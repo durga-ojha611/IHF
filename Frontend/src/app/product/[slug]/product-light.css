@@ -1,0 +1,11 @@
+.detail-page .detail-top{background:#f6f3ed;color:#211f1b}
+.detail-page .detail-breadcrumb{color:#77736a}
+.detail-page .detail-config>span{color:#747c32}
+.detail-page .detail-rating{color:#8b743d}
+.detail-page .detail-config>p{color:#625f58}
+.detail-page .detail-price-row{border-color:#bdb8ad}
+.detail-page .detail-swatches i{border-color:#f6f3ed;outline-color:#77736a}
+.detail-page .detail-sizes button{background:transparent;color:#24221e;border-color:#9c978d}
+.detail-page .detail-sizes button.active{background:#24221e;color:#fff}
+.detail-page .detail-continue{background:#24221e;color:#fff}
+.detail-page .detail-thumbs img{border-color:#cbc6bb}

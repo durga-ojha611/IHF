@@ -1,0 +1,7 @@
+@media(min-width:801px){
+  .home-v2 .product-family{min-height:1120px}
+  .home-v2 .cornice-family{min-height:1650px;padding-top:390px}
+  .home-v2 .category-mosaic a{background:#f0efec;border-radius:8px}
+  .home-v2 .category-mosaic a:after{inset:0;background:linear-gradient(90deg,#f0efec 0%,rgba(240,239,236,.88) 30%,transparent 62%)}
+  .home-v2 .category-mosaic span{left:28px;top:58px;bottom:auto;color:var(--ink);font-size:25px}
+}

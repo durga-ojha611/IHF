@@ -1,0 +1,10 @@
+.home-v2 .hero-kicker{display:flex;align-items:center;gap:14px}
+.home-v2 .hero-kicker:before{content:"";width:34px;height:1px;background:#79909a}
+.home-v2 .home-hero-copy{width:610px}
+.home-v2 .home-hero-copy>p{width:590px;font-size:15px}
+.home-v2 .hero-actions{display:flex;gap:14px;margin-top:30px}
+.home-v2 .hero-button{height:52px;padding:0 29px;display:inline-flex;align-items:center;justify-content:center;font:500 11px var(--font-inter);letter-spacing:2px}
+.home-v2 .hero-button-solid{background:#191816;color:#fff;gap:24px}
+.home-v2 .hero-button-solid span{font-size:17px;font-weight:300}
+.home-v2 .hero-button-outline{border:1px solid #292824;background:rgba(255,255,255,.12)}
+@media(max-width:800px){.home-v2 .home-hero-copy{width:auto}.home-v2 .home-hero-copy>p{width:auto}.home-v2 .hero-actions{gap:8px}.home-v2 .hero-button{height:48px;padding:0 18px;font-size:9px}.home-v2 .hero-button-solid{gap:12px}}
