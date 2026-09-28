@@ -25,13 +25,14 @@ const createSendToken = (user, statusCode, res) => {
 
   res.cookie('jwt', token, cookieOptions);
 
-  user.password = undefined;
+  const sanitizedUser = user.toObject ? user.toObject() : { ...user };
+  delete sanitizedUser.password;
 
   res.status(statusCode).json({
     status: 'success',
     token,
     data: {
-      user
+      user: sanitizedUser
     }
   });
 };

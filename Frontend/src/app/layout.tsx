@@ -18,13 +18,20 @@ export const metadata: Metadata = {
   description: "Bespoke window treatments and fine home furnishings.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+import { AuthProvider } from "@/components/auth-context";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
       className={`${inter.variable} ${cormorant.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col"><CommerceProvider>{children}</CommerceProvider></body>
+      <body className="min-h-full flex flex-col">
+        <AuthProvider>
+          <CommerceProvider>{children}</CommerceProvider>
+        </AuthProvider>
+      </body>
     </html>
   );
 }
+

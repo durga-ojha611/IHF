@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Header } from "@/components/site-chrome";
+import { Header, Footer } from "@/components/site-chrome";
 import "./home.css";
 import "./home-tuning.css";
 import "./hero-tuning.css";
@@ -112,5 +112,6 @@ export default function Home() {
 
       <section className="consult"><div><span className="home-kicker">PERSONAL DESIGN GUIDANCE</span><h2>Consult with Our<br/><em>Designers.</em></h2><p>Not sure where to begin? Our design team will help you choose the right styles, fabrics and finishes for your space.</p><div><ArrowLink>BOOK A COMPLIMENTARY CALL</ArrowLink><ArrowLink>CHAT WITH A DESIGNER</ArrowLink></div></div><Image src="/figma/home-02.png" alt="Design consultation fabric samples" fill sizes="100vw"/></section>
     </main>
+    <Footer />
   </div>;
 }

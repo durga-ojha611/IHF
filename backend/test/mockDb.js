@@ -42,6 +42,9 @@ class QueryMock {
             if (key === 'isPublished' && item.isPublished !== query[key]) return false;
             if (key === 'parent' && item.parent !== query[key]) return false;
             if (key === 'parentCategory' && item.parentCategory !== query[key]) return false;
+            if (key === 'fabricType' && item.fabricType !== query[key]) return false;
+            if (key === 'category' && item.category?.toString() !== query[key]?.toString()) return false;
+            if (key === 'isFeatured' && item.isFeatured !== query[key]) return false;
           }
           return true;
         });
@@ -242,18 +245,90 @@ export function setupMockDatabase() {
       title: 'The Chateau Pure Belgian Flax Linen Drapery',
       slug: 'chateau-pure-belgian-flax-linen-drapery',
       sku: 'IHF-LINEN-001',
-      description: 'Handcrafted luxury custom linen drapery.',
+      shortDescription: 'Tailored from certified 100% Belgian flax with rich natural slub texture and artisan pinch pleats.',
+      description: 'Handcrafted luxury custom linen drapery made from finest European flax.',
       category: catId,
       subCategory: subCatId,
       basePrice: 580,
       pricePerYard: 68,
       fabricType: 'linen',
-      colors: [{ name: 'Champagne Beige', hexCode: '#F7E7CE', inStock: true }],
-      styles: ['pinch-pleat'],
+      colors: [
+        { name: 'Champagne Beige', hexCode: '#F7E7CE', inStock: true },
+        { name: 'Ivory White', hexCode: '#FFFFF0', inStock: true },
+        { name: 'Charcoal Slate', hexCode: '#36454F', inStock: true }
+      ],
+      styles: ['pinch-pleat', 'euro-pleat'],
       features: ['blackout', 'motorized'],
+      images: [
+        { url: '/figma/home-01.jpeg', alt: 'Chateau Pure Belgian Flax Linen Drapery', isPrimary: true },
+        { url: '/figma/home-05.png', alt: 'Chateau Linen Detail', isPrimary: false }
+      ],
       customizerRule: ruleId,
       stockStatus: 'in_stock',
       inventoryCount: 450,
+      isCustomizable: true,
+      isFeatured: true,
+      isActive: true,
+      isDeleted: false,
+      save: async function () { return this; }
+    },
+    {
+      _id: '660000000000000000000062',
+      title: 'The Monaco Royal Silk Velvet Blackout Drapery',
+      slug: 'monaco-royal-silk-velvet-blackout-drapery',
+      sku: 'IHF-VELVET-002',
+      shortDescription: 'Sumptuous, heavyweight velvet with 100% blackout eclipse lining and thermal noise dampening.',
+      description: 'Sumptuous, heavyweight velvet with 100% blackout eclipse lining and thermal noise dampening.',
+      category: catId,
+      subCategory: subCatId,
+      basePrice: 780,
+      pricePerYard: 95,
+      fabricType: 'velvet',
+      colors: [
+        { name: 'Emerald Green', hexCode: '#046307', inStock: true },
+        { name: 'Midnight Navy', hexCode: '#002366', inStock: true },
+        { name: 'Terracotta Rust', hexCode: '#C46851', inStock: true }
+      ],
+      styles: ['pinch-pleat', 'ripple-fold'],
+      features: ['blackout', 'thermal-insulated', 'acoustic'],
+      images: [
+        { url: '/figma/home-06.jpeg', alt: 'Monaco Royal Silk Velvet Drapery', isPrimary: true },
+        { url: '/figma/home-13.png', alt: 'Monaco Velvet Detail', isPrimary: false }
+      ],
+      customizerRule: ruleId,
+      stockStatus: 'in_stock',
+      inventoryCount: 320,
+      isCustomizable: true,
+      isFeatured: true,
+      isActive: true,
+      isDeleted: false,
+      save: async function () { return this; }
+    },
+    {
+      _id: '660000000000000000000063',
+      title: 'The Verona Architectural Ripple Fold Sheer',
+      slug: 'verona-architectural-ripple-fold-sheer',
+      sku: 'IHF-SHEER-003',
+      shortDescription: 'Modern continuous S-wave ripple fold sheer drapery for floor-to-ceiling windows.',
+      description: 'Modern continuous S-wave ripple fold sheer drapery for floor-to-ceiling windows.',
+      category: catId,
+      subCategory: subCatId,
+      basePrice: 420,
+      pricePerYard: 48,
+      fabricType: 'sheer',
+      colors: [
+        { name: 'Ivory White', hexCode: '#FFFFF0', inStock: true },
+        { name: 'Champagne Beige', hexCode: '#F7E7CE', inStock: true }
+      ],
+      styles: ['ripple-fold'],
+      features: ['motorized'],
+      images: [
+        { url: '/figma/home-11.png', alt: 'Verona Architectural Ripple Fold Sheer', isPrimary: true },
+        { url: '/figma/home-17.jpeg', alt: 'Verona Sheer Detail', isPrimary: false }
+      ],
+      customizerRule: ruleId,
+      stockStatus: 'in_stock',
+      inventoryCount: 600,
       isCustomizable: true,
       isFeatured: true,
       isActive: true,
@@ -272,6 +347,26 @@ export function setupMockDatabase() {
       isActive: true,
       isDeleted: false,
       deleteOne: async function () {}
+    },
+    {
+      _id: '660000000000000000000082',
+      group: 'fabric',
+      label: 'Silk Velvet',
+      value: 'velvet',
+      displayOrder: 2,
+      isActive: true,
+      isDeleted: false,
+      deleteOne: async function () {}
+    },
+    {
+      _id: '660000000000000000000083',
+      group: 'fabric',
+      label: 'Airy Sheers',
+      value: 'sheer',
+      displayOrder: 3,
+      isActive: true,
+      isDeleted: false,
+      deleteOne: async function () {}
     }
   ];
 
@@ -281,9 +376,51 @@ export function setupMockDatabase() {
       fabricName: 'Belgian Flax Linen',
       colorName: 'Champagne Oat',
       hexCode: '#E6D7B9',
-      material: '100% Linen',
+      material: '100% European Flax Linen',
+      weightGsm: 420,
+      texture: 'Rich Slub Textured Weave',
       price: 0,
       inStock: true,
+      image: { url: '/figma/home-02.png', alt: 'Belgian Flax Linen Champagne Oat' },
+      isDeleted: false
+    },
+    {
+      _id: '660000000000000000000072',
+      fabricName: 'Monaco Royal Velvet',
+      colorName: 'Emerald Forest',
+      hexCode: '#046307',
+      material: 'Heavyweight Cotton Velvet',
+      weightGsm: 540,
+      texture: 'Ultra-Soft Matte Pile',
+      price: 0,
+      inStock: true,
+      image: { url: '/figma/home-13.png', alt: 'Monaco Royal Velvet Emerald' },
+      isDeleted: false
+    },
+    {
+      _id: '660000000000000000000073',
+      fabricName: 'Monaco Royal Velvet',
+      colorName: 'Midnight Navy',
+      hexCode: '#002366',
+      material: 'Heavyweight Cotton Velvet',
+      weightGsm: 540,
+      texture: 'Lustrous Deep Velvet Pile',
+      price: 0,
+      inStock: true,
+      image: { url: '/figma/home-06.jpeg', alt: 'Monaco Royal Velvet Midnight Navy' },
+      isDeleted: false
+    },
+    {
+      _id: '660000000000000000000074',
+      fabricName: 'Artisan Sheer Voile',
+      colorName: 'Pure Ivory',
+      hexCode: '#FFFFF0',
+      material: '100% Fine Spun Linen Sheer',
+      weightGsm: 180,
+      texture: 'Airy Ethereal Open Weave',
+      price: 0,
+      inStock: true,
+      image: { url: '/figma/home-17.jpeg', alt: 'Artisan Sheer Pure Ivory' },
       isDeleted: false
     }
   ];
