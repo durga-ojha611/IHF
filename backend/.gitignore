@@ -1,0 +1,64 @@
+# ----------------------------------------------------
+# 🔒 SENSITIVE CREDENTIALS & ENVIRONMENT SECRETS
+# ----------------------------------------------------
+.env
+.env.*
+*.env
+!.env.example
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+
+# ----------------------------------------------------
+# 📦 DEPENDENCY DIRECTORIES
+# ----------------------------------------------------
+node_modules/
+jspm_packages/
+.pnp
+.pnp.js
+
+# ----------------------------------------------------
+# 📋 LOGS & DEBUGGING
+# ----------------------------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# ----------------------------------------------------
+# 🧪 TEST COVERAGE & ARTIFACTS
+# ----------------------------------------------------
+coverage/
+.nyc_output/
+
+# ----------------------------------------------------
+# 🖥️ OS & EDITOR ARTIFACTS
+# ----------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ----------------------------------------------------
+# 🚀 BUILD ARTIFACTS & CACHES
+# ----------------------------------------------------
+dist/
+build/
+.cache/
