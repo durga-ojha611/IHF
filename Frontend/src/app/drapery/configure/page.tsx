@@ -4,7 +4,7 @@ import { Footer, Header } from "@/components/site-chrome";
 import "./configure.css";
 
 const styles=[
-  ["/figma/home-05.png","RIPPLE FOLD DRAPERY","BEAUTY MEETS FUNCTIONALITY","Adored by interior designers everywhere, our Ripple Fold Drapery is an elegant blend of simplicity and style."],
+  ["/figma/home-hero-hd.png","RIPPLE FOLD DRAPERY","BEAUTY MEETS FUNCTIONALITY","Adored by interior designers everywhere, our Ripple Fold Drapery is an elegant blend of simplicity and style."],
   ["/figma/home-11.png","TAILORED PLEAT DRAPERY","REFINED AND STRUCTURED","A modern take on traditional pleating, offering a crisp waterfall effect that maintains its structure beautifully."],
   ["/figma/home-01.jpeg","PINCH PLEAT DRAPERY","CLASSIC TRADITION","The timeless standard for custom drapery, featuring hand-sewn, permanent folds that create a full, elegant appearance."],
   ["/figma/home-17.jpeg","GROMMET DRAPERY","CONTEMPORARY & CASUAL","A popular choice for a modern, relaxed aesthetic with metal rings sliding effortlessly over a decorative rod."],

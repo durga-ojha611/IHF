@@ -3,14 +3,14 @@ import Link from "next/link";
 import { Footer, Header } from "@/components/site-chrome";
 import "./listing.css";
 
-const productImages=["/figma/home-05.png","/figma/home-15.jpeg","/figma/home-10.jpeg","/figma/home-05.png","/figma/home-15.jpeg","/figma/home-10.jpeg"];
+const productImages=["/figma/product-linen-bedspread-hd.png","/figma/home-hero-hd.png","/figma/home-11.png","/figma/product-linen-bedspread-hd.png","/figma/home-13.png","/figma/home-16.png"];
 const productNames=["Waffle Weave Linen Coverlet","Garment-Washed Duvet Set","Bespoke Linen Quilt","Waffle Weave Linen Coverlet","Garment-Washed Duvet Set","Bespoke Linen Quilt"];
 const related=[
   ["/figma/home-10.jpeg","Quilts & Coverlet","320","18 STYLES"],
   ["/figma/home-11.png","Bedding Sets","540","4-PIECE SUITES"],
   ["/figma/home-15.jpeg","Pillowcases & Shams","85","EURO & STANDARD"],
   ["/figma/home-17.jpeg","Bed Runners","145","ARTISANAL TEXTURES"],
-  ["/figma/home-05.png","Bed Skirts","190","CUSTOM DROPS"],
+  ["/figma/product-linen-bedspread-hd.png","Bed Skirts","190","CUSTOM DROPS"],
   ["/figma/home-01.jpeg","Throw Pillows","110","DOWN & FEATHER"],
 ];
 

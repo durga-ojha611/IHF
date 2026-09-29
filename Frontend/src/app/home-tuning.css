@@ -1,6 +1,17 @@
 @media(min-width:801px){
-  .home-v2 .product-family{min-height:1120px}
-  .home-v2 .cornice-family{min-height:1650px;padding-top:390px}
+  .home-v2 .entrance{padding-block:112px}
+  .home-v2 .finish-block{padding-block:96px}
+  .home-v2 .product-family{min-height:0;padding-block:96px}
+  .home-v2 .cornice-family{min-height:0;padding-top:96px}
+  .home-v2 .shop-category{padding-block:96px}
+  .home-v2 .right-details{padding-block:96px}
+  .home-v2 .intention{padding-block:96px}
+  .home-v2 .love{padding-block:96px}
+  .home-v2 .real-homes{padding-block:80px 96px}
+  .home-v2 .instagram{padding-block:88px}
+  .home-v2 .home-heading{margin-bottom:48px}
+  .home-v2 .family-heading{margin-bottom:48px}
+  .home-v2 .section-number{top:108px}
   .home-v2 .category-mosaic a{background:#f0efec;border-radius:8px}
   .home-v2 .category-mosaic a:after{inset:0;background:linear-gradient(90deg,#f0efec 0%,rgba(240,239,236,.88) 30%,transparent 62%)}
   .home-v2 .category-mosaic span{left:28px;top:58px;bottom:auto;color:var(--ink);font-size:25px}

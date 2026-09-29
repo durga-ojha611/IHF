@@ -11,6 +11,10 @@ export interface CustomSpecs {
   pleat?: string;
   mount?: string;
   hardware?: string;
+  railSystem?: string;
+  trim?: string;
+  valance?: string;
+  tieBack?: string;
   panelConfiguration?: string;
   priceBreakdown?: Record<string, any>;
 }

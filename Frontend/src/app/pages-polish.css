@@ -1,0 +1,86 @@
+/* Shared editorial polish for catalogue, PDP and made-to-measure flows. */
+@media (min-width:801px){
+  .cp-hero{height:570px}
+  .cp-hero>img{object-position:center 52%}
+  .cp-hero>div{left:max(calc((100% - 1120px)/2),64px);width:520px}
+  .cp-hero h1{font-size:58px;line-height:1;margin:17px 0}
+  .cp-hero p{font-size:14px;line-height:1.75}
+  .cp-section{padding-block:58px}
+  .cp-section>header{margin-bottom:32px}
+  .cp-categories img{height:268px}
+  .cp-fabrics>div{gap:36px 20px}
+  .cp-catalog-body{grid-template-columns:220px 1fr;gap:40px}
+  .cp-product>div{height:365px}
+  .cp-product h3{font-size:17px;line-height:1.25}
+  .cp-product-grid{gap:36px 22px}
+  .cp-layer{gap:60px}
+  .cp-layer>img{height:540px}
+
+  .archive-intro{padding-top:44px;padding-bottom:34px}
+  .archive-intro h1{font-size:42px}
+  .archive-products{grid-template-columns:270px 1fr;gap:34px;padding-top:38px}
+  .archive-grid{gap:38px 22px}
+  .archive-card>div:first-child{height:390px}
+  .archive-card h2{font-size:18px}
+  .related-archive{padding-block:76px 88px}
+  .related-grid>a>div{height:315px}
+
+  .detail-top{grid-template-columns:minmax(0,56%) minmax(420px,44%);padding-top:32px;gap:34px}
+  .detail-main-img{height:640px}
+  .detail-main-img img{object-position:center}
+  .detail-config{padding:18px 18px 0 8px}
+  .detail-config h1{font-size:43px;line-height:1.05;margin:12px 0}
+  .detail-config>p{font-size:11px;line-height:1.75;max-width:560px}
+  .detail-sizes button{height:42px}
+  .bundle-builder{margin-top:62px}
+  .detail-benefits,.detail-recs,.reviews{padding-block:60px}
+  .spec-section,.delivery-section,.craft-detail,.shop-look{padding-block:60px}
+  .look-photo{height:500px}
+
+  .style-step{padding-top:44px;padding-bottom:72px}
+  .style-step>header{margin-bottom:40px}
+  .style-step>article{gap:46px;padding:36px;margin-bottom:30px}
+  .style-step>article>img{height:370px}
+  .fabric-step main{padding-top:42px;padding-bottom:96px}
+  .material-group{padding-bottom:48px}
+  .material-group>div{gap:26px 22px;margin-top:34px}
+  .material-group button>span{height:180px}
+  .details-step main>header{padding:34px 35px 30px}
+  .details-layout{grid-template-columns:40% 60%;gap:38px}
+  .details-preview-sticky{position:sticky;top:22px}
+  .details-preview-image{position:relative;width:100%;height:440px;overflow:hidden}
+  .engineering-summary{background:#fff;padding:18px;border:1px solid #e0ded8;margin-top:12px}
+  .config-section{padding-block:20px}
+  .option-grid{gap:10px}
+  .option-grid label{padding:8px}
+  .option-visual{height:88px;font-size:32px;margin-bottom:8px}
+  .option-grid label>b{font-size:7px;line-height:1.3}
+  .option-grid label>small{font-size:7px;line-height:1.35}
+  .trim-feature{padding:12px}
+  .trim-feature img{width:125px;height:84px}
+}
+
+@media (min-width:1500px){
+  .commerce-page{padding-inline:max(calc((100% - 1490px)/2),64px)}
+  .cp-section{width:min(1490px,calc(100% - 176px))}
+  .cp-fabrics{width:100%;padding-inline:max(calc((100% - 1490px)/2),88px)}
+  .archive-intro,.archive-toolbar{padding-inline:max(calc((100% - 1560px)/2),72px)}
+  .archive-products{max-width:1560px;grid-template-columns:300px 1fr}
+  .related-archive{padding-inline:max(calc((100% - 1560px)/2),72px)}
+  .detail-top{padding-inline:max(calc((100% - 1680px)/2),56px)}
+  .style-step,.details-layout{max-width:1500px}
+  .fabric-step main{max-width:1500px}
+  .fabric-bar{padding-inline:max(calc((100% - 1500px)/2),64px)}
+}
+
+@media (max-width:800px){
+  .cp-hero{height:520px}
+  .cp-section{padding-block:56px}
+  .archive-intro{padding:30px 18px 24px}
+  .archive-intro h1{font-size:36px}
+  .archive-grid{grid-template-columns:1fr 1fr;gap:28px 10px}
+  .archive-card>div:first-child{height:245px}
+  .detail-main-img{height:460px}
+  .style-step>header{margin-bottom:36px}
+  .style-step>article{margin-bottom:24px}
+}

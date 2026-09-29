@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
+import "./top-fold.css";
+import "./pages-polish.css";
 import { CommerceProvider } from "@/components/commerce-context";
 
 const inter = Inter({
@@ -34,4 +36,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
-

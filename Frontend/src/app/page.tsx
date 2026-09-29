@@ -4,6 +4,7 @@ import { Header, Footer } from "@/components/site-chrome";
 import "./home.css";
 import "./home-tuning.css";
 import "./hero-tuning.css";
+import "./figma-hero.css";
 
 const finish = [
   ["/figma/home-04.jpeg", "A touch of grandeur", "Tassel Trims"],
@@ -41,7 +42,7 @@ export default function Home() {
     <Header />
     <main>
       <section className="home-hero">
-        <Image src="/figma/home-05.png" alt="Custom made bedroom drapery" fill priority sizes="100vw" />
+        <Image src="/figma/home-hero-hd.png" alt="Custom made bedroom drapery" fill priority quality={92} sizes="100vw" />
         <div className="home-hero-copy">
           <span className="home-kicker hero-kicker">CUSTOM MADE · EST. 1998</span>
           <h1>Custom Made.<br/><em>Beautifully Yours.</em></h1>
@@ -90,7 +91,7 @@ export default function Home() {
 
       <section className="shop-category home-shell"><span className="home-kicker">EVERY DETAIL, BEAUTIFULLY CONSIDERED</span><h2>Shop By Category</h2><p>Discover the pieces that make a room feel complete.</p>
         <div className="category-mosaic">
-          <Link className="mosaic-tall" href="/products/table-linen"><Image src="/figma/home-19.png" alt="Table linen" fill sizes="45vw"/><span>Table Linen <b>↗</b></span></Link>
+          <Link className="mosaic-tall" href="/products/table-linen"><Image src="/figma/home-03.jpeg" alt="Natural linen table textile" fill quality={90} sizes="45vw"/><span>Table Linen <b>↗</b></span></Link>
           <Link href="/products/bedding"><Image src="/figma/home-11.png" alt="Bedding" fill sizes="25vw"/><span>Bedding <b>↗</b></span></Link>
           <Link href="/products/pillows"><Image src="/figma/home-14.png" alt="Cushions" fill sizes="25vw"/><span>Cushions <b>↗</b></span></Link>
           <Link href="/products/decor"><Image src="/figma/home-18.jpeg" alt="Decor" fill sizes="25vw"/><span>Decor <b>↗</b></span></Link>
@@ -100,7 +101,7 @@ export default function Home() {
 
       <section className="right-details home-shell"><div><span className="home-kicker">DETAILS THAT TRANSFORM A ROOM</span><h2>Every beautiful drape begins with the right details.</h2><p>Explore the materials, trims and finishes that bring your vision together.</p></div><div className="three-grid">{[["/figma/home-18.jpeg","FABRICS"],["/figma/home-02.png","SWATCHES"],["/figma/home-07.jpeg","TRIMS & FINISHES"]].map(([src,label])=><article key={label}><Image src={src} alt={label} width={520} height={420}/><span className="home-kicker">{label}</span><h3>Chosen for the way you live.</h3><ArrowLink>DISCOVER</ArrowLink></article>)}</div></section>
 
-      <section className="fabric-split"><Image src="/figma/home-18.jpeg" alt="Fabric finishes" width={690} height={650}/><div><span className="home-kicker">CURATED MATERIALS</span><h2>Fabrics &amp; Finishes.<br/>Chosen for You.</h2><p>Explore a thoughtful collection of natural textures, elegant weaves and enduring colours—selected to work beautifully throughout your home.</p><ArrowLink href="/swatches">ORDER COMPLIMENTARY SWATCHES</ArrowLink></div></section>
+      <section className="fabric-split"><Image src="/figma/home-03.jpeg" alt="Natural linen fabric finish" width={1130} height={754} quality={90}/><div><span className="home-kicker">CURATED MATERIALS</span><h2>Fabrics &amp; Finishes.<br/>Chosen for You.</h2><p>Explore a thoughtful collection of natural textures, elegant weaves and enduring colours—selected to work beautifully throughout your home.</p><ArrowLink href="/swatches">ORDER COMPLIMENTARY SWATCHES</ArrowLink></div></section>
 
       <section className="intention home-shell"><div className="home-heading"><span className="home-kicker">FROM OUR HANDS TO YOUR HOME</span><h2>Made With Intention. Delivered Beautifully.</h2></div><div className="five-grid">{[["/figma/home-13.png","Made For You"],["/figma/home-02.png","Material First"],["/figma/home-04.jpeg","Finished By Hand"],["/figma/home-08.png","Delivered With Care"],["/figma/home-18.jpeg","Beautifully At Home"]].map(([src,title],i)=><article key={title}><Image src={src} alt={title} width={300} height={330}/><span>0{i+1}</span><h3>{title}</h3><p>Every detail considered, from first idea to final placement.</p></article>)}</div></section>
 

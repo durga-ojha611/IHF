@@ -80,3 +80,10 @@
   background: #2b2926 !important;
 }
 
+@media(min-width:801px){
+  .commerce-page{padding-top:58px;padding-bottom:88px}
+  .commerce-head{margin-bottom:42px}
+  .commerce-head h1{font-size:42px;line-height:1.05}
+  .empty-state{padding-block:68px}
+  .empty-state h2{font-size:28px}
+}

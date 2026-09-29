@@ -4,7 +4,7 @@ import { Footer, Header } from "@/components/site-chrome";
 import "./category.css";
 
 const collections = [
-  ["/figma/home-05.png","Duvet Covers","duvet-covers"],["/figma/home-15.jpeg","Quilts & Coverlets","quilts-coverlets"],
+  ["/figma/product-linen-bedspread-hd.png","Duvet Covers","duvet-covers"],["/figma/home-15.jpeg","Quilts & Coverlets","quilts-coverlets"],
   ["/figma/home-11.png","Comforters","comforters"],["/figma/home-10.jpeg","Sheets","sheets"],["/figma/home-01.jpeg","Blankets & Throws","blankets-throws"],
 ];
 const fabrics = [
@@ -12,7 +12,7 @@ const fabrics = [
   ["/figma/home-12.jpeg","Velvet"],["/figma/home-02.png","Silk Sateen"],["/figma/home-18.jpeg","Wool Blend"],["/figma/home-19.png","Organic Cotton"],
 ];
 const products = [
-  ["/figma/home-05.png","Washed Linen Duvet Cover","100% European Flax Linen","185"],
+  ["/figma/product-linen-bedspread-hd.png","Washed Linen Duvet Cover","100% European Flax Linen","185"],
   ["/figma/home-15.jpeg","Textured Cotton Quilt","Organic Cotton","140"],
   ["/figma/home-17.jpeg","Classic Percale Sheet Set","Crisp Matte Cotton","115"],
 ];
@@ -30,7 +30,7 @@ export default async function Products({params}:{params:Promise<{slug:string}>})
   const title=slug.split("-").map(s=>s[0].toUpperCase()+s.slice(1)).join(" ");
   const isBedding=slug==="bedding";
   return <div className="category-page"><Header/><main>
-    <section className="cp-hero"><Image src="/figma/home-11.png" alt={`${title} collection`} fill priority sizes="100vw"/><div><span>REST EASY, LIVE BEAUTIFULLY</span><h1>Elevate Your {isBedding?"Bedroom":title}</h1><p>Discover beautifully crafted {title.toLowerCase()} designed for comfort, texture and timeless style.</p><Link href="#collection">EXPLORE {title.toUpperCase()}</Link></div></section>
+    <section className="cp-hero"><Image src="/figma/home-hero-hd.png" alt={`${title} collection`} fill priority quality={92} sizes="100vw"/><div><span>REST EASY, LIVE BEAUTIFULLY</span><h1>Elevate Your {isBedding?"Bedroom":title}</h1><p>Discover beautifully crafted {title.toLowerCase()} designed for comfort, texture and timeless style.</p><Link href="#collection">EXPLORE {title.toUpperCase()}</Link></div></section>
 
     <section className="cp-section cp-categories"><header><h2>Shop by Category</h2><p>Explore our curated collections for every corner of your sanctuary.</p></header><div>{collections.map(([src,name,path])=><Link href={`/products/${slug}/${path}`} key={name}><Image src={src} alt={name} width={310} height={330}/><span>{name}</span></Link>)}</div></section>
 
