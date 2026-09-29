@@ -10,6 +10,9 @@ import Blog from '../src/models/Blog.js';
 import Swatch from '../src/models/Swatch.js';
 import SwatchOrder from '../src/models/SwatchOrder.js';
 import CustomizerRule from '../src/models/CustomizerRule.js';
+import CustomizerFlow from '../src/models/CustomizerFlow.js';
+import CustomizerStep from '../src/models/CustomizerStep.js';
+import OptionLayer from '../src/models/OptionLayer.js';
 import Order from '../src/models/Order.js';
 import FabricOption from '../src/models/FabricOption.js';
 import ActivityLog from '../src/models/ActivityLog.js';
@@ -25,6 +28,9 @@ export const db = {
   swatches: [],
   swatchOrders: [],
   customizerRules: [],
+  customizerFlows: [],
+  customizerSteps: [],
+  optionLayers: [],
   orders: [],
   fabricOptions: [],
   activityLogs: []
@@ -56,6 +62,17 @@ class QueryMock {
               if (query[key] instanceof RegExp && !query[key].test(item.materialGroup)) return false;
               if (typeof query[key] === 'string' && item.materialGroup !== query[key]) return false;
             }
+            if (key === 'flowRef' && item.flowRef?.toString() !== query[key]?.toString()) return false;
+            if (key === 'stepRef' && item.stepRef?.toString() !== query[key]?.toString()) return false;
+            if (key === 'status' && item.status !== query[key]) return false;
+            if (key === 'isEnabled' && item.isEnabled !== query[key]) return false;
+            if (key === 'isArchived') {
+              if (query[key] && typeof query[key] === 'object' && query[key].$ne !== undefined) {
+                if (item.isArchived === query[key].$ne) return false;
+              } else if (Boolean(item.isArchived) !== Boolean(query[key])) {
+                return false;
+              }
+            }
           }
           return true;
         });
@@ -68,7 +85,16 @@ class QueryMock {
     return this;
   }
 
-  sort() {
+  sort(criteria) {
+    if (Array.isArray(this._data) && criteria && typeof criteria === 'object') {
+      const field = Object.keys(criteria)[0];
+      const direction = criteria[field];
+      this._data = [...this._data].sort((a, b) => {
+        if (a[field] < b[field]) return direction === -1 ? 1 : -1;
+        if (a[field] > b[field]) return direction === -1 ? -1 : 1;
+        return 0;
+      });
+    }
     return this;
   }
 
@@ -225,6 +251,227 @@ export function setupMockDatabase() {
       ],
       isActive: true,
       isDeleted: false
+    }
+  ];
+
+  const flowId = '660000000000000000000050';
+  db.customizerFlows = [
+    {
+      _id: flowId,
+      name: 'Drapery configurator',
+      slug: 'drapery-configurator',
+      description: 'Primary made-to-measure bespoke draperies flow',
+      status: 'published',
+      version: 8,
+      totalSteps: 9,
+      totalOptions: 42,
+      totalRules: 12,
+      isDefault: true,
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      save: async function () { return this; }
+    }
+  ];
+
+  db.customizerSteps = [
+    {
+      _id: '660000000000000000000051',
+      flowRef: flowId,
+      internalName: 'Choose style',
+      stepNumber: '01',
+      displayOrder: 1,
+      heading: 'Choose Your Drapery Style',
+      description: 'Select heading pleat and tailoring silhouette.',
+      stepType: 'style',
+      isEnabled: true,
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      save: async function () { return this; }
+    },
+    {
+      _id: '660000000000000000000052',
+      flowRef: flowId,
+      internalName: 'Select fabric',
+      stepNumber: '02',
+      displayOrder: 2,
+      heading: 'Select Atelier Fabric',
+      description: 'Choose from Belgian flax linen, silk dupioni, or wool weaves.',
+      stepType: 'fabric',
+      isEnabled: true,
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      save: async function () { return this; }
+    },
+    {
+      _id: '660000000000000000000053',
+      flowRef: flowId,
+      internalName: 'Measurements',
+      stepNumber: '03',
+      displayOrder: 3,
+      heading: 'Tell Us About Your Window',
+      description: 'Guide the customer with concise, reassuring atelier expertise.',
+      stepType: 'dimensions',
+      isEnabled: true,
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      save: async function () { return this; }
+    },
+    {
+      _id: '660000000000000000000054',
+      flowRef: flowId,
+      internalName: 'Mount & position',
+      stepNumber: '04',
+      displayOrder: 4,
+      heading: 'Mounting & Position',
+      description: 'Determine ceiling vs wall mount placement.',
+      stepType: 'mount',
+      isEnabled: true,
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      save: async function () { return this; }
+    },
+    {
+      _id: '660000000000000000000055',
+      flowRef: flowId,
+      internalName: 'Lining',
+      stepNumber: '05',
+      displayOrder: 5,
+      heading: 'Select Luxury Lining',
+      description: 'Choose privacy, room darkening blackout, or thermal interlining.',
+      stepType: 'lining',
+      isEnabled: true,
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      save: async function () { return this; }
+    },
+    {
+      _id: '660000000000000000000056',
+      flowRef: flowId,
+      internalName: 'Control system',
+      stepNumber: '06',
+      displayOrder: 6,
+      heading: 'Control System',
+      description: 'Select manual baton, cord traverse, or motorized system.',
+      stepType: 'control',
+      isEnabled: true,
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      save: async function () { return this; }
+    },
+    {
+      _id: '660000000000000000000057',
+      flowRef: flowId,
+      internalName: 'Hardware',
+      stepNumber: '07',
+      displayOrder: 7,
+      heading: 'Atelier Hardware & Rods',
+      description: 'French return rod or architectural concealed ceiling track.',
+      stepType: 'hardware',
+      isEnabled: true,
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      save: async function () { return this; }
+    },
+    {
+      _id: '660000000000000000000058',
+      flowRef: flowId,
+      internalName: 'Finishing details',
+      stepNumber: '08',
+      displayOrder: 8,
+      heading: 'Finishing Touches',
+      description: 'Custom memory shaping, lead corner weights, matching tiebacks.',
+      stepType: 'finishing',
+      isEnabled: true,
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      save: async function () { return this; }
+    },
+    {
+      _id: '660000000000000000000059',
+      flowRef: flowId,
+      internalName: 'Review',
+      stepNumber: '09',
+      displayOrder: 9,
+      heading: 'Review Your Commission',
+      description: 'Inspect exact custom dimensions, fabrics, and production timeline.',
+      stepType: 'review',
+      isEnabled: true,
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      save: async function () { return this; }
+    }
+  ];
+
+  db.optionLayers = [
+    {
+      _id: '660000000000000000000060',
+      stepRef: '660000000000000000000053',
+      flowRef: flowId,
+      layerName: 'Primary selection',
+      layerType: 'dimensions',
+      displayOrder: 1,
+      visibilityCondition: {
+        type: 'always',
+        description: 'Always visible'
+      },
+      optionsArray: [
+        { id: 'custom-width', label: 'Finished Drapery Width (Inches)', value: 'width_input', isDefault: true, priceAddon: 0 },
+        { id: 'custom-height', label: 'Finished Drapery Length / Height (Inches)', value: 'height_input', isDefault: true, priceAddon: 0 }
+      ],
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      save: async function () { return this; }
+    },
+    {
+      _id: '660000000000000000000061',
+      stepRef: '660000000000000000000053',
+      flowRef: flowId,
+      layerName: 'Conditional additions',
+      layerType: 'selection',
+      displayOrder: 2,
+      visibilityCondition: {
+        type: 'conditional',
+        ruleExpression: { ifField: 'width', operator: 'greater_than', value: 120 },
+        description: 'Shown when rules match'
+      },
+      optionsArray: [
+        { id: 'heavy-duty-bracket', label: 'Heavy-Duty Center Support Bracket', value: 'bracket_center', priceAddon: 45, isDefault: true },
+        { id: 'split-draw', label: 'Two-Way Center Split Draw', value: 'pair_split', priceAddon: 0, isDefault: true }
+      ],
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      save: async function () { return this; }
+    },
+    {
+      _id: '660000000000000000000062',
+      stepRef: '660000000000000000000053',
+      flowRef: flowId,
+      layerName: 'Help & measurement guidance',
+      layerType: 'guidance',
+      displayOrder: 3,
+      visibilityCondition: {
+        type: 'always',
+        description: 'Always visible'
+      },
+      optionsArray: [
+        { id: 'puddle-guide', label: 'Puddle Allowance Guide (0" to +3")', value: 'puddle_note', priceAddon: 0 }
+      ],
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      save: async function () { return this; }
     }
   ];
 
@@ -742,6 +989,172 @@ export function setupMockDatabase() {
     const item = db.customizerRules.find((r) => r._id.toString() === id.toString());
     if (item) Object.assign(item, update);
     return item;
+  };
+
+  // ----------------------------------------------------
+  // Mock CustomizerFlow Model Methods
+  // ----------------------------------------------------
+  CustomizerFlow.find = (query) => {
+    let items = db.customizerFlows.filter((f) => !f.isArchived);
+    if (query) {
+      if (query.includeArchived) items = [...db.customizerFlows];
+      if (query.status) items = items.filter((f) => f.status === query.status);
+    }
+    return new QueryMock(items);
+  };
+  CustomizerFlow.findOne = (query) => {
+    let item = null;
+    if (query) {
+      if (query.slug) item = db.customizerFlows.find((f) => f.slug === query.slug && !f.isArchived);
+      else if (query.status && query.isDefault) item = db.customizerFlows.find((f) => f.status === query.status && f.isDefault && !f.isArchived);
+      else if (query.status) item = db.customizerFlows.find((f) => f.status === query.status && !f.isArchived);
+      else item = db.customizerFlows.find((f) => !f.isArchived);
+    } else {
+      item = db.customizerFlows.find((f) => !f.isArchived);
+    }
+    return new QueryMock(item);
+  };
+  CustomizerFlow.findById = (id) => new QueryMock(db.customizerFlows.find((f) => f._id.toString() === id.toString()));
+  CustomizerFlow.create = async (data) => {
+    const item = {
+      _id: `6600000000000000000000f${db.customizerFlows.length + 1}`,
+      version: 1,
+      status: 'draft',
+      totalSteps: 0,
+      totalOptions: 0,
+      totalRules: 0,
+      isDefault: false,
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...data,
+      save: async function () { return this; }
+    };
+    db.customizerFlows.push(item);
+    return item;
+  };
+  CustomizerFlow.findByIdAndUpdate = async (id, update) => {
+    const item = db.customizerFlows.find((f) => f._id.toString() === id.toString());
+    if (item) {
+      Object.assign(item, update);
+      item.updatedAt = new Date();
+    }
+    return item;
+  };
+  CustomizerFlow.countDocuments = async (query) => {
+    if (query && query.isArchived) return db.customizerFlows.filter((f) => !f.isArchived).length;
+    return db.customizerFlows.length;
+  };
+
+  // ----------------------------------------------------
+  // Mock CustomizerStep Model Methods
+  // ----------------------------------------------------
+  CustomizerStep.find = (query) => {
+    let items = db.customizerSteps.filter((s) => !s.isArchived);
+    if (query) {
+      if (query.flowRef) items = items.filter((s) => s.flowRef.toString() === query.flowRef.toString());
+      if (query.isEnabled !== undefined) items = items.filter((s) => s.isEnabled === query.isEnabled);
+    }
+    return new QueryMock(items);
+  };
+  CustomizerStep.findOne = (query) => {
+    let items = db.customizerSteps.filter((s) => !s.isArchived);
+    if (query && query.flowRef) items = items.filter((s) => s.flowRef.toString() === query.flowRef.toString());
+    return new QueryMock(items[0] || null);
+  };
+  CustomizerStep.findById = (id) => new QueryMock(db.customizerSteps.find((s) => s._id.toString() === id.toString()));
+  CustomizerStep.create = async (data) => {
+    const item = {
+      _id: `6600000000000000000000s${db.customizerSteps.length + 1}`,
+      displayOrder: db.customizerSteps.length + 1,
+      isEnabled: true,
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...data,
+      save: async function () { return this; }
+    };
+    db.customizerSteps.push(item);
+    return item;
+  };
+  CustomizerStep.findByIdAndUpdate = async (id, update) => {
+    const item = db.customizerSteps.find((s) => s._id.toString() === id.toString());
+    if (item) {
+      Object.assign(item, update);
+      item.updatedAt = new Date();
+    }
+    return item;
+  };
+  CustomizerStep.updateMany = async (query, update) => {
+    let count = 0;
+    db.customizerSteps.forEach((s) => {
+      if (!query || (query.flowRef && s.flowRef.toString() === query.flowRef.toString())) {
+        Object.assign(s, update);
+        count++;
+      }
+    });
+    return { modifiedCount: count };
+  };
+  CustomizerStep.countDocuments = async (query) => {
+    let items = db.customizerSteps.filter((s) => !s.isArchived);
+    if (query && query.flowRef) items = items.filter((s) => s.flowRef.toString() === query.flowRef.toString());
+    return items.length;
+  };
+
+  // ----------------------------------------------------
+  // Mock OptionLayer Model Methods
+  // ----------------------------------------------------
+  OptionLayer.find = (query) => {
+    let items = db.optionLayers.filter((l) => !l.isArchived);
+    if (query) {
+      if (query.stepRef) items = items.filter((l) => l.stepRef.toString() === query.stepRef.toString());
+      if (query.flowRef) items = items.filter((l) => l.flowRef.toString() === query.flowRef.toString());
+    }
+    return new QueryMock(items);
+  };
+  OptionLayer.findOne = (query) => {
+    let items = db.optionLayers.filter((l) => !l.isArchived);
+    if (query && query.stepRef) items = items.filter((l) => l.stepRef.toString() === query.stepRef.toString());
+    return new QueryMock(items[0] || null);
+  };
+  OptionLayer.findById = (id) => new QueryMock(db.optionLayers.find((l) => l._id.toString() === id.toString()));
+  OptionLayer.create = async (data) => {
+    const item = {
+      _id: `6600000000000000000000l${db.optionLayers.length + 1}`,
+      displayOrder: db.optionLayers.length + 1,
+      optionsArray: [],
+      isArchived: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...data,
+      save: async function () { return this; }
+    };
+    db.optionLayers.push(item);
+    return item;
+  };
+  OptionLayer.findByIdAndUpdate = async (id, update) => {
+    const item = db.optionLayers.find((l) => l._id.toString() === id.toString());
+    if (item) {
+      Object.assign(item, update);
+      item.updatedAt = new Date();
+    }
+    return item;
+  };
+  OptionLayer.updateMany = async (query, update) => {
+    let count = 0;
+    db.optionLayers.forEach((l) => {
+      if (!query || (query.flowRef && l.flowRef.toString() === query.flowRef.toString()) || (query.stepRef && l.stepRef.toString() === query.stepRef.toString())) {
+        Object.assign(l, update);
+        count++;
+      }
+    });
+    return { modifiedCount: count };
+  };
+  OptionLayer.countDocuments = async (query) => {
+    let items = db.optionLayers.filter((l) => !l.isArchived);
+    if (query && query.flowRef) items = items.filter((l) => l.flowRef.toString() === query.flowRef.toString());
+    if (query && query.stepRef) items = items.filter((l) => l.stepRef.toString() === query.stepRef.toString());
+    return items.length;
   };
 
   // ----------------------------------------------------

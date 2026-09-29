@@ -102,7 +102,8 @@ app.use(cookieParser());
 app.use(mongoSanitize());
 app.use(xssSanitizer);
 
-// 8. Mount all Application API Routes
+// 8. Mount all Application API Routes (Both /api/v1 and /api supported)
+app.use('/api/v1', apiRoutes);
 app.use('/api', apiRoutes);
 
 // Root route

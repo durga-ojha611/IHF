@@ -9,6 +9,7 @@ import filterRoutes from './filter.routes.js';
 import blogRoutes from './blog.routes.js';
 import swatchRoutes from './swatch.routes.js';
 import customizerRoutes from './customizer.routes.js';
+import customizerBuilderRoutes from './customizer.builder.routes.js';
 import orderRoutes from './order.routes.js';
 import uploadRoutes from './upload.routes.js';
 import adminRoutes from './admin/admin.routes.js';
@@ -37,7 +38,12 @@ router.use('/customizer', customizerRoutes);
 router.use('/orders', orderRoutes);
 router.use('/upload', uploadRoutes);
 
-// Mount Admin Management Suite
+// Client Live Preview & Configurator Sync
+router.use('/client/customizer', customizerBuilderRoutes);
+
+// Mount Admin Management Suite & Customization Builder
+router.use('/admin/customizer', customizerBuilderRoutes);
+router.use('/admin/customizer-builder', customizerBuilderRoutes);
 router.use('/admin', adminRoutes);
 
 export default router;

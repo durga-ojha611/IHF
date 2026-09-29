@@ -100,9 +100,20 @@ const customizerRuleSchema = new mongoose.Schema(
     liningOptions: [liningOptionSchema],
     pleatHeaders: [pleatHeaderSchema],
     hardwareAddons: [hardwareAddonSchema],
+    flowRef: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'CustomizerFlow',
+      default: null,
+      index: true
+    },
     isActive: {
       type: Boolean,
       default: true,
+      index: true
+    },
+    isArchived: {
+      type: Boolean,
+      default: false,
       index: true
     },
     isDeleted: {
