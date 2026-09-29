@@ -2,6 +2,7 @@ import express from 'express';
 import {
   register,
   login,
+  refreshSession,
   logout,
   getMe,
   forgotPassword,
@@ -9,18 +10,21 @@ import {
   updatePassword
 } from '../controllers/auth.controller.js';
 import { protect } from '../middlewares/auth.middleware.js';
+import { authLimiter, requireStrongPassword } from '../middlewares/security.middleware.js';
 
 const router = express.Router();
 
-router.post('/register', register);
-router.post('/login', login);
+// Strict Rate-Limited & Sanitized Public Auth Endpoints
+router.post('/register', authLimiter, requireStrongPassword, register);
+router.post('/login', authLimiter, login);
+router.post('/refresh', refreshSession);
 router.post('/logout', logout);
-router.post('/forgot-password', forgotPassword);
-router.post('/reset-password/:token', resetPassword);
+router.post('/forgot-password', authLimiter, forgotPassword);
+router.post('/reset-password/:token', authLimiter, requireStrongPassword, resetPassword);
 
-// Authenticated auth routes
+// Authenticated User Routes (Enforced by protect middleware)
 router.use(protect);
 router.get('/me', getMe);
-router.patch('/update-password', updatePassword);
+router.patch('/update-password', requireStrongPassword, updatePassword);
 
 export default router;

@@ -143,7 +143,15 @@ export function CustomizerScreen({ step }: { step: CustomizerStep }) {
     </div>
     <main className="customizer-shell">
       <aside className="customizer-preview">
-        <div className="preview-photo"><Image src="/figma/home-01.jpeg" alt="Pinch pleat drapery in a calm interior" fill priority sizes="45vw" /></div>
+        <div className="preview-photo">
+          <Image src="/figma/home-01.jpeg" alt="Pinch pleat drapery in a calm interior" fill priority sizes="45vw" />
+          <span className="zoom-badge" title="Inspect drapery preview">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1c1c1a" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="10.5" cy="10.5" r="6" />
+              <line x1="15" y1="15" x2="20.5" y2="20.5" />
+            </svg>
+          </span>
+        </div>
         <div className="preview-caption"><span>YOUR SELECTION</span><h2>Pinch Pleat Drapery</h2><p>Belgian Flax Linen · Oatmeal</p></div>
       </aside>
       <section className="customizer-content">
@@ -152,7 +160,7 @@ export function CustomizerScreen({ step }: { step: CustomizerStep }) {
 
         {step === "measurements" && <div className="measure-panel">
           <div className="configuration-toggle"><button className={config.panels === "pair" ? "active" : ""} onClick={() => update("panels", "pair")}>PAIR · 2 PANELS</button><button className={config.panels === "single_panel" ? "active" : ""} onClick={() => update("panels", "single_panel")}>SINGLE PANEL</button></div>
-          <div className="measurement-fields"><label><span>FINISHED WIDTH</span><div><input value={config.width} onChange={(e) => update("width", e.target.value)} /><b>IN</b></div><small className={!widthValid ? "error" : ""}>{widthValid ? "24″ minimum — 240″ maximum" : "Enter a width between 24″ and 240″"}</small></label><label><span>FINISHED DROP</span><div><input value={config.height} onChange={(e) => update("height", e.target.value)} /><b>IN</b></div><small className={!heightValid ? "error" : ""}>{heightValid ? "36″ minimum — 200″ maximum" : "Enter a drop between 36″ and 200″"}</small></label></div>
+          <div className="measurement-fields"><label><span>FINISHED WIDTH</span><div><input className="measurement-number-input" value={config.width} onChange={(e) => update("width", e.target.value)} /><b>IN</b></div><small className={!widthValid ? "error" : ""}>{widthValid ? "24″ minimum — 240″ maximum" : "Enter a width between 24″ and 240″"}</small></label><label><span>FINISHED DROP</span><div><input className="measurement-number-input" value={config.height} onChange={(e) => update("height", e.target.value)} /><b>IN</b></div><small className={!heightValid ? "error" : ""}>{heightValid ? "36″ minimum — 200″ maximum" : "Enter a drop between 36″ and 200″"}</small></label></div>
           <div className="fullness-choice"><span>FULLNESS</span>{(["standard","deluxe"] as const).map((x) => <button className={config.fullness === x ? "active" : ""} onClick={() => update("fullness", x)} key={x}><b>{x === "standard" ? "2.0× STANDARD" : "2.5× DELUXE"}</b><small>{x === "standard" ? "A refined everyday drape" : "A richer, more luxurious fold"}</small></button>)}</div>
           <div className="atelier-note"><b>COMPLIMENTARY MEASURING SUPPORT</b><p>Share a photograph of your window with our atelier after checkout. We will confirm every dimension before production.</p></div>
         </div>}

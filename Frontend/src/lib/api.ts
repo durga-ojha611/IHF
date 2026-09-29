@@ -151,6 +151,28 @@ export const customizerApi = {
     return apiRequest('/customizer/rules');
   },
 
+  async getFilters() {
+    return apiRequest('/customizer/filters');
+  },
+
+  async getFabrics(params?: {
+    collection?: string;
+    color?: string;
+    priceGroup?: string;
+    material?: string;
+    sort?: string;
+    search?: string;
+  }) {
+    const query = params
+      ? '?' +
+        Object.entries(params)
+          .filter(([_, v]) => v !== undefined && v !== '')
+          .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v as string)}`)
+          .join('&')
+      : '';
+    return apiRequest(`/customizer/fabrics${query}`);
+  },
+
   async calculatePrice(payload: CustomizerCalculatePayload) {
     return apiRequest('/customizer/calculate-price', {
       method: 'POST',
@@ -174,19 +196,30 @@ export const swatchesApi = {
       phone?: string;
       shippingAddress: {
         street: string;
+        apartment?: string;
         city: string;
         state: string;
         zipCode: string;
         country?: string;
       };
     };
-    swatchIds: string[];
+    swatchIds?: string[];
+    customSwatches?: any[];
+    totalCost?: number;
     notes?: string;
   }) {
     return apiRequest('/swatches/request', {
       method: 'POST',
       body: JSON.stringify(payload)
     });
+  },
+
+  async trackOrder(orderNumber: string) {
+    return apiRequest(`/swatches/track/${encodeURIComponent(orderNumber)}`);
+  },
+
+  async getMySwatchOrders() {
+    return apiRequest('/swatches/my-orders');
   }
 };
 

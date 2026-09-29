@@ -41,11 +41,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please provide a password'],
       minlength: [8, 'Password must be at least 8 characters long'],
+      match: [
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/,
+        'Password must contain at least 8 characters, including 1 uppercase, 1 lowercase, 1 number, and 1 special character.'
+      ],
       select: false
     },
     role: {
       type: String,
-      enum: ['customer', 'admin', 'staff'],
+      enum: ['customer', 'admin', 'staff', 'superadmin'],
       default: 'customer'
     },
     phone: {
@@ -54,6 +58,13 @@ const userSchema = new mongoose.Schema(
       default: ''
     },
     addresses: [addressSchema],
+    refreshTokens: [
+      {
+        tokenHash: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now },
+        expiresAt: { type: Date, required: true }
+      }
+    ],
     isDeleted: {
       type: Boolean,
       default: false,

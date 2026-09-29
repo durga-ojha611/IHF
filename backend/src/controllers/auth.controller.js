@@ -4,33 +4,92 @@ import User from '../models/User.js';
 import AppError from '../utils/appError.js';
 import catchAsync from '../utils/catchAsync.js';
 import { sendPasswordResetEmail } from '../services/email.service.js';
+import { validatePasswordPolicy } from '../middlewares/security.middleware.js';
 
-const signToken = (id) => {
+/**
+ * Sign Short-Lived Access Token (15 Minutes)
+ */
+const signAccessToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d'
+    expiresIn: process.env.JWT_EXPIRES_IN || '15m'
   });
 };
 
-const createSendToken = (user, statusCode, res) => {
-  const token = signToken(user._id);
+/**
+ * Generate Secure Cryptographic Refresh Token (7 Days)
+ */
+const generateRefreshToken = () => {
+  return crypto.randomBytes(40).toString('hex');
+};
 
-  const cookieOptions = {
-    expires: new Date(
-      Date.now() + (parseInt(process.env.JWT_COOKIE_EXPIRES_IN, 10) || 7) * 24 * 60 * 60 * 1000
-    ),
+const hashToken = (token) => {
+  return crypto.createHash('sha256').update(token).digest('hex');
+};
+
+/**
+ * Create and attach tokens in HttpOnly, Secure, SameSite=Strict cookies
+ * Supporting short-lived access tokens (15m) and refresh token rotation (7d)
+ */
+const createSendTokens = async (user, statusCode, res) => {
+  // 1. Generate 15-minute access token
+  const accessToken = signAccessToken(user._id);
+
+  // 2. Generate and store rotated refresh token
+  const rawRefreshToken = generateRefreshToken();
+  const hashedRefreshToken = hashToken(rawRefreshToken);
+  const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+  // Store refresh token hash in user document (max 5 active sessions per user)
+  if (!user.refreshTokens) user.refreshTokens = [];
+  // Clean expired tokens
+  user.refreshTokens = user.refreshTokens.filter((t) => t.expiresAt > new Date());
+  user.refreshTokens.push({
+    tokenHash: hashedRefreshToken,
+    createdAt: new Date(),
+    expiresAt: refreshExpiresAt
+  });
+
+  // Keep at most 5 concurrent devices
+  if (user.refreshTokens.length > 5) {
+    user.refreshTokens = user.refreshTokens.slice(-5);
+  }
+
+  await user.save({ validateBeforeSave: false });
+
+  // 3. Set Strict HttpOnly Cookies
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  const accessCookieOptions = {
+    expires: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    secure: isProduction,
+    sameSite: isProduction ? 'strict' : 'lax',
+    path: '/'
   };
 
-  res.cookie('jwt', token, cookieOptions);
+  const refreshCookieOptions = {
+    expires: refreshExpiresAt,
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? 'strict' : 'lax',
+    path: '/'
+  };
+
+  // Set cookies: accessToken, jwt (for backwards-compatibility), and refreshToken
+  res.cookie('accessToken', accessToken, accessCookieOptions);
+  res.cookie('jwt', accessToken, accessCookieOptions);
+  res.cookie('refreshToken', rawRefreshToken, refreshCookieOptions);
 
   const sanitizedUser = user.toObject ? user.toObject() : { ...user };
   delete sanitizedUser.password;
+  delete sanitizedUser.refreshTokens;
+  delete sanitizedUser.resetPasswordToken;
 
   res.status(statusCode).json({
     status: 'success',
-    token,
+    token: accessToken, // for API tests and programmatic clients
+    accessToken,
+    expiresIn: 15 * 60, // 900 seconds (15m)
     data: {
       user: sanitizedUser
     }
@@ -42,6 +101,19 @@ const createSendToken = (user, statusCode, res) => {
  */
 export const register = catchAsync(async (req, res, next) => {
   const { name, email, password, phone } = req.body;
+
+  if (!email || !password || !name) {
+    return next(new AppError('Full name, email address, and password are required.', 400));
+  }
+
+  if (!validatePasswordPolicy(password)) {
+    return next(
+      new AppError(
+        'Password does not meet security requirements: Minimum 8 characters, at least 1 uppercase, 1 lowercase, 1 number, and 1 special character.',
+        400
+      )
+    );
+  }
 
   const existingUser = await User.findOne({ email: email.toLowerCase() });
   if (existingUser) {
@@ -56,7 +128,7 @@ export const register = catchAsync(async (req, res, next) => {
     role: 'customer'
   });
 
-  createSendToken(newUser, 201, res);
+  await createSendTokens(newUser, 201, res);
 });
 
 /**
@@ -80,27 +152,79 @@ export const login = catchAsync(async (req, res, next) => {
   }
 
   user.lastLogin = Date.now();
-  await user.save({ validateBeforeSave: false });
-
-  createSendToken(user, 200, res);
+  await createSendTokens(user, 200, res);
 });
 
 /**
- * Logout - Clears httpOnly Cookie
+ * Refresh Access Token with Token Rotation & Reuse Detection
  */
-export const logout = (req, res) => {
-  res.cookie('jwt', 'loggedout', {
-    expires: new Date(Date.now() + 5 * 1000),
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+export const refreshSession = catchAsync(async (req, res, next) => {
+  const incomingRefreshToken =
+    (req.cookies && req.cookies.refreshToken) || req.body.refreshToken;
+
+  if (!incomingRefreshToken) {
+    return next(new AppError('No refresh token provided in session cookies.', 401));
+  }
+
+  const incomingHash = hashToken(incomingRefreshToken);
+
+  // Find user holding this refresh token
+  const user = await User.findOne({
+    'refreshTokens.tokenHash': incomingHash,
+    isDeleted: false
   });
+
+  if (!user) {
+    // Suspected token reuse or revoked session: clear client cookies
+    res.clearCookie('accessToken');
+    res.clearCookie('jwt');
+    res.clearCookie('refreshToken');
+    return next(new AppError('Invalid or expired refresh token. Please sign in again.', 401));
+  }
+
+  const tokenRecord = user.refreshTokens.find((t) => t.tokenHash === incomingHash);
+  if (!tokenRecord || tokenRecord.expiresAt < new Date()) {
+    // Remove expired token
+    user.refreshTokens = user.refreshTokens.filter((t) => t.tokenHash !== incomingHash);
+    await user.save({ validateBeforeSave: false });
+    return next(new AppError('Refresh token expired. Please sign in again.', 401));
+  }
+
+  // Rotate token: Remove used token and issue new pair
+  user.refreshTokens = user.refreshTokens.filter((t) => t.tokenHash !== incomingHash);
+  await createSendTokens(user, 200, res);
+});
+
+/**
+ * Logout - Invalidate Refresh Token and Clear Cookies
+ */
+export const logout = catchAsync(async (req, res) => {
+  const incomingRefreshToken = req.cookies?.refreshToken;
+  if (incomingRefreshToken) {
+    const incomingHash = hashToken(incomingRefreshToken);
+    await User.updateOne(
+      { 'refreshTokens.tokenHash': incomingHash },
+      { $pull: { refreshTokens: { tokenHash: incomingHash } } }
+    );
+  }
+
+  const isProduction = process.env.NODE_ENV === 'production';
+  const clearOptions = {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? 'strict' : 'lax',
+    path: '/'
+  };
+
+  res.clearCookie('accessToken', clearOptions);
+  res.clearCookie('jwt', clearOptions);
+  res.clearCookie('refreshToken', clearOptions);
 
   res.status(200).json({
     status: 'success',
-    message: 'Logged out successfully'
+    message: 'Logged out successfully. All session tokens invalidated.'
   });
-};
+});
 
 /**
  * Current Logged In User
@@ -156,6 +280,17 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
  * Reset Password with Hashed Token
  */
 export const resetPassword = catchAsync(async (req, res, next) => {
+  const { password } = req.body;
+
+  if (!password || !validatePasswordPolicy(password)) {
+    return next(
+      new AppError(
+        'Password does not meet security requirements: Minimum 8 characters, at least 1 uppercase, 1 lowercase, 1 number, and 1 special character.',
+        400
+      )
+    );
+  }
+
   const hashedToken = crypto
     .createHash('sha256')
     .update(req.params.token)
@@ -170,12 +305,14 @@ export const resetPassword = catchAsync(async (req, res, next) => {
     return next(new AppError('Password reset token is invalid or has expired.', 400));
   }
 
-  user.password = req.body.password;
+  user.password = password;
   user.resetPasswordToken = undefined;
   user.resetPasswordExpire = undefined;
+  // Invalidate all active sessions upon password reset
+  user.refreshTokens = [];
   await user.save();
 
-  createSendToken(user, 200, res);
+  await createSendTokens(user, 200, res);
 });
 
 /**
@@ -184,6 +321,15 @@ export const resetPassword = catchAsync(async (req, res, next) => {
 export const updatePassword = catchAsync(async (req, res, next) => {
   const { currentPassword, newPassword } = req.body;
 
+  if (!newPassword || !validatePasswordPolicy(newPassword)) {
+    return next(
+      new AppError(
+        'New password does not meet security requirements: Minimum 8 characters, at least 1 uppercase, 1 lowercase, 1 number, and 1 special character.',
+        400
+      )
+    );
+  }
+
   const user = await User.findById(req.user.id).select('+password');
 
   if (!(await user.comparePassword(currentPassword))) {
@@ -191,14 +337,17 @@ export const updatePassword = catchAsync(async (req, res, next) => {
   }
 
   user.password = newPassword;
+  // Invalidate previous refresh tokens
+  user.refreshTokens = [];
   await user.save();
 
-  createSendToken(user, 200, res);
+  await createSendTokens(user, 200, res);
 });
 
 export default {
   register,
   login,
+  refreshSession,
   logout,
   getMe,
   forgotPassword,

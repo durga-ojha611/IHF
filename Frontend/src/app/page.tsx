@@ -1,10 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Header, Footer } from "@/components/site-chrome";
+import { BenefitSection } from "@/components/benefit-section";
+import { CustomerStoriesSection } from "@/components/customer-stories-section";
+import { InTheirHomesSection } from "@/components/in-their-homes-section";
 import "./home.css";
 import "./home-tuning.css";
 import "./hero-tuning.css";
 import "./figma-hero.css";
+import "./category-showcase.css";
 
 const finish = [
   ["/figma/home-04.jpeg", "A touch of grandeur", "Tassel Trims"],
@@ -90,12 +94,135 @@ export default function Home() {
       </section>
 
       <section className="shop-category home-shell"><span className="home-kicker">EVERY DETAIL, BEAUTIFULLY CONSIDERED</span><h2>Shop By Category</h2><p>Discover the pieces that make a room feel complete.</p>
-        <div className="category-mosaic">
-          <Link className="mosaic-tall" href="/products/table-linen"><Image src="/figma/home-03.jpeg" alt="Natural linen table textile" fill quality={90} sizes="45vw"/><span>Table Linen <b>↗</b></span></Link>
-          <Link href="/products/bedding"><Image src="/figma/home-11.png" alt="Bedding" fill sizes="25vw"/><span>Bedding <b>↗</b></span></Link>
-          <Link href="/products/pillows"><Image src="/figma/home-14.png" alt="Cushions" fill sizes="25vw"/><span>Cushions <b>↗</b></span></Link>
-          <Link href="/products/decor"><Image src="/figma/home-18.jpeg" alt="Decor" fill sizes="25vw"/><span>Decor <b>↗</b></span></Link>
-          <Link href="/roman-shades"><Image src="/figma/home-16.png" alt="Blinds and shades" fill sizes="25vw"/><span>Blinds &amp; Shades <b>↗</b></span></Link>
+        <div className="category-showcase-grid">
+          {/* Left Column: 2 Cards (Table Linen & Decor) */}
+          <div className="cat-showcase-col">
+            {/* Card 1: Table Linen */}
+            <div className="cat-card cat-card-tall">
+              <Image
+                src="/figma/cat-table-linen.png"
+                alt="Table Linen"
+                fill
+                quality={92}
+                className="cat-card-bg-img object-cover object-right"
+              />
+              <div className="cat-card-overlay" />
+              <div className="cat-card-content">
+                <span className="cat-pill">30+ Items</span>
+                <Link href="/products/table-linen" className="cat-title-link">
+                  <h3 className="cat-title">Table Linen</h3>
+                </Link>
+                <ul className="cat-sublinks">
+                  <li><Link href="/products/table-linen?type=dining-chairs">Dining Chairs</Link></li>
+                  <li><Link href="/products/table-linen?type=lounge-chairs">Lounge Chairs</Link></li>
+                  <li><Link href="/products/table-linen?type=armchairs">Armchairs</Link></li>
+                  <li><Link href="/products/table-linen?type=bar-stools">Bar Stools</Link></li>
+                  <li><Link href="/products/table-linen?type=office-chairs">Office Chairs</Link></li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Card 2: Decor */}
+            <div className="cat-card cat-card-medium">
+              <Image
+                src="/figma/cat-decor.png"
+                alt="Decor"
+                fill
+                quality={92}
+                className="cat-card-bg-img object-cover object-right"
+              />
+              <div className="cat-card-overlay" />
+              <div className="cat-card-content">
+                <span className="cat-pill">750+ Items</span>
+                <Link href="/products/decor" className="cat-title-link">
+                  <h3 className="cat-title">Decor</h3>
+                </Link>
+                <ul className="cat-sublinks">
+                  <li><Link href="/products/decor?type=reception-sofa">Reception Sofa</Link></li>
+                  <li><Link href="/products/decor?type=sectional-sofa">Sectional Sofa</Link></li>
+                  <li><Link href="/products/decor?type=armless-sofa">Armless Sofa</Link></li>
+                  <li><Link href="/products/decor?type=curved-sofa">Curved Sofa</Link></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: 3 Cards (Bedding, Cushions, Shades & Blinds) */}
+          <div className="cat-showcase-col">
+            {/* Card 3: Bedding */}
+            <div className="cat-card cat-card-short cat-card-bedding">
+              <div className="cat-card-content">
+                <span className="cat-pill">750+ Items</span>
+                <Link href="/products/bedding" className="cat-title-link">
+                  <h3 className="cat-title">Bedding</h3>
+                </Link>
+                <ul className="cat-sublinks">
+                  <li><Link href="/products/bedding?type=reception-sofa">Reception Sofa</Link></li>
+                  <li><Link href="/products/bedding?type=sectional-sofa">Sectional Sofa</Link></li>
+                  <li><Link href="/products/bedding?type=armless-sofa">Armless Sofa</Link></li>
+                  <li><Link href="/products/bedding?type=curved-sofa">Curved Sofa</Link></li>
+                </ul>
+              </div>
+              <div className="cat-card-graphic cat-graphic-bedding">
+                <Image
+                  src="/figma/cat-bedding-transparent.png"
+                  alt="Bedding"
+                  width={370}
+                  height={220}
+                  className="object-contain"
+                />
+              </div>
+            </div>
+
+            {/* Card 4: Cushions */}
+            <div className="cat-card cat-card-short cat-card-cushions">
+              <div className="cat-card-content">
+                <span className="cat-pill">450+ Items</span>
+                <Link href="/products/pillows" className="cat-title-link">
+                  <h3 className="cat-title">Cushions</h3>
+                </Link>
+                <ul className="cat-sublinks">
+                  <li><Link href="/products/pillows?type=table-lights">Table Lights</Link></li>
+                  <li><Link href="/products/pillows?type=floor-lights">Floor Lights</Link></li>
+                  <li><Link href="/products/pillows?type=ceiling-lights">Ceiling Lights</Link></li>
+                  <li><Link href="/products/pillows?type=wall-lights">Wall Lights</Link></li>
+                </ul>
+              </div>
+              <div className="cat-card-graphic cat-graphic-cushions">
+                <Image
+                  src="/figma/cat-cushions-new.png"
+                  alt="Cushions"
+                  width={255}
+                  height={205}
+                  className="object-contain"
+                />
+              </div>
+            </div>
+
+            {/* Card 5: Shades & Blinds */}
+            <div className="cat-card cat-card-short cat-card-shades">
+              <div className="cat-card-content">
+                <span className="cat-pill">750+ Items</span>
+                <Link href="/roman-shades" className="cat-title-link">
+                  <h3 className="cat-title">Shades &amp; Blinds</h3>
+                </Link>
+                <ul className="cat-sublinks">
+                  <li><Link href="/roman-shades?type=reception-sofa">Reception Sofa</Link></li>
+                  <li><Link href="/roman-shades?type=sectional-sofa">Sectional Sofa</Link></li>
+                  <li><Link href="/roman-shades?type=armless-sofa">Armless Sofa</Link></li>
+                  <li><Link href="/roman-shades?type=curved-sofa">Curved Sofa</Link></li>
+                </ul>
+              </div>
+              <div className="cat-card-graphic cat-graphic-shades">
+                <Image
+                  src="/figma/cat-shades-new.png"
+                  alt="Shades & Blinds"
+                  fill
+                  className="object-cover object-center"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -105,11 +232,11 @@ export default function Home() {
 
       <section className="intention home-shell"><div className="home-heading"><span className="home-kicker">FROM OUR HANDS TO YOUR HOME</span><h2>Made With Intention. Delivered Beautifully.</h2></div><div className="five-grid">{[["/figma/home-13.png","Made For You"],["/figma/home-02.png","Material First"],["/figma/home-04.jpeg","Finished By Hand"],["/figma/home-08.png","Delivered With Care"],["/figma/home-18.jpeg","Beautifully At Home"]].map(([src,title],i)=><article key={title}><Image src={src} alt={title} width={300} height={330}/><span>0{i+1}</span><h3>{title}</h3><p>Every detail considered, from first idea to final placement.</p></article>)}</div></section>
 
-      <section className="love"><div className="home-heading"><span className="home-kicker">THE DIFFERENCE IS IN THE DETAILS</span><h2>Why Homeowners Love<br/><em>Us</em></h2></div><div className="benefit-grid home-shell">{[["✦","Made to Measure"],["●","Free Shipping"],["◇","Premium Fabrics"],["♙","Expert Craftsmanship"],["↗","Thoughtful Design"],["○","Easy Experience"]].map(([icon,title])=><article key={title}><i>{icon}</i><h3>{title}</h3><p>Considered service, exceptional quality and support from people who truly care.</p></article>)}</div></section>
+      <BenefitSection />
 
-      <section className="real-homes"><div className="home-shell"><div className="real-brand"><b>IHF</b><span>INSTAGRAM</span><ArrowLink>FOLLOW US</ArrowLink></div><div className="real-head"><span className="home-kicker">FROM OUR COMMUNITY</span><h2>Real Homes, Real Words.</h2></div><div className="three-grid">{["/figma/home-15.jpeg","/figma/home-10.jpeg","/figma/home-17.jpeg"].map((src,i)=><article key={src}><Image src={src} alt="A real India Home Furnishings interior" width={520} height={430}/><p>“Beautiful quality and the whole process felt effortless.”</p><small>HOMEOWNER STORY 0{i+1}</small></article>)}</div></div></section>
+      <CustomerStoriesSection />
 
-      <section className="instagram"><div><span className="home-kicker">IN THEIR HOMES</span><h2>In Their Homes</h2><p>Follow along for beautiful rooms, thoughtful details and everyday inspiration.</p><ArrowLink>FOLLOW @INDIAHOMEFURNISHINGS</ArrowLink></div><div className="insta-grid">{["/figma/home-15.jpeg","/figma/home-10.jpeg","/figma/home-01.jpeg"].map(src=><Image key={src} src={src} alt="Customer home" width={420} height={440}/>)}</div></section>
+      <InTheirHomesSection />
 
       <section className="consult"><div><span className="home-kicker">PERSONAL DESIGN GUIDANCE</span><h2>Consult with Our<br/><em>Designers.</em></h2><p>Not sure where to begin? Our design team will help you choose the right styles, fabrics and finishes for your space.</p><div><ArrowLink>BOOK A COMPLIMENTARY CALL</ArrowLink><ArrowLink>CHAT WITH A DESIGNER</ArrowLink></div></div><Image src="/figma/home-02.png" alt="Design consultation fabric samples" fill sizes="100vw"/></section>
     </main>

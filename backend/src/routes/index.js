@@ -10,6 +10,7 @@ import blogRoutes from './blog.routes.js';
 import swatchRoutes from './swatch.routes.js';
 import customizerRoutes from './customizer.routes.js';
 import orderRoutes from './order.routes.js';
+import uploadRoutes from './upload.routes.js';
 import adminRoutes from './admin/admin.routes.js';
 
 const router = express.Router();
@@ -34,6 +35,7 @@ router.use('/blogs', blogRoutes);
 router.use('/swatches', swatchRoutes);
 router.use('/customizer', customizerRoutes);
 router.use('/orders', orderRoutes);
+router.use('/upload', uploadRoutes);
 
 // Mount Admin Management Suite
 router.use('/admin', adminRoutes);

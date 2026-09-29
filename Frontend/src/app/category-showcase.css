@@ -1,0 +1,275 @@
+/* ==========================================================================
+   Category Showcase Grid (Figma Matching 5-Card Layout)
+   ========================================================================== */
+
+.category-showcase-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  margin-top: 42px;
+  width: 100%;
+}
+
+.cat-showcase-col {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* Base Card */
+.cat-card {
+  position: relative;
+  background: #f4f3ee;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.cat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.07);
+}
+
+/* Card Heights */
+.cat-card-tall {
+  height: 430px;
+}
+
+.cat-card-medium {
+  height: 350px;
+}
+
+.cat-card-short {
+  height: 248px;
+}
+
+/* Background Image & Overlay for Full-Bleed Cards (Table Linen & Decor) */
+.cat-card-bg-img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1;
+}
+
+.cat-card-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    90deg,
+    rgba(247, 246, 242, 0.95) 0%,
+    rgba(247, 246, 242, 0.88) 42%,
+    rgba(247, 246, 242, 0.4) 62%,
+    transparent 82%
+  );
+  pointer-events: none;
+}
+
+/* Card Content (Pill, Title, Sub-links) */
+.cat-card-content {
+  position: relative;
+  z-index: 3;
+  padding: 32px 28px 28px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 260px;
+}
+
+/* Pill Badge */
+.cat-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  color: #8c734b;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(226, 221, 212, 0.6);
+  text-transform: none;
+}
+
+/* Title */
+.cat-title-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.cat-title {
+  font-family: var(--font-serif) !important;
+  font-size: 32px !important;
+  font-weight: 500 !important;
+  color: #1a1917 !important;
+  margin: 0 0 16px 0 !important;
+  line-height: 1.12 !important;
+  letter-spacing: -0.2px !important;
+  transition: color 0.18s ease;
+}
+
+.cat-title-link:hover .cat-title {
+  color: #635848 !important;
+}
+
+/* Sub-links List */
+.cat-sublinks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.cat-sublinks li a {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13px;
+  color: #55534e;
+  line-height: 1.35;
+  letter-spacing: 0.1px;
+  text-decoration: none;
+  display: inline-block;
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+
+.cat-sublinks li a:hover {
+  color: #1a1917;
+  transform: translateX(3px);
+}
+
+/* Right-side Graphic Placements (Bedding, Cushions, Shades) */
+.cat-card-graphic {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 58%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.cat-graphic-bedding {
+  padding-right: 12px;
+}
+
+.cat-graphic-bedding img {
+  width: 370px !important;
+  height: auto !important;
+  max-height: 220px !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.08));
+}
+
+.cat-graphic-cushions {
+  padding-right: 24px;
+}
+
+.cat-graphic-cushions img {
+  width: 250px !important;
+  height: auto !important;
+  max-height: 215px !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.1));
+}
+
+.cat-graphic-shades {
+  width: 50%;
+  border-radius: 0 16px 16px 0;
+  overflow: hidden;
+}
+
+.cat-graphic-shades img {
+  object-fit: cover !important;
+  object-position: center !important;
+}
+
+/* Specific Card Background Adjustments */
+.cat-card-bedding {
+  background: #f4f3ef;
+}
+
+.cat-card-cushions {
+  background: #f6f5f1;
+}
+
+.cat-card-shades {
+  background: #f4f3ef;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 1024px) {
+  .category-showcase-grid {
+    gap: 18px;
+  }
+  .cat-showcase-col {
+    gap: 18px;
+  }
+  .cat-card-tall {
+    height: 400px;
+  }
+  .cat-card-medium {
+    height: 330px;
+  }
+  .cat-card-short {
+    height: 235px;
+  }
+  .cat-title {
+    font-size: 27px !important;
+  }
+  .cat-card-content {
+    padding: 24px 20px;
+  }
+  .cat-graphic-bedding img {
+    width: 300px !important;
+  }
+  .cat-graphic-cushions img {
+    width: 210px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .category-showcase-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .cat-showcase-col {
+    gap: 16px;
+  }
+  .cat-card-tall,
+  .cat-card-medium,
+  .cat-card-short {
+    height: auto;
+    min-height: 240px;
+  }
+  .cat-card-content {
+    max-width: 58%;
+    padding: 24px 18px;
+  }
+  .cat-title {
+    font-size: 24px !important;
+  }
+  .cat-sublinks li a {
+    font-size: 12px;
+  }
+  .cat-graphic-bedding img {
+    width: 220px !important;
+  }
+  .cat-graphic-cushions img {
+    width: 170px !important;
+  }
+  .cat-graphic-shades {
+    width: 44%;
+  }
+}

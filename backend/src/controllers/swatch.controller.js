@@ -52,39 +52,66 @@ export const getSwatchById = catchAsync(async (req, res, next) => {
  * Public: Request a Fabric Swatch Sample Kit
  */
 export const requestSwatchKit = catchAsync(async (req, res, next) => {
-  const { customerInfo, swatchIds } = req.body;
+  const { customerInfo, swatchIds, customSwatches } = req.body;
 
   if (!customerInfo || !customerInfo.email || !customerInfo.shippingAddress) {
     return next(new AppError('Customer info and shipping address are required', 400));
   }
 
-  if (!Array.isArray(swatchIds) || swatchIds.length === 0) {
-    return next(new AppError('Please select at least 1 fabric swatch', 400));
+  let swatchItems = [];
+
+  if (Array.isArray(swatchIds) && swatchIds.length > 0) {
+    if (swatchIds.length > 10) {
+      return next(new AppError('Sample kits are limited to a maximum of 10 swatches per request', 400));
+    }
+
+    const swatches = await Swatch.find({ _id: { $in: swatchIds }, isDeleted: false });
+    if (swatches.length > 0) {
+      swatchItems = swatches.map((s) => ({
+        swatch: s._id,
+        fabricName: s.fabricName,
+        colorName: s.colorName,
+        hexCode: s.hexCode,
+        image: s.image?.url || ''
+      }));
+    }
   }
 
-  if (swatchIds.length > 10) {
-    return next(new AppError('Sample kits are limited to a maximum of 10 swatches per request', 400));
+  // Fallback to customSwatches array if DB swatches were not matched
+  if (swatchItems.length === 0 && Array.isArray(customSwatches) && customSwatches.length > 0) {
+    swatchItems = customSwatches.slice(0, 10).map((s) => ({
+      swatch: s.swatch || (s._id && s._id.length === 24 ? s._id : '660000000000000000000007'),
+      fabricName: s.fabricName || s.name || 'Artisan Fabric',
+      colorName: s.colorName || s.color?.name || 'Natural',
+      hexCode: s.hexCode || s.color?.hexCode || '#E6D7B9',
+      image: s.image?.url || s.image || '/figma/home-02.png'
+    }));
   }
 
-  const swatches = await Swatch.find({ _id: { $in: swatchIds }, isDeleted: false });
-
-  if (swatches.length === 0) {
-    return next(new AppError('No valid swatches found for the provided IDs', 400));
+  if (swatchItems.length === 0) {
+    return next(new AppError('Please select at least 1 valid fabric swatch', 400));
   }
-
-  const swatchItems = swatches.map((s) => ({
-    swatch: s._id,
-    fabricName: s.fabricName,
-    colorName: s.colorName,
-    hexCode: s.hexCode,
-    image: s.image?.url || ''
-  }));
 
   const swatchOrder = await SwatchOrder.create({
     user: req.user ? req.user._id : null,
-    customerInfo,
+    customerInfo: {
+      name: customerInfo.name,
+      email: customerInfo.email,
+      phone: customerInfo.phone || '',
+      shippingAddress: {
+        street: customerInfo.shippingAddress.street,
+        apartment: customerInfo.shippingAddress.apartment || '',
+        city: customerInfo.shippingAddress.city,
+        state: customerInfo.shippingAddress.state,
+        zipCode: customerInfo.shippingAddress.zipCode,
+        country: customerInfo.shippingAddress.country || 'US'
+      }
+    },
     swatches: swatchItems,
-    status: 'pending'
+    status: 'pending',
+    totalCost: req.body.totalCost || 0,
+    carrier: 'USPS',
+    trackingNumber: ''
   });
 
   res.status(201).json({
@@ -92,6 +119,47 @@ export const requestSwatchKit = catchAsync(async (req, res, next) => {
     message: 'Swatch kit sample order requested successfully',
     data: {
       swatchOrder
+    }
+  });
+});
+
+/**
+ * Public: Track Swatch Order by orderNumber
+ */
+export const trackSwatchOrder = catchAsync(async (req, res, next) => {
+  const { orderNumber } = req.params;
+
+  const order = await SwatchOrder.findOne({
+    orderNumber: { $regex: new RegExp(`^${orderNumber.trim()}$`, 'i') },
+    isDeleted: false
+  });
+
+  if (!order) {
+    return next(new AppError('No swatch order found matching that reference number', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      order
+    }
+  });
+});
+
+/**
+ * Customer: Get Authenticated User's Swatch Orders
+ */
+export const getMySwatchOrders = catchAsync(async (req, res, next) => {
+  const orders = await SwatchOrder.find({
+    user: req.user._id,
+    isDeleted: false
+  }).sort({ createdAt: -1 });
+
+  res.status(200).json({
+    status: 'success',
+    results: orders.length,
+    data: {
+      orders
     }
   });
 });
@@ -229,6 +297,8 @@ export default {
   getSwatches,
   getSwatchById,
   requestSwatchKit,
+  trackSwatchOrder,
+  getMySwatchOrders,
   adminGetAllSwatches,
   adminCreateSwatch,
   adminUpdateSwatch,

@@ -11,6 +11,8 @@ import Swatch from '../src/models/Swatch.js';
 import SwatchOrder from '../src/models/SwatchOrder.js';
 import CustomizerRule from '../src/models/CustomizerRule.js';
 import Order from '../src/models/Order.js';
+import FabricOption from '../src/models/FabricOption.js';
+import ActivityLog from '../src/models/ActivityLog.js';
 
 // In-Memory Data Store
 export const db = {
@@ -23,7 +25,9 @@ export const db = {
   swatches: [],
   swatchOrders: [],
   customizerRules: [],
-  orders: []
+  orders: [],
+  fabricOptions: [],
+  activityLogs: []
 };
 
 // Helper: Chainable Query Mock
@@ -45,6 +49,13 @@ class QueryMock {
             if (key === 'fabricType' && item.fabricType !== query[key]) return false;
             if (key === 'category' && item.category?.toString() !== query[key]?.toString()) return false;
             if (key === 'isFeatured' && item.isFeatured !== query[key]) return false;
+            if (key === 'collectionType' && item.collectionType !== query[key]) return false;
+            if (key === 'priceGroup' && item.priceGroup !== query[key]) return false;
+            if (key === 'isPopular' && item.isPopular !== query[key]) return false;
+            if (key === 'materialGroup') {
+              if (query[key] instanceof RegExp && !query[key].test(item.materialGroup)) return false;
+              if (typeof query[key] === 'string' && item.materialGroup !== query[key]) return false;
+            }
           }
           return true;
         });
@@ -114,6 +125,7 @@ function hydrateUser(userDoc) {
   };
 
   if (!user.addresses) user.addresses = [];
+  if (!user.refreshTokens) user.refreshTokens = [];
   user.addresses.id = function (id) {
     if (!id) return null;
     return user.addresses.find((a) => a._id.toString() === id.toString());
@@ -474,10 +486,27 @@ export function setupMockDatabase() {
       result = db.users.find((u) => u.email.toLowerCase() === query.email.toLowerCase() && !u.isDeleted);
     } else if (query && query.resetPasswordToken) {
       result = db.users.find((u) => u.resetPasswordToken === query.resetPasswordToken);
+    } else if (query && query['refreshTokens.tokenHash']) {
+      result = db.users.find(
+        (u) => (u.refreshTokens || []).some((t) => t.tokenHash === query['refreshTokens.tokenHash']) && !u.isDeleted
+      );
     }
     const q = new QueryMock(hydrateUser(result));
     q.select = () => q;
     return q;
+  };
+
+  User.updateOne = async (filter, update) => {
+    let user = null;
+    if (filter['refreshTokens.tokenHash']) {
+      user = db.users.find((u) => (u.refreshTokens || []).some((t) => t.tokenHash === filter['refreshTokens.tokenHash']));
+      if (user && update.$pull && update.$pull.refreshTokens) {
+        user.refreshTokens = user.refreshTokens.filter(
+          (t) => t.tokenHash !== update.$pull.refreshTokens.tokenHash
+        );
+      }
+    }
+    return { acknowledged: true, modifiedCount: user ? 1 : 0 };
   };
 
   User.findById = (id) => {
@@ -743,6 +772,446 @@ export function setupMockDatabase() {
     return item;
   };
   Order.countDocuments = async () => db.orders.filter((o) => !o.isDeleted).length;
+
+  // ----------------------------------------------------
+  // Mock FabricOption Model Methods & Data
+  // ----------------------------------------------------
+  db.fabricOptions = [
+    {
+      _id: '6600000000000000000000a1',
+      name: 'White Linen',
+      slug: 'white-linen',
+      collectionType: 'LINENS',
+      materialGroup: 'LINENS & NATURAL WEAVES',
+      materialDescription: 'Soft, breathable and wonderfully versatile, long-staple fibres bring understated everyday elegance to both classic architectural spaces and contemporary interiors.',
+      priceGroup: 'A',
+      fromPrice: 650,
+      color: { name: 'White', hexCode: '#F5F5F0' },
+      image: '/figma/home-02.png',
+      specs: {
+        composition: '100% Belgian Flax Linen',
+        weight: '320 GSM (Heavyweight Architectural Drape)',
+        durability: '30,000 Martindale Rubs (Commercial Grade)',
+        lightFiltering: 'Semi-Sheer to Light Filtering (Soft Glow)',
+        care: 'Professional dry clean or steam in situ.'
+      },
+      isPopular: true,
+      displayOrder: 1,
+      isActive: true,
+      isDeleted: false
+    },
+    {
+      _id: '6600000000000000000000a2',
+      name: 'Clay Linen',
+      slug: 'clay-linen',
+      collectionType: 'LINENS',
+      materialGroup: 'LINENS & NATURAL WEAVES',
+      materialDescription: 'Soft, breathable and wonderfully versatile, long-staple fibres bring understated everyday elegance to both classic architectural spaces and contemporary interiors.',
+      priceGroup: 'A',
+      fromPrice: 650,
+      color: { name: 'Clay', hexCode: '#D2B48C' },
+      image: '/figma/home-18.jpeg',
+      specs: {
+        composition: '100% Belgian Flax Linen',
+        weight: '320 GSM (Heavyweight Architectural Drape)',
+        durability: '30,000 Martindale Rubs (Commercial Grade)',
+        lightFiltering: 'Light Filtering to Privacy (Warm Amber)',
+        care: 'Professional dry clean or steam in situ.'
+      },
+      isPopular: true,
+      displayOrder: 2,
+      isActive: true,
+      isDeleted: false
+    },
+    {
+      _id: '6600000000000000000000a3',
+      name: 'Slate Wool',
+      slug: 'slate-wool',
+      collectionType: 'WOOLS + BLENDS',
+      materialGroup: 'WOOL & BLENDS',
+      materialDescription: 'Finely spun virgin wool blend creating substantial drape with acoustic sound-dampening qualities and thermal insulation.',
+      priceGroup: 'B',
+      fromPrice: 720,
+      color: { name: 'Slate', hexCode: '#708090' },
+      image: '/figma/home-07.jpeg',
+      specs: {
+        composition: '70% Wool, 30% Fine Cashmere Blend',
+        weight: '440 GSM (Substantial Acoustic Weave)',
+        durability: '45,000 Martindale Rubs (High Residential)',
+        lightFiltering: 'Dimout to Room Darkening',
+        care: 'Strictly professional dry clean only.'
+      },
+      isPopular: false,
+      displayOrder: 3,
+      isActive: true,
+      isDeleted: false
+    },
+    {
+      _id: '6600000000000000000000a4',
+      name: 'Oatmeal Linen',
+      slug: 'oatmeal-linen',
+      collectionType: 'LINENS',
+      materialGroup: 'LINENS & NATURAL WEAVES',
+      materialDescription: 'Soft, breathable and wonderfully versatile, long-staple fibres bring understated everyday elegance to both classic architectural spaces and contemporary interiors.',
+      priceGroup: 'A',
+      fromPrice: 650,
+      color: { name: 'Oatmeal', hexCode: '#E6D7B9' },
+      image: '/figma/home-03.jpeg',
+      closeupImage: '/figma/home-03.jpeg',
+      specs: {
+        composition: '100% Belgian Flax Linen',
+        weight: '320 GSM (Heavyweight Architectural Drape)',
+        durability: '30,000 Martindale Rubs (Commercial Grade)',
+        lightFiltering: 'Semi-Sheer to Light Filtering (Soft Glow)',
+        care: 'Professional dry clean or steam in situ.'
+      },
+      isPopular: true,
+      displayOrder: 4,
+      isActive: true,
+      isDeleted: false
+    },
+    {
+      _id: '6600000000000000000000a5',
+      name: 'Sand Wool Blend',
+      slug: 'sand-wool-blend',
+      collectionType: 'WOOLS + BLENDS',
+      materialGroup: 'WOOL & BLENDS',
+      materialDescription: 'Finely spun virgin wool blend creating substantial drape with acoustic sound-dampening qualities and thermal insulation.',
+      priceGroup: 'B',
+      fromPrice: 720,
+      color: { name: 'Sand', hexCode: '#C2B280' },
+      image: '/figma/home-04.jpeg',
+      specs: {
+        composition: '75% Merino Wool, 25% Organic Cotton',
+        weight: '410 GSM (Thermal Insulation Drape)',
+        durability: '40,000 Martindale Rubs',
+        lightFiltering: 'Room Darkening with Soft Warm Tone',
+        care: 'Professional dry clean.'
+      },
+      isPopular: true,
+      displayOrder: 5,
+      isActive: true,
+      isDeleted: false
+    },
+    {
+      _id: '6600000000000000000000a6',
+      name: 'Sky Cotton',
+      slug: 'sky-cotton',
+      collectionType: 'COTTONS',
+      materialGroup: 'COTTON & BLENDS',
+      materialDescription: 'Crisp, matte organic cotton sateen with fluid hand and smooth contemporary finish for modern homes.',
+      priceGroup: 'A',
+      fromPrice: 650,
+      color: { name: 'Sky', hexCode: '#87CEEB' },
+      image: '/figma/home-17.jpeg',
+      specs: {
+        composition: '100% Long-Staple Pima Cotton',
+        weight: '290 GSM (Tailored Crisp Fold)',
+        durability: '35,000 Martindale Rubs',
+        lightFiltering: 'Light Filtering to Privacy',
+        care: 'Dry clean or gentle spot wash.'
+      },
+      isPopular: false,
+      displayOrder: 6,
+      isActive: true,
+      isDeleted: false
+    },
+    {
+      _id: '6600000000000000000000a7',
+      name: 'Terracotta Cotton',
+      slug: 'terracotta-cotton',
+      collectionType: 'COTTONS',
+      materialGroup: 'COTTON & BLENDS',
+      materialDescription: 'Crisp, matte organic cotton sateen with fluid hand and smooth contemporary finish for modern homes.',
+      priceGroup: 'A',
+      fromPrice: 650,
+      color: { name: 'Terracotta', hexCode: '#E2725B' },
+      image: '/figma/home-12.jpeg',
+      specs: {
+        composition: '100% Organic Washed Cotton Canvas',
+        weight: '310 GSM (Substantial Casual Hang)',
+        durability: '38,000 Martindale Rubs',
+        lightFiltering: 'Medium Privacy Diffusion',
+        care: 'Machine wash delicate or dry clean.'
+      },
+      isPopular: true,
+      displayOrder: 7,
+      isActive: true,
+      isDeleted: false
+    },
+    {
+      _id: '6600000000000000000000a8',
+      name: 'Sage Linen',
+      slug: 'sage-linen',
+      collectionType: 'LINENS',
+      materialGroup: 'LINENS & NATURAL WEAVES',
+      materialDescription: 'Soft, breathable and wonderfully versatile, long-staple fibres bring understated everyday elegance to both classic architectural spaces and contemporary interiors.',
+      priceGroup: 'A',
+      fromPrice: 650,
+      color: { name: 'Sage', hexCode: '#9DC183' },
+      image: '/figma/home-15.jpeg',
+      specs: {
+        composition: '100% French Natural Flax',
+        weight: '330 GSM (Fluid Architectonic Fall)',
+        durability: '32,000 Martindale Rubs',
+        lightFiltering: 'Semi-Sheer to Light Filtering',
+        care: 'Professional dry clean or steam in situ.'
+      },
+      isPopular: true,
+      displayOrder: 8,
+      isActive: true,
+      isDeleted: false
+    },
+    {
+      _id: '6600000000000000000000a9',
+      name: 'Forest Velvet',
+      slug: 'forest-velvet',
+      collectionType: 'SOLIDS',
+      materialGroup: 'LUXURY VELVET',
+      materialDescription: 'Ultra-luxurious dense cotton-silk velvet pile offering extraordinary light extinction, thermal noise cancellation, and rich opulence.',
+      priceGroup: 'C',
+      fromPrice: 850,
+      color: { name: 'Forest', hexCode: '#228B22' },
+      image: '/figma/home-13.png',
+      specs: {
+        composition: '80% Cotton Velvet, 20% Natural Silk',
+        weight: '540 GSM (Master Estate Velvet)',
+        durability: '50,000 Martindale Rubs (Contract Grade)',
+        lightFiltering: 'Full Eclipse Blackout Compatible',
+        care: 'Specialist velvet dry clean only.'
+      },
+      isPopular: true,
+      displayOrder: 9,
+      isActive: true,
+      isDeleted: false
+    },
+    {
+      _id: '6600000000000000000000aa',
+      name: 'Charcoal Velvet',
+      slug: 'charcoal-velvet',
+      collectionType: 'SOLIDS',
+      materialGroup: 'LUXURY VELVET',
+      materialDescription: 'Ultra-luxurious dense cotton-silk velvet pile offering extraordinary light extinction, thermal noise cancellation, and rich opulence.',
+      priceGroup: 'C',
+      fromPrice: 850,
+      color: { name: 'Charcoal', hexCode: '#36454F' },
+      image: '/figma/home-06.jpeg',
+      specs: {
+        composition: '80% Cotton Velvet, 20% Natural Silk',
+        weight: '540 GSM (Master Estate Velvet)',
+        durability: '50,000 Martindale Rubs (Contract Grade)',
+        lightFiltering: 'Full Eclipse Blackout Compatible',
+        care: 'Specialist velvet dry clean only.'
+      },
+      isPopular: true,
+      displayOrder: 10,
+      isActive: true,
+      isDeleted: false
+    },
+    {
+      _id: '6600000000000000000000ab',
+      name: 'Airy Voile Sheer',
+      slug: 'airy-voile-sheer',
+      collectionType: 'SHEERS',
+      materialGroup: 'ARCHITECTURAL SHEERS',
+      materialDescription: 'Ethereal sheer open weave that gracefully floods spaces with natural light while softening glare and preserving panoramic views.',
+      priceGroup: 'A',
+      fromPrice: 550,
+      color: { name: 'Ivory White', hexCode: '#FFFFF0' },
+      image: '/figma/home-11.png',
+      specs: {
+        composition: '100% Fine Spun Linen Voile',
+        weight: '160 GSM (Float Drape)',
+        durability: '25,000 Martindale Rubs',
+        lightFiltering: 'Maximum Daylight Transmittance',
+        care: 'Gentle hand steam or dry clean.'
+      },
+      isPopular: true,
+      displayOrder: 11,
+      isActive: true,
+      isDeleted: false
+    },
+    {
+      _id: '6600000000000000000000ac',
+      name: 'Oyster Dupioni Silk',
+      slug: 'oyster-dupioni-silk',
+      collectionType: 'SILKS',
+      materialGroup: 'NATURAL RAW SILKS',
+      materialDescription: 'Hand-reeled mulberry silk with characteristic irregular slub texture that shimmers with multi-dimensional luster under sunlight.',
+      priceGroup: 'C',
+      fromPrice: 890,
+      color: { name: 'Oyster', hexCode: '#EAE6DF' },
+      image: '/figma/home-05.png',
+      specs: {
+        composition: '100% Pure Hand-Spun Mulberry Silk',
+        weight: '260 GSM (Lustrous Crisp Hang)',
+        durability: '30,000 Martindale Rubs',
+        lightFiltering: 'Requires Interlining for Sun Protection',
+        care: 'Dry clean only.'
+      },
+      isPopular: true,
+      displayOrder: 12,
+      isActive: true,
+      isDeleted: false
+    },
+    {
+      _id: '6600000000000000000000ad',
+      name: 'Botanical Toile Linen',
+      slug: 'botanical-toile-linen',
+      collectionType: 'PATTERNS',
+      materialGroup: 'ARTISAN PATTERNS',
+      materialDescription: 'Hand-screened floral and architectural toile on rustic linen ground, tailored for statement library and salon treatments.',
+      priceGroup: 'B',
+      fromPrice: 750,
+      color: { name: 'Clay', hexCode: '#D2B48C' },
+      image: '/figma/home-18.jpeg',
+      specs: {
+        composition: '100% Pure French Linen',
+        weight: '340 GSM',
+        durability: '35,000 Martindale Rubs',
+        lightFiltering: 'Privacy & Light Diffusion',
+        care: 'Dry clean only.'
+      },
+      isPopular: false,
+      displayOrder: 13,
+      isActive: true,
+      isDeleted: false
+    },
+    {
+      _id: '6600000000000000000000ae',
+      name: 'Pastel Cloud Cotton',
+      slug: 'pastel-cloud-cotton',
+      collectionType: 'KIDS',
+      materialGroup: 'COTTON & BLENDS',
+      materialDescription: 'OEKO-TEX certified chemical-free nursery and children drapery cotton with hypo-allergenic finish.',
+      priceGroup: 'A',
+      fromPrice: 580,
+      color: { name: 'White', hexCode: '#F5F5F0' },
+      image: '/figma/home-02.png',
+      specs: {
+        composition: '100% Organic Combed Cotton',
+        weight: '280 GSM',
+        durability: '40,000 Martindale Rubs',
+        lightFiltering: 'Pairs perfectly with 100% Blackout Lining',
+        care: 'Machine washable on cold gentle cycle.'
+      },
+      isPopular: false,
+      displayOrder: 14,
+      isActive: true,
+      isDeleted: false
+    },
+    {
+      _id: '6600000000000000000000af',
+      name: 'Heritage Bouclé Drape',
+      slug: 'heritage-boucle-drape',
+      collectionType: 'DESIGNERS',
+      materialGroup: 'DESIGNER COUTURE',
+      materialDescription: 'Architectural heavy looped yarn bouclé bringing high-fashion runway tactile depth to modern interior windows.',
+      priceGroup: 'C',
+      fromPrice: 920,
+      color: { name: 'Sand', hexCode: '#C2B280' },
+      image: '/figma/home-04.jpeg',
+      specs: {
+        composition: '65% Alpaca Wool, 35% Textured Cotton Bouclé',
+        weight: '560 GSM (Heavyweight Couture Weight)',
+        durability: '45,000 Martindale Rubs',
+        lightFiltering: 'Heavy Light Dimout',
+        care: 'Professional dry clean only.'
+      },
+      isPopular: true,
+      displayOrder: 15,
+      isActive: true,
+      isDeleted: false
+    },
+    {
+      _id: '6600000000000000000000b0',
+      name: 'Sunbrella Sailcloth Salt',
+      slug: 'sunbrella-sailcloth-salt',
+      collectionType: 'SUNBRELLA',
+      materialGroup: 'PERFORMANCE SUNBRELLA',
+      materialDescription: 'Bleach-cleanable, fade-proof solution-dyed acrylic fabric built for sunrooms, coastal estates, and high-UV exposure.',
+      priceGroup: 'B',
+      fromPrice: 710,
+      color: { name: 'Oatmeal', hexCode: '#E6D7B9' },
+      image: '/figma/home-03.jpeg',
+      specs: {
+        composition: '100% Solution-Dyed Acrylic',
+        weight: '380 GSM',
+        durability: '50,000 Double Rubs (Heavy Duty)',
+        lightFiltering: 'UV 98% Blockage / Light Filtering',
+        care: 'Bleach cleanable & water repellent.'
+      },
+      isPopular: true,
+      displayOrder: 16,
+      isActive: true,
+      isDeleted: false
+    }
+  ];
+
+  FabricOption.find = (query) => {
+    let items = db.fabricOptions.filter((f) => !f.isDeleted);
+    if (query) {
+      if (query.collectionType) {
+        items = items.filter((f) => f.collectionType === query.collectionType);
+      }
+      if (query.priceGroup) {
+        items = items.filter((f) => f.priceGroup === query.priceGroup);
+      }
+      if (query.isPopular !== undefined) {
+        items = items.filter((f) => f.isPopular === query.isPopular);
+      }
+      if (query.materialGroup) {
+        if (query.materialGroup instanceof RegExp) {
+          items = items.filter((f) => query.materialGroup.test(f.materialGroup));
+        } else if (typeof query.materialGroup === 'string') {
+          items = items.filter((f) => f.materialGroup === query.materialGroup);
+        }
+      }
+      if (query.isActive !== undefined) {
+        items = items.filter((f) => f.isActive === query.isActive);
+      }
+    }
+    return new QueryMock(items);
+  };
+  FabricOption.findById = (id) => new QueryMock(db.fabricOptions.find((f) => f._id.toString() === id.toString()));
+  FabricOption.create = async (data) => {
+    const item = {
+      _id: `6600000000000000000000c${db.fabricOptions.length + 1}`,
+      isActive: true,
+      isDeleted: false,
+      ...data
+    };
+    db.fabricOptions.push(item);
+    return item;
+  };
+  FabricOption.findByIdAndUpdate = async (id, update) => {
+    const item = db.fabricOptions.find((f) => f._id.toString() === id.toString());
+    if (item) Object.assign(item, update);
+    return item;
+  };
+  FabricOption.countDocuments = async () => db.fabricOptions.filter((f) => !f.isDeleted).length;
+
+  ActivityLog.find = (query) => {
+    let items = [...db.activityLogs];
+    if (query) {
+      if (query.action) items = items.filter((l) => l.action === query.action);
+      if (query.resource) items = items.filter((l) => l.resource === query.resource);
+      if (query.user) items = items.filter((l) => l.user?.toString() === query.user.toString());
+    }
+    return new QueryMock(items);
+  };
+  ActivityLog.findById = (id) => new QueryMock(db.activityLogs.find((l) => l._id.toString() === id.toString()));
+  ActivityLog.create = async (data) => {
+    const item = {
+      _id: `6600000000000000000000d${db.activityLogs.length + 1}`,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...data
+    };
+    db.activityLogs.push(item);
+    return item;
+  };
+  ActivityLog.countDocuments = async () => db.activityLogs.length;
 }
 
 export default {

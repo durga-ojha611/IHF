@@ -3,16 +3,73 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Header, Footer } from "@/components/site-chrome";
 import { useAuth } from "@/components/auth-context";
-import { authApi, ordersApi } from "@/lib/api";
+import { authApi, ordersApi, swatchesApi } from "@/lib/api";
 import "../commerce.css";
+import "./auth-card.css";
+
+function MailIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect width="20" height="16" x="2" y="4" rx="2" />
+      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+    </svg>
+  );
+}
+
+function LockIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}
+
+function UserIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  );
+}
+
+function PhoneIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+    </svg>
+  );
+}
+
+function GoogleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24">
+      <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.15z" />
+      <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z" />
+      <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z" />
+      <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" />
+    </svg>
+  );
+}
 
 export default function Account() {
-  const { user, loading, login, register, logout } = useAuth();
+  const router = useRouter();
+  const { user, login, register, logout } = useAuth();
   const [isRegister, setIsRegister] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleClose = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  };
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,6 +80,8 @@ export default function Account() {
   const [submitting, setSubmitting] = useState(false);
   const [orders, setOrders] = useState<any[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const [swatchOrders, setSwatchOrders] = useState<any[]>([]);
+  const [swatchOrdersLoading, setSwatchOrdersLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -37,6 +96,19 @@ export default function Account() {
         })
         .finally(() => {
           setOrdersLoading(false);
+        });
+
+      setSwatchOrdersLoading(true);
+      swatchesApi
+        .getMySwatchOrders()
+        .then((res) => {
+          setSwatchOrders(res.data?.orders || []);
+        })
+        .catch(() => {
+          setSwatchOrders([]);
+        })
+        .finally(() => {
+          setSwatchOrdersLoading(false);
         });
     }
   }, [user]);
@@ -67,17 +139,9 @@ export default function Account() {
     }
   };
 
-  const handleDemoFill = (role: "client" | "admin") => {
-    setIsRegister(false);
-    setIsForgotPassword(false);
+  const handleGoogleSignIn = () => {
     setError(null);
-    if (role === "client") {
-      setEmail("client@luxurydrapes.com");
-      setPassword("Client@123456");
-    } else {
-      setEmail("admin@ihfluxury.com");
-      setPassword("Admin@123456");
-    }
+    setSuccess("Google Sign-In is configured. Please enter your email and password to proceed.");
   };
 
   return (
@@ -170,218 +234,328 @@ export default function Account() {
                 </div>
               )}
             </div>
+
+            {/* Complimentary Swatch Sample Kits */}
+            <div style={{ marginTop: 44 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <h3 style={{ fontFamily: "var(--font-serif)", fontSize: 22, margin: 0 }}>Complimentary Swatch Kits</h3>
+                <Link href="/swatches" style={{ fontSize: 11, letterSpacing: 1, textDecoration: "underline", color: "#8b783a", fontWeight: 600 }}>
+                  ORDER NEW SWATCHES +
+                </Link>
+              </div>
+              {swatchOrdersLoading ? (
+                <p style={{ fontSize: 12, color: "#777" }}>Loading swatch kits...</p>
+              ) : swatchOrders.length > 0 ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  {swatchOrders.map((sOrd) => (
+                    <div key={sOrd.orderNumber} style={{ border: "1px solid #e0ded8", padding: 20, background: "#faf9f6", borderRadius: 8 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid #eae7e1", paddingBottom: 10, marginBottom: 12 }}>
+                        <div>
+                          <b style={{ fontSize: 13 }}>Kit #{sOrd.orderNumber}</b>
+                          <span style={{ fontSize: 11, color: "#777", marginLeft: 12 }}>
+                            {sOrd.createdAt ? new Date(sOrd.createdAt).toLocaleDateString() : ""}
+                          </span>
+                        </div>
+                        <span style={{ fontSize: 10, letterSpacing: 1, padding: "3px 8px", background: sOrd.status === "delivered" ? "#d1fae5" : "#fef3c7", color: "#111", fontWeight: 600, textTransform: "uppercase" }}>
+                          {sOrd.status || "PENDING"}
+                        </span>
+                      </div>
+                      <p style={{ fontSize: 12, color: "#555", margin: "0 0 10px" }}>
+                        Delivery to: {sOrd.customerInfo?.name} · {sOrd.customerInfo?.shippingAddress?.street},{" "}
+                        {sOrd.customerInfo?.shippingAddress?.city} ({sOrd.customerInfo?.shippingAddress?.country || "US"})
+                      </p>
+                      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                        {sOrd.swatches?.map((sw: any, idx: number) => (
+                          <div key={idx} style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "white", border: "1px solid #e2ddd4", padding: "4px 8px", borderRadius: 4, fontSize: 11 }}>
+                            <span style={{ width: 8, height: 8, borderRadius: "50%", background: sw.hexCode || "#ddd", border: "1px solid #ccc" }} />
+                            <b>{sw.fabricName}</b> ({sw.colorName})
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{ padding: 24, background: "#faf9f6", border: "1px dashed #d5d1c8", textAlign: "center" }}>
+                  <p style={{ fontSize: 12, color: "#666", margin: 0 }}>You haven&apos;t ordered any fabric swatches yet.</p>
+                  <Link href="/swatches" style={{ display: "inline-block", marginTop: 8, fontSize: 10, letterSpacing: 1.5, textDecoration: "underline", color: "#8b783a", fontWeight: 600 }}>
+                    ORDER COMPLIMENTARY SWATCH KIT (UP TO 4 SAMPLES) →
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
         ) : (
-          /* Sign In / Register / Forgot Password Form */
-          <div className="account-shell">
-            <div className="account-art">
-              <Image src="/figma/home-15.jpeg" alt="A beautiful bedroom" fill sizes="40vw" />
-            </div>
-            <form className="account-form" onSubmit={handleSubmit} noValidate>
-              <span className="home-kicker">
-                {isForgotPassword ? "ACCOUNT RECOVERY" : isRegister ? "EXCLUSIVE MEMBERSHIP" : "WELCOME BACK"}
-              </span>
-
-              <h1>
-                {isForgotPassword ? "Reset Password" : isRegister ? "Create Account" : "Your Account"}
-              </h1>
-
-              <p>
-                {isForgotPassword
-                  ? "Enter the email associated with your account and we will send a password reset link."
-                  : isRegister
-                  ? "Join the India Home Furnishings atelier to track bespoke draperies, save swatch palettes, and book personal design appointments."
-                  : "Sign in to view orders, saved custom drapery designs, complimentary swatches and design appointments."}
-              </p>
-
-              {error && (
-                <div style={{ background: "#fee2e2", border: "1px solid #f87171", color: "#991b1b", padding: "10px 14px", fontSize: 11, marginBottom: 14 }}>
-                  {error}
-                </div>
-              )}
-              {success && (
-                <div style={{ background: "#ecfdf5", border: "1px solid #34d399", color: "#065f46", padding: "10px 14px", fontSize: 11, marginBottom: 14 }}>
-                  {success}
-                </div>
-              )}
-
-              {/* REGISTER ONLY FIELDS */}
-              {!isForgotPassword && isRegister && (
-                <>
-                  <div className="account-form-group">
-                    <label className="account-form-label" htmlFor="register-name">FULL NAME</label>
-                    <div className="account-input-wrap">
-                      <input
-                        id="register-name"
-                        className="account-input"
-                        type="text"
-                        placeholder="Eleanor Vance"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
-                  <div className="account-form-group">
-                    <label className="account-form-label" htmlFor="register-phone">PHONE (OPTIONAL)</label>
-                    <div className="account-input-wrap">
-                      <input
-                        id="register-phone"
-                        className="account-input"
-                        type="tel"
-                        placeholder="+1 (212) 555-7821"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {/* EMAIL FIELD (Common to all) */}
-              <div className="account-form-group">
-                <label className="account-form-label" htmlFor="account-email">EMAIL ADDRESS</label>
-                <div className="account-input-wrap">
-                  <input
-                    id="account-email"
-                    className="account-input"
-                    type="email"
-                    placeholder="client@luxurydrapes.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* PASSWORD FIELD WITH FLUSH-RIGHT END TOGGLE */}
-              {!isForgotPassword && (
-                <div className="account-form-group">
-                  <label className="account-form-label" htmlFor="account-password">PASSWORD</label>
-                  <div className="account-input-wrap">
-                    <input
-                      id="account-password"
-                      className="account-input account-input-with-toggle"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="account-password-toggle"
-                      onClick={() => setShowPassword(!showPassword)}
-                      title={showPassword ? "Hide password" : "Show password"}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
-                    >
-                      {showPassword ? (
-                        /* Eye Slash Icon (Hide) */
-                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                          <line x1="1" y1="1" x2="23" y2="23"></line>
-                        </svg>
-                      ) : (
-                        /* Eye Icon (Show) */
-                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                          <circle cx="12" cy="12" r="3"></circle>
-                        </svg>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* FORGOT PASSWORD LINK (Shown in Sign In mode) */}
-              {!isForgotPassword && !isRegister && (
-                <div style={{ textAlign: "right", marginTop: 4, marginBottom: 18 }}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsForgotPassword(true);
-                      setError(null);
-                      setSuccess(null);
-                    }}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      padding: 0,
-                      fontSize: 10,
-                      color: "#666",
-                      textDecoration: "underline",
-                      cursor: "pointer",
-                      letterSpacing: 0.5
-                    }}
-                  >
-                    Forgot your password?
-                  </button>
-                </div>
-              )}
-
-              {/* SUBMIT BUTTON */}
-              <button className="account-submit-btn" type="submit" disabled={submitting}>
-                {submitting
-                  ? "PROCESSING..."
-                  : isForgotPassword
-                  ? "SEND RESET LINK"
-                  : isRegister
-                  ? "CREATE ACCOUNT"
-                  : "SIGN IN"}
+          /* Exact Luxury Split Auth Card matching the user's design image (WITHOUT DEMO BUTTONS) */
+          <div className="auth-page-wrapper">
+            <div className="auth-split-card">
+              {/* Close / Dismiss Button */}
+              <button
+                type="button"
+                className="auth-close-btn"
+                onClick={handleClose}
+                title="Close and return"
+                aria-label="Close"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </button>
 
-              {/* NAVIGATION LINKS */}
-              <div style={{ marginTop: 20, textAlign: "center", display: "flex", flexDirection: "column", gap: 10 }}>
-                {isForgotPassword ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsForgotPassword(false);
-                      setError(null);
-                      setSuccess(null);
-                    }}
-                    style={{ background: "none", border: 0, fontSize: 10, letterSpacing: 1, textDecoration: "underline", cursor: "pointer", color: "#444" }}
-                  >
-                    ← BACK TO SIGN IN
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsRegister(!isRegister);
-                      setError(null);
-                      setSuccess(null);
-                    }}
-                    style={{ background: "none", border: 0, fontSize: 10, letterSpacing: 1, textDecoration: "underline", cursor: "pointer", color: "#444" }}
-                  >
-                    {isRegister ? "ALREADY HAVE AN ACCOUNT? SIGN IN" : "NEW HERE? CREATE AN ACCOUNT"}
-                  </button>
-                )}
+              {/* Left Column: Visual Story */}
+              <div className="auth-hero-pane">
+                <Image
+                  src="/figma/auth-hero-hd.jpg"
+                  alt="Durga / IHF - Bespoke Living"
+                  fill
+                  sizes="(max-width: 860px) 100vw, 50vw"
+                  className="auth-hero-img"
+                  priority
+                />
               </div>
 
-              {/* DEV DEMO SHORTCUTS */}
-              {!isRegister && !isForgotPassword && (
-                <div style={{ marginTop: 24, paddingTop: 16, borderTop: "1px solid #eee", textAlign: "center" }}>
-                  <span style={{ fontSize: 9, letterSpacing: 1.5, color: "#888", display: "block", marginBottom: 8 }}>DEV DEMO ONE-CLICK CREDENTIALS:</span>
-                  <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
-                    <button
-                      type="button"
-                      onClick={() => handleDemoFill("client")}
-                      style={{ background: "#f4f3ef", border: "1px solid #ddd", padding: "6px 12px", fontSize: 9, cursor: "pointer" }}
-                    >
-                      Demo Client
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDemoFill("admin")}
-                      style={{ background: "#f4f3ef", border: "1px solid #ddd", padding: "6px 12px", fontSize: 9, cursor: "pointer" }}
-                    >
-                      Demo Admin
-                    </button>
-                  </div>
+              {/* Right Column: Form Pane */}
+              <div className="auth-form-pane">
+                {/* Botanical sketch art in top right corner */}
+                <div className="auth-botanical-art">
+                  <Image
+                    src="/figma/auth-botanical.png"
+                    alt=""
+                    width={130}
+                    height={130}
+                    aria-hidden="true"
+                  />
                 </div>
-              )}
-            </form>
+
+                <span className="auth-kicker">
+                  {isForgotPassword ? "ACCOUNT RECOVERY" : isRegister ? "EXCLUSIVE ACCESS" : "WELCOME BACK"}
+                </span>
+
+                <h1 className="auth-title">
+                  {isForgotPassword ? "Reset Password" : isRegister ? "Create Account" : "Your Account"}
+                </h1>
+
+                <p className="auth-description">
+                  {isForgotPassword
+                    ? "Enter the email associated with your account and we will send a password reset link."
+                    : isRegister
+                    ? "Join our atelier to track bespoke draperies, save swatch palettes, and book personal design appointments."
+                    : "Sign in to view orders, saved custom drapery designs, complimentary swatches and design appointments."}
+                </p>
+
+                {error && <div className="auth-alert-error">{error}</div>}
+                {success && <div className="auth-alert-success">{success}</div>}
+
+                <form onSubmit={handleSubmit} noValidate>
+                  {/* SIGN UP ONLY FIELDS */}
+                  {!isForgotPassword && isRegister && (
+                    <>
+                      <div className="auth-form-group">
+                        <label className="auth-label" htmlFor="register-name">
+                          FULL NAME
+                        </label>
+                        <div className="auth-input-container">
+                          <span className="auth-input-icon">
+                            <UserIcon />
+                          </span>
+                          <input
+                            id="register-name"
+                            className="auth-input"
+                            type="text"
+                            placeholder="Eleanor Vance"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="auth-form-group">
+                        <label className="auth-label" htmlFor="register-phone">
+                          PHONE NUMBER (OPTIONAL)
+                        </label>
+                        <div className="auth-input-container">
+                          <span className="auth-input-icon">
+                            <PhoneIcon />
+                          </span>
+                          <input
+                            id="register-phone"
+                            className="auth-input"
+                            type="tel"
+                            placeholder="+1 (555) 019-2834"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* EMAIL ADDRESS */}
+                  <div className="auth-form-group">
+                    <label className="auth-label" htmlFor="auth-email">
+                      EMAIL ADDRESS
+                    </label>
+                    <div className="auth-input-container">
+                      <span className="auth-input-icon">
+                        <MailIcon />
+                      </span>
+                      <input
+                        id="auth-email"
+                        className="auth-input"
+                        type="email"
+                        placeholder="durga@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        autoComplete="email"
+                      />
+                    </div>
+                  </div>
+
+                  {/* PASSWORD (Sign In & Sign Up) */}
+                  {!isForgotPassword && (
+                    <div className="auth-form-group">
+                      <label className="auth-label" htmlFor="auth-password">
+                        PASSWORD
+                      </label>
+                      <div className="auth-input-container">
+                        <span className="auth-input-icon">
+                          <LockIcon />
+                        </span>
+                        <input
+                          id="auth-password"
+                          className="auth-input has-toggle"
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Enter your password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
+                          autoComplete={isRegister ? "new-password" : "current-password"}
+                        />
+                        <button
+                          type="button"
+                          className="auth-eye-btn"
+                          onClick={() => setShowPassword(!showPassword)}
+                          title={showPassword ? "Hide password" : "Show password"}
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                          {showPassword ? (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                              <line x1="1" y1="1" x2="23" y2="23" />
+                            </svg>
+                          ) : (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                              <circle cx="12" cy="12" r="3" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* FORGOT PASSWORD LINK (Shown in Sign In mode) */}
+                  {!isForgotPassword && !isRegister && (
+                    <div className="auth-forgot-link-wrap">
+                      <button
+                        type="button"
+                        className="auth-forgot-btn"
+                        onClick={() => {
+                          setIsForgotPassword(true);
+                          setError(null);
+                          setSuccess(null);
+                        }}
+                      >
+                        Forgot your password?
+                      </button>
+                    </div>
+                  )}
+
+                  {/* PRIMARY SUBMIT BUTTON */}
+                  <button className="auth-submit-btn" type="submit" disabled={submitting}>
+                    <span>
+                      {submitting
+                        ? "PROCESSING..."
+                        : isForgotPassword
+                        ? "SEND RESET LINK"
+                        : isRegister
+                        ? "CREATE ACCOUNT"
+                        : "SIGN IN"}
+                    </span>
+                    <span aria-hidden="true">→</span>
+                  </button>
+                </form>
+
+                {/* OR DIVIDER */}
+                {!isForgotPassword && (
+                  <>
+                    <div className="auth-divider">OR</div>
+
+                    {/* GOOGLE SOCIAL BUTTON */}
+                    <button
+                      type="button"
+                      className="auth-google-btn"
+                      onClick={handleGoogleSignIn}
+                    >
+                      <GoogleIcon />
+                      <span>Continue with Google</span>
+                    </button>
+                  </>
+                )}
+
+                {/* MODE TOGGLE LINK */}
+                <div className="auth-switch-mode">
+                  {isForgotPassword ? (
+                    <button
+                      type="button"
+                      className="auth-switch-btn"
+                      onClick={() => {
+                        setIsForgotPassword(false);
+                        setError(null);
+                        setSuccess(null);
+                      }}
+                    >
+                      ← BACK TO SIGN IN
+                    </button>
+                  ) : isRegister ? (
+                    <>
+                      <span>ALREADY HAVE AN ACCOUNT?</span>
+                      <button
+                        type="button"
+                        className="auth-switch-btn"
+                        onClick={() => {
+                          setIsRegister(false);
+                          setError(null);
+                          setSuccess(null);
+                        }}
+                      >
+                        SIGN IN
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <span>NEW HERE?</span>
+                      <button
+                        type="button"
+                        className="auth-switch-btn"
+                        onClick={() => {
+                          setIsRegister(true);
+                          setError(null);
+                          setSuccess(null);
+                        }}
+                      >
+                        CREATE AN ACCOUNT
+                      </button>
+                    </>
+                  )}
+                </div>
+
+                {/* NOTE: DEV DEMO ONE-CLICK CREDENTIALS ARE INTENTIONALLY EXCLUDED AS REQUESTED */}
+              </div>
+            </div>
           </div>
         )}
       </main>

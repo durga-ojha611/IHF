@@ -1,0 +1,822 @@
+/* ==========================================================================
+   INDIA HOME FURNISHINGS — MASTER RESPONSIVE STYLESHEET
+   Handles: Phone (<640px), Tablet (641px-1024px), Laptop (1025px-1440px), 
+            and PC / Big Screens / 4K (>1441px).
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. Viewport & Universal Overflow Shield
+   -------------------------------------------------------------------------- */
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+img, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* --------------------------------------------------------------------------
+   1. Mobile Navigation Drawer & Hamburger Menu
+   -------------------------------------------------------------------------- */
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: 0;
+  color: #1a1917;
+  cursor: pointer;
+  padding: 8px;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+}
+.mobile-menu-btn:hover {
+  opacity: 0.7;
+}
+
+.mobile-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  display: flex;
+  justify-content: flex-start;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.mobile-drawer {
+  background: #ffffff;
+  width: min(340px, 85vw);
+  height: 100%;
+  box-shadow: 10px 0 35px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px;
+  overflow-y: auto;
+  animation: slideDrawer 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDrawer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.mobile-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #ebe7df;
+}
+.mobile-drawer-title {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  color: #8b783a;
+  text-transform: uppercase;
+}
+.mobile-drawer-close {
+  background: none;
+  border: 0;
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+}
+
+.mobile-drawer-links {
+  display: flex;
+  flex-direction: column;
+  padding-top: 14px;
+}
+.mobile-nav-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 4px;
+  border-bottom: 1px solid #f2eee8;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 19px;
+  color: #1a1917;
+  text-decoration: none;
+  transition: padding-left 0.15s ease, color 0.15s ease;
+}
+.mobile-nav-item:hover {
+  color: #8b783a;
+  padding-left: 6px;
+}
+.mobile-nav-arrow {
+  font-size: 14px;
+  color: #a09a8f;
+}
+
+.mobile-drawer-footer {
+  margin-top: auto;
+  padding-top: 24px;
+}
+.mobile-primary-btn {
+  display: block;
+  background: #1a1917;
+  color: #ffffff !important;
+  text-align: center;
+  padding: 14px 18px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 2px;
+  margin-bottom: 18px;
+  transition: background 0.2s ease;
+}
+.mobile-primary-btn:hover {
+  background: #333;
+}
+.mobile-footer-quicklinks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mobile-footer-quicklinks a {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 11px;
+  color: #68655e;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+}
+.mobile-footer-quicklinks a:hover {
+  color: #111;
+}
+
+/* --------------------------------------------------------------------------
+   2. Phone Viewports (Screens <= 640px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  /* Announcement bar */
+  .announcement {
+    height: 36px !important;
+    font-size: 10px !important;
+    letter-spacing: 0.8px !important;
+    padding: 0 12px !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+  }
+  .announcement-track {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .announcement span:nth-of-type(n+4),
+  .announcement i:nth-of-type(n+3) {
+    display: none;
+  }
+
+  /* Header */
+  .header {
+    height: 64px !important;
+    padding: 0 16px !important;
+    grid-template-columns: auto 1fr auto !important;
+    gap: 12px !important;
+  }
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+  .monogram {
+    display: none !important;
+  }
+  .wordmark {
+    font-size: 14px !important;
+    letter-spacing: 1.8px !important;
+    line-height: 1.2 !important;
+    white-space: normal !important;
+    text-align: center !important;
+  }
+  .actions {
+    font-size: 16px !important;
+    gap: 12px !important;
+  }
+  .actions a img {
+    width: 17px !important;
+    height: 17px !important;
+  }
+  .count-link > b {
+    min-width: 13px !important;
+    height: 13px !important;
+    font-size: 7px !important;
+    right: -6px !important;
+    top: -6px !important;
+    padding-top: 1px !important;
+  }
+  .nav {
+    display: none !important;
+  }
+
+  /* Homepage Hero */
+  .home-hero, .hero {
+    height: 520px !important;
+  }
+  .home-hero-copy, .hero-copy {
+    left: 18px !important;
+    right: 18px !important;
+    bottom: 40px !important;
+    top: auto !important;
+    transform: none !important;
+    width: auto !important;
+  }
+  .home-hero h1, .hero h1 {
+    font-size: 34px !important;
+    line-height: 1.05 !important;
+    margin: 12px 0 16px !important;
+  }
+  .home-hero p, .hero-copy p {
+    font-size: 12px !important;
+    line-height: 1.55 !important;
+    width: auto !important;
+    margin-bottom: 20px !important;
+  }
+
+  /* Grids & Cards */
+  .home-shell, .feature, .finish-grid, .category-grid {
+    width: calc(100% - 32px) !important;
+    margin-inline: auto !important;
+  }
+  .section-pad {
+    padding: 56px 16px !important;
+  }
+  .section-pad > h2, .finish > h2 {
+    font-size: 32px !important;
+    margin: 10px 0 24px !important;
+  }
+  .entrance {
+    padding: 60px 0 !important;
+  }
+  .entrance-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  .entrance-grid > img {
+    height: 260px !important;
+  }
+  .four-grid, .five-grid, .finish-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px 12px !important;
+  }
+  .four-grid article img, .finish-grid img, .five-grid img {
+    height: 180px !important;
+  }
+  .three-grid, .product-family .three-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  .three-grid img {
+    height: 260px !important;
+  }
+  .craft-story {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+  }
+  .craft-copy {
+    padding: 45px 20px !important;
+  }
+  .craft-copy h2 {
+    font-size: 34px !important;
+  }
+  .craft-story > img {
+    height: 320px !important;
+  }
+  .craft-stats {
+    flex-wrap: wrap !important;
+    gap: 24px !important;
+  }
+  .category-mosaic {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto !important;
+    gap: 12px !important;
+  }
+  .category-mosaic .mosaic-tall {
+    grid-row: auto !important;
+    height: 260px !important;
+  }
+  .category-mosaic a {
+    height: 200px !important;
+  }
+  .benefit-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .benefit-grid article {
+    padding: 24px 18px !important;
+  }
+  .instagram {
+    grid-template-columns: 1fr !important;
+    padding: 60px 16px !important;
+    gap: 32px !important;
+  }
+  .insta-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+  }
+  .insta-grid img {
+    height: 120px !important;
+  }
+  .consult {
+    height: auto !important;
+    padding: 50px 16px !important;
+  }
+  .consult > div {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+  .consult h2 {
+    font-size: 34px !important;
+  }
+
+  /* Fabric Customizer (/drapery/configure/fabric) */
+  .fabric-step main {
+    padding: 28px 14px 110px !important;
+  }
+  .fabric-step main > header h1 {
+    font-size: 28px !important;
+  }
+  .collection h2, .materials > h2 {
+    font-size: 20px !important;
+    margin: 30px 0 16px !important;
+  }
+  .collection > .collection-buttons {
+    gap: 6px !important;
+  }
+  .collection-buttons button {
+    padding: 8px 14px !important;
+    font-size: 9px !important;
+    border-radius: 6px !important;
+  }
+  .collection nav.filter-nav {
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    padding: 16px 0 12px !important;
+    gap: 18px !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .material-group {
+    padding: 20px 0 35px !important;
+  }
+  .material-group > div.fabrics-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px 10px !important;
+    margin-top: 20px !important;
+  }
+  .fabric-card > span.thumb-wrapper {
+    height: 140px !important;
+  }
+  .zoom-badge {
+    width: 26px !important;
+    height: 26px !important;
+    right: 6px !important;
+    top: 6px !important;
+  }
+  .zoom-badge svg {
+    width: 13px !important;
+    height: 13px !important;
+  }
+  .fabric-bar {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: auto !important;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    background: #ffffff !important;
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.1) !important;
+    z-index: 50 !important;
+  }
+  .fabric-bar > div {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: baseline !important;
+  }
+  .fabric-bar > div b {
+    font-size: 9px !important;
+  }
+  .fabric-bar > div span {
+    font-size: 13px !important;
+  }
+  .fabric-bar > strong {
+    display: none !important;
+  }
+  .fabric-bar > a {
+    width: 100% !important;
+    padding: 14px 16px !important;
+    font-size: 9.5px !important;
+  }
+
+  /* Fabric Detail Modal on Phone */
+  .fabric-modal-backdrop {
+    padding: 12px !important;
+    align-items: flex-end !important;
+  }
+  .fabric-modal {
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    max-height: 88vh !important;
+    border-radius: 12px 12px 0 0 !important;
+    overflow-y: auto !important;
+  }
+  .modal-photo {
+    min-height: 240px !important;
+    height: 240px !important;
+  }
+  .modal-copy {
+    padding: 20px 16px !important;
+  }
+  .modal-title {
+    font-size: 26px !important;
+  }
+  .modal-desc {
+    font-size: 11px !important;
+    line-height: 1.55 !important;
+  }
+  .modal-close {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    top: 10px !important;
+    right: 10px !important;
+    font-size: 18px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18) !important;
+  }
+
+  /* Window Measurements & Details (/drapery/configure/details) */
+  .customizer-progress {
+    padding: 10px 16px !important;
+    height: 52px !important;
+  }
+  .customizer-shell {
+    width: calc(100% - 24px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .customizer-preview {
+    position: relative !important;
+    top: 0 !important;
+    padding: 16px 0 0 !important;
+    width: 100% !important;
+  }
+  .preview-photo {
+    height: 280px !important;
+    border-radius: 4px !important;
+  }
+  .preview-caption {
+    padding: 16px 18px !important;
+  }
+  .preview-caption h2 {
+    font-size: 20px !important;
+  }
+  .customizer-content {
+    border-left: 0 !important;
+    padding: 24px 0 110px 0 !important;
+    min-height: auto !important;
+  }
+  .customizer-content > header h1 {
+    font-size: 28px !important;
+  }
+  .measurement-fields {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  .choice-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  .choice-visual {
+    height: 110px !important;
+  }
+  .choice-grid > button > b {
+    font-size: 8px !important;
+  }
+  .customizer-bar {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: auto !important;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    grid-template-columns: 1fr auto !important;
+    gap: 12px !important;
+    background: #ffffff !important;
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.1) !important;
+    z-index: 50 !important;
+  }
+  .customizer-bar > div {
+    display: none !important;
+  }
+  .customizer-bar > strong {
+    font-size: 21px !important;
+  }
+  .customizer-bar nav {
+    display: flex !important;
+    gap: 8px !important;
+    flex: 1 !important;
+    justify-content: flex-end !important;
+  }
+  .customizer-bar button {
+    height: 40px !important;
+    min-width: 120px !important;
+    font-size: 8px !important;
+  }
+  .customizer-bar button.back {
+    min-width: 60px !important;
+  }
+
+  /* Style Step (/drapery/configure) */
+  .style-step {
+    padding: 30px 16px 80px !important;
+  }
+  .style-step > header h1 {
+    font-size: 32px !important;
+  }
+  .style-step > article {
+    grid-template-columns: 1fr !important;
+    padding: 20px !important;
+    gap: 20px !important;
+  }
+  .style-step > article > img {
+    height: 240px !important;
+  }
+
+  /* Product Details (/product/[slug]) */
+  .detail-top {
+    grid-template-columns: 1fr !important;
+    padding: 16px !important;
+    gap: 20px !important;
+  }
+  .detail-main-img {
+    height: 340px !important;
+  }
+  .detail-config h1 {
+    font-size: 28px !important;
+  }
+  .detail-thumbs {
+    overflow-x: auto !important;
+    gap: 6px !important;
+    padding-bottom: 6px !important;
+  }
+  .detail-thumbs img {
+    width: 70px !important;
+    height: 70px !important;
+  }
+  .detail-benefits > div {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 16px !important;
+  }
+  .spec-section, .delivery-section, .craft-detail, .shop-look {
+    grid-template-columns: 1fr !important;
+    gap: 30px !important;
+    padding: 40px 16px !important;
+  }
+
+  /* Cart & Commerce */
+  .commerce-page {
+    padding: 35px 16px 90px !important;
+  }
+  .cart-layout {
+    grid-template-columns: 1fr !important;
+    gap: 30px !important;
+  }
+  .cart-line {
+    grid-template-columns: 80px 1fr !important;
+    gap: 14px !important;
+  }
+  .cart-line img {
+    width: 80px !important;
+    height: 95px !important;
+  }
+  .line-price {
+    grid-column: 2 !important;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 50px 0 25px 0 !important;
+  }
+  .footer-main {
+    grid-template-columns: 1fr !important;
+    gap: 30px !important;
+    padding: 0 20px !important;
+  }
+  .footer-copyright {
+    padding-top: 40px !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. Tablet Viewports (641px <= Screens <= 1024px)
+   -------------------------------------------------------------------------- */
+@media (min-width: 641px) and (max-width: 1024px) {
+  /* Header */
+  .header {
+    height: 84px !important;
+    padding: 0 28px !important;
+    grid-template-columns: auto 1fr auto !important;
+  }
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+  .monogram {
+    display: block !important;
+  }
+  .monogram img {
+    width: 75px !important;
+    height: 32px !important;
+  }
+  .wordmark {
+    font-size: 20px !important;
+    letter-spacing: 4px !important;
+    text-align: center !important;
+  }
+  .nav {
+    display: none !important;
+  }
+
+  /* Grids */
+  .home-shell, .feature, .finish-grid, .category-grid {
+    width: calc(100% - 48px) !important;
+  }
+  .entrance-grid {
+    grid-template-columns: 1.2fr 1fr !important;
+    gap: 32px !important;
+  }
+  .four-grid, .finish-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 24px 20px !important;
+  }
+  .five-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  .category-mosaic {
+    grid-template-columns: 1fr 1fr !important;
+    grid-template-rows: 280px 220px !important;
+  }
+  .craft-story {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .craft-copy {
+    padding: 50px 32px !important;
+  }
+
+  /* Fabric Step on Tablet */
+  .fabric-step main {
+    max-width: 920px !important;
+    padding: 40px 24px 110px !important;
+  }
+  .material-group > div.fabrics-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 18px !important;
+  }
+  .fabric-card > span.thumb-wrapper {
+    height: 155px !important;
+  }
+  .fabric-modal {
+    width: min(720px, 92vw) !important;
+    grid-template-columns: 1fr 1.1fr !important;
+  }
+  .modal-photo {
+    min-height: 420px !important;
+  }
+
+  /* Customizer Details on Tablet */
+  .customizer-shell {
+    width: calc(100% - 48px) !important;
+    grid-template-columns: 42% 58% !important;
+    gap: 24px !important;
+  }
+  .preview-photo {
+    height: 480px !important;
+  }
+  .choice-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* PDP on Tablet */
+  .detail-top {
+    grid-template-columns: 50% 50% !important;
+    gap: 24px !important;
+    padding: 24px 24px !important;
+  }
+  .detail-main-img {
+    height: 480px !important;
+  }
+  .detail-thumbs img {
+    height: 75px !important;
+  }
+
+  /* Footer */
+  .footer-main {
+    grid-template-columns: 1.5fr 1fr 1fr 1fr !important;
+    gap: 24px !important;
+    padding: 0 32px !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. Laptop Viewports (1025px <= Screens <= 1440px)
+   -------------------------------------------------------------------------- */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  .header {
+    max-width: 1240px !important;
+  }
+  .nav {
+    max-width: 1240px !important;
+  }
+  .home-shell, .feature, .finish-grid, .category-grid {
+    width: min(1200px, calc(100% - 80px)) !important;
+  }
+  .fabric-step main {
+    max-width: 1200px !important;
+  }
+  .material-group > div.fabrics-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+  }
+  .customizer-shell {
+    width: min(1200px, calc(100% - 64px)) !important;
+    grid-template-columns: 45% 55% !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. PC, Big Screens & 4K Viewports (Screens >= 1441px)
+   -------------------------------------------------------------------------- */
+@media (min-width: 1441px) {
+  .header, .nav {
+    max-width: 1440px !important;
+    margin-inline: auto !important;
+  }
+  .wordmark {
+    font-size: 32px !important;
+    letter-spacing: 7px !important;
+  }
+  .home-shell, .feature, .finish-grid, .category-grid {
+    width: min(1440px, calc(100% - 120px)) !important;
+    margin-inline: auto !important;
+  }
+  .home-hero, .hero {
+    height: 760px !important;
+  }
+  .home-hero-copy, .hero-copy {
+    left: max(calc((100% - 1440px)/2), 60px) !important;
+  }
+  .fabric-step main {
+    max-width: 1440px !important;
+    padding-top: 55px !important;
+  }
+  .material-group > div.fabrics-grid {
+    grid-template-columns: repeat(6, 1fr) !important;
+    gap: 28px !important;
+  }
+  .fabric-card > span.thumb-wrapper {
+    height: 190px !important;
+  }
+  .customizer-shell {
+    width: min(1440px, calc(100% - 96px)) !important;
+    grid-template-columns: 46% 54% !important;
+    gap: 36px !important;
+  }
+  .preview-photo {
+    height: 700px !important;
+  }
+  .customizer-bar {
+    padding-inline: max(calc((100% - 1440px)/2), 48px) !important;
+  }
+  .fabric-bar {
+    padding-inline: max(calc((100% - 1440px)/2), 48px) !important;
+  }
+  .footer-main {
+    max-width: 1440px !important;
+  }
+}

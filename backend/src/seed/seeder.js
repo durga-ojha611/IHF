@@ -11,6 +11,7 @@ import Navigation from '../models/Navigation.js';
 import Blog from '../models/Blog.js';
 import Swatch from '../models/Swatch.js';
 import CustomizerRule from '../models/CustomizerRule.js';
+import FabricOption from '../models/FabricOption.js';
 
 const seedDatabase = async () => {
   try {
@@ -28,7 +29,8 @@ const seedDatabase = async () => {
       Navigation.deleteMany({}),
       Blog.deleteMany({}),
       Swatch.deleteMany({}),
-      CustomizerRule.deleteMany({})
+      CustomizerRule.deleteMany({}),
+      FabricOption.deleteMany({})
     ]);
 
     // 1. Seed Users
@@ -267,7 +269,242 @@ const seedDatabase = async () => {
       { group: 'feature', label: '100% Blackout', value: 'blackout', displayOrder: 1 },
       { group: 'feature', label: 'Motorized Compatible', value: 'motorized', displayOrder: 2 },
       { group: 'feature', label: 'Thermal Insulated', value: 'thermal-insulated', displayOrder: 3 },
-      { group: 'feature', label: 'Acoustic Sound Dampening', value: 'acoustic', displayOrder: 4 }
+      { group: 'feature', label: 'Acoustic Sound Dampening', value: 'acoustic', displayOrder: 4 },
+
+      { group: 'collection', label: 'LINENS', value: 'linens', displayOrder: 1 },
+      { group: 'collection', label: 'SHEERS', value: 'sheers', displayOrder: 2 },
+      { group: 'collection', label: 'WOOLS + BLENDS', value: 'wools-blends', displayOrder: 3 },
+      { group: 'collection', label: 'COTTONS', value: 'cottons', displayOrder: 4 },
+      { group: 'collection', label: 'SILKS', value: 'silks', displayOrder: 5 },
+      { group: 'collection', label: 'SOLIDS', value: 'solids', displayOrder: 6 },
+      { group: 'collection', label: 'PATTERNS', value: 'patterns', displayOrder: 7 },
+      { group: 'collection', label: 'KIDS', value: 'kids', displayOrder: 8 },
+      { group: 'collection', label: 'DESIGNERS', value: 'designers', displayOrder: 9 },
+      { group: 'collection', label: 'SUNBRELLA', value: 'sunbrella', displayOrder: 10 },
+      { group: 'collection', label: 'MOST POPULAR', value: 'most-popular', displayOrder: 11 },
+
+      { group: 'material', label: 'Linens & Natural Weaves', value: 'linens-natural-weaves', displayOrder: 1 },
+      { group: 'material', label: 'Cotton & Blends', value: 'cotton-blends', displayOrder: 2 },
+      { group: 'material', label: 'Wool & Blends', value: 'wool-blends', displayOrder: 3 },
+      { group: 'material', label: 'Luxury Velvet', value: 'luxury-velvet', displayOrder: 4 },
+
+      { group: 'price', label: 'Price Group A', value: 'a', displayOrder: 1 },
+      { group: 'price', label: 'Price Group B', value: 'b', displayOrder: 2 },
+      { group: 'price', label: 'Price Group C', value: 'c', displayOrder: 3 }
+    ]);
+
+    // 4b. Seed Fabric Options for Customizer
+    console.log('[Seeder] Creating Customizer Fabric Catalog & Materials...');
+    await FabricOption.insertMany([
+      {
+        name: 'White Linen',
+        slug: 'white-linen',
+        collectionType: 'LINENS',
+        materialGroup: 'LINENS & NATURAL WEAVES',
+        materialDescription: 'Soft, breathable and wonderfully versatile, long-staple fibres bring understated everyday elegance to both classic architectural spaces and contemporary interiors.',
+        priceGroup: 'A',
+        fromPrice: 650,
+        color: { name: 'White', hexCode: '#F5F5F0' },
+        image: '/figma/home-02.png',
+        isPopular: true,
+        displayOrder: 1
+      },
+      {
+        name: 'Clay Linen',
+        slug: 'clay-linen',
+        collectionType: 'LINENS',
+        materialGroup: 'LINENS & NATURAL WEAVES',
+        materialDescription: 'Soft, breathable and wonderfully versatile, long-staple fibres bring understated everyday elegance to both classic architectural spaces and contemporary interiors.',
+        priceGroup: 'A',
+        fromPrice: 650,
+        color: { name: 'Clay', hexCode: '#D2B48C' },
+        image: '/figma/home-18.jpeg',
+        isPopular: true,
+        displayOrder: 2
+      },
+      {
+        name: 'Slate Wool',
+        slug: 'slate-wool',
+        collectionType: 'WOOLS + BLENDS',
+        materialGroup: 'WOOL & BLENDS',
+        materialDescription: 'Finely spun virgin wool blend creating substantial drape with acoustic sound-dampening qualities and thermal insulation.',
+        priceGroup: 'B',
+        fromPrice: 720,
+        color: { name: 'Slate', hexCode: '#708090' },
+        image: '/figma/home-07.jpeg',
+        isPopular: false,
+        displayOrder: 3
+      },
+      {
+        name: 'Oatmeal Linen',
+        slug: 'oatmeal-linen',
+        collectionType: 'LINENS',
+        materialGroup: 'LINENS & NATURAL WEAVES',
+        materialDescription: 'Soft, breathable and wonderfully versatile, long-staple fibres bring understated everyday elegance to both classic architectural spaces and contemporary interiors.',
+        priceGroup: 'A',
+        fromPrice: 650,
+        color: { name: 'Oatmeal', hexCode: '#E6D7B9' },
+        image: '/figma/home-03.jpeg',
+        closeupImage: '/figma/home-03.jpeg',
+        isPopular: true,
+        displayOrder: 4
+      },
+      {
+        name: 'Sand Wool Blend',
+        slug: 'sand-wool-blend',
+        collectionType: 'WOOLS + BLENDS',
+        materialGroup: 'WOOL & BLENDS',
+        materialDescription: 'Finely spun virgin wool blend creating substantial drape with acoustic sound-dampening qualities and thermal insulation.',
+        priceGroup: 'B',
+        fromPrice: 720,
+        color: { name: 'Sand', hexCode: '#C2B280' },
+        image: '/figma/home-04.jpeg',
+        isPopular: true,
+        displayOrder: 5
+      },
+      {
+        name: 'Sky Cotton',
+        slug: 'sky-cotton',
+        collectionType: 'COTTONS',
+        materialGroup: 'COTTON & BLENDS',
+        materialDescription: 'Crisp, matte organic cotton sateen with fluid hand and smooth contemporary finish for modern homes.',
+        priceGroup: 'A',
+        fromPrice: 650,
+        color: { name: 'Sky', hexCode: '#87CEEB' },
+        image: '/figma/home-17.jpeg',
+        isPopular: false,
+        displayOrder: 6
+      },
+      {
+        name: 'Terracotta Cotton',
+        slug: 'terracotta-cotton',
+        collectionType: 'COTTONS',
+        materialGroup: 'COTTON & BLENDS',
+        materialDescription: 'Crisp, matte organic cotton sateen with fluid hand and smooth contemporary finish for modern homes.',
+        priceGroup: 'A',
+        fromPrice: 650,
+        color: { name: 'Terracotta', hexCode: '#E2725B' },
+        image: '/figma/home-12.jpeg',
+        isPopular: true,
+        displayOrder: 7
+      },
+      {
+        name: 'Sage Linen',
+        slug: 'sage-linen',
+        collectionType: 'LINENS',
+        materialGroup: 'LINENS & NATURAL WEAVES',
+        materialDescription: 'Soft, breathable and wonderfully versatile, long-staple fibres bring understated everyday elegance to both classic architectural spaces and contemporary interiors.',
+        priceGroup: 'A',
+        fromPrice: 650,
+        color: { name: 'Sage', hexCode: '#9DC183' },
+        image: '/figma/home-15.jpeg',
+        isPopular: true,
+        displayOrder: 8
+      },
+      {
+        name: 'Forest Velvet',
+        slug: 'forest-velvet',
+        collectionType: 'SOLIDS',
+        materialGroup: 'LUXURY VELVET',
+        materialDescription: 'Ultra-luxurious dense cotton-silk velvet pile offering extraordinary light extinction, thermal noise cancellation, and rich opulence.',
+        priceGroup: 'C',
+        fromPrice: 850,
+        color: { name: 'Forest', hexCode: '#228B22' },
+        image: '/figma/home-13.png',
+        isPopular: true,
+        displayOrder: 9
+      },
+      {
+        name: 'Charcoal Velvet',
+        slug: 'charcoal-velvet',
+        collectionType: 'SOLIDS',
+        materialGroup: 'LUXURY VELVET',
+        materialDescription: 'Ultra-luxurious dense cotton-silk velvet pile offering extraordinary light extinction, thermal noise cancellation, and rich opulence.',
+        priceGroup: 'C',
+        fromPrice: 850,
+        color: { name: 'Charcoal', hexCode: '#36454F' },
+        image: '/figma/home-06.jpeg',
+        isPopular: true,
+        displayOrder: 10
+      },
+      {
+        name: 'Airy Voile Sheer',
+        slug: 'airy-voile-sheer',
+        collectionType: 'SHEERS',
+        materialGroup: 'ARCHITECTURAL SHEERS',
+        materialDescription: 'Ethereal sheer open weave that gracefully floods spaces with natural light while softening glare and preserving panoramic views.',
+        priceGroup: 'A',
+        fromPrice: 550,
+        color: { name: 'Ivory White', hexCode: '#FFFFF0' },
+        image: '/figma/home-11.png',
+        isPopular: true,
+        displayOrder: 11
+      },
+      {
+        name: 'Oyster Dupioni Silk',
+        slug: 'oyster-dupioni-silk',
+        collectionType: 'SILKS',
+        materialGroup: 'NATURAL RAW SILKS',
+        materialDescription: 'Hand-reeled mulberry silk with characteristic irregular slub texture that shimmers with multi-dimensional luster under sunlight.',
+        priceGroup: 'C',
+        fromPrice: 890,
+        color: { name: 'Oyster', hexCode: '#EAE6DF' },
+        image: '/figma/home-05.png',
+        isPopular: true,
+        displayOrder: 12
+      },
+      {
+        name: 'Botanical Toile Linen',
+        slug: 'botanical-toile-linen',
+        collectionType: 'PATTERNS',
+        materialGroup: 'ARTISAN PATTERNS',
+        materialDescription: 'Hand-screened floral and architectural toile on rustic linen ground, tailored for statement library and salon treatments.',
+        priceGroup: 'B',
+        fromPrice: 750,
+        color: { name: 'Clay', hexCode: '#D2B48C' },
+        image: '/figma/home-18.jpeg',
+        isPopular: false,
+        displayOrder: 13
+      },
+      {
+        name: 'Pastel Cloud Cotton',
+        slug: 'pastel-cloud-cotton',
+        collectionType: 'KIDS',
+        materialGroup: 'COTTON & BLENDS',
+        materialDescription: 'OEKO-TEX certified chemical-free nursery and children drapery cotton with hypo-allergenic finish.',
+        priceGroup: 'A',
+        fromPrice: 580,
+        color: { name: 'White', hexCode: '#F5F5F0' },
+        image: '/figma/home-02.png',
+        isPopular: false,
+        displayOrder: 14
+      },
+      {
+        name: 'Heritage Bouclé Drape',
+        slug: 'heritage-boucle-drape',
+        collectionType: 'DESIGNERS',
+        materialGroup: 'DESIGNER COUTURE',
+        materialDescription: 'Architectural heavy looped yarn bouclé bringing high-fashion runway tactile depth to modern interior windows.',
+        priceGroup: 'C',
+        fromPrice: 920,
+        color: { name: 'Sand', hexCode: '#C2B280' },
+        image: '/figma/home-04.jpeg',
+        isPopular: true,
+        displayOrder: 15
+      },
+      {
+        name: 'Sunbrella Sailcloth Salt',
+        slug: 'sunbrella-sailcloth-salt',
+        collectionType: 'SUNBRELLA',
+        materialGroup: 'PERFORMANCE SUNBRELLA',
+        materialDescription: 'Bleach-cleanable, fade-proof solution-dyed acrylic fabric built for sunrooms, coastal estates, and high-UV exposure.',
+        priceGroup: 'B',
+        fromPrice: 710,
+        color: { name: 'Oatmeal', hexCode: '#E6D7B9' },
+        image: '/figma/home-03.jpeg',
+        isPopular: true,
+        displayOrder: 16
+      }
     ]);
 
     // 5. Seed Swatches

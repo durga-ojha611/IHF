@@ -10,8 +10,8 @@ export const protect = catchAsync(async (req, res, next) => {
   let token;
 
   // 1. Check for token in httpOnly cookie first (recommended security standard)
-  if (req.cookies && req.cookies.jwt) {
-    token = req.cookies.jwt;
+  if (req.cookies && (req.cookies.accessToken || req.cookies.jwt)) {
+    token = req.cookies.accessToken || req.cookies.jwt;
   } else if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
@@ -59,7 +59,7 @@ export const protect = catchAsync(async (req, res, next) => {
 });
 
 /**
- * Restrict routes to specific roles (e.g. 'admin', 'staff')
+ * Restrict routes to specific roles (e.g. 'admin', 'staff', 'superadmin')
  */
 export const authorize = (...roles) => {
   return (req, res, next) => {
@@ -76,12 +76,17 @@ export const authorize = (...roles) => {
 };
 
 /**
+ * Strict RBAC Verification Alias matching cyber-security standard
+ */
+export const verifyRoles = (...roles) => authorize(...roles);
+
+/**
  * Optional authentication: attaches req.user if valid token provided, but doesn't block guests
  */
 export const optionalAuth = async (req, res, next) => {
   let token;
-  if (req.cookies && req.cookies.jwt) {
-    token = req.cookies.jwt;
+  if (req.cookies && (req.cookies.accessToken || req.cookies.jwt)) {
+    token = req.cookies.accessToken || req.cookies.jwt;
   } else if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
@@ -106,5 +111,6 @@ export const optionalAuth = async (req, res, next) => {
 export default {
   protect,
   authorize,
+  verifyRoles,
   optionalAuth
 };

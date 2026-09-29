@@ -181,7 +181,7 @@ export const adminGetUserById = catchAsync(async (req, res, next) => {
 
 export const adminUpdateUserRole = catchAsync(async (req, res, next) => {
   const { role } = req.body;
-  if (!['customer', 'staff', 'admin'].includes(role)) {
+  if (!['customer', 'staff', 'admin', 'superadmin'].includes(role)) {
     return next(new AppError('Invalid user role specified', 400));
   }
 

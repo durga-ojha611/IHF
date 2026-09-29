@@ -5,7 +5,7 @@ const filterOptionSchema = new mongoose.Schema(
     group: {
       type: String,
       required: [true, 'Filter group is required'],
-      enum: ['fabric', 'color', 'size', 'style', 'feature'],
+      enum: ['fabric', 'color', 'size', 'style', 'feature', 'collection', 'material', 'price', 'sort'],
       lowercase: true,
       index: true
     },

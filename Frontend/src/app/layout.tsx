@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 import "./top-fold.css";
 import "./pages-polish.css";
+import "./responsive-master.css";
 import { CommerceProvider } from "@/components/commerce-context";
 
 const inter = Inter({
@@ -13,6 +14,7 @@ const inter = Inter({
 const cormorant = Cormorant_Garamond({
   variable: "--font-serif",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {

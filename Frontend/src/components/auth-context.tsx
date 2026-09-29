@@ -14,6 +14,7 @@ export interface User {
     label?: string;
     fullName: string;
     street: string;
+    apartment?: string;
     city: string;
     state: string;
     zipCode: string;

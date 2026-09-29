@@ -128,6 +128,11 @@ const productSchema = new mongoose.Schema(
       default: true,
       index: true
     },
+    isArchived: {
+      type: Boolean,
+      default: false,
+      index: true
+    },
     isDeleted: {
       type: Boolean,
       default: false,

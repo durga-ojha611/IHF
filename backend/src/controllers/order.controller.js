@@ -124,7 +124,7 @@ export const getOrderById = catchAsync(async (req, res, next) => {
     return next(new AppError('Order not found', 404));
   }
 
-  if (req.user.role !== 'admin' && req.user.role !== 'staff') {
+  if (!['admin', 'staff', 'superadmin'].includes(req.user.role)) {
     if (!order.user || order.user.toString() !== req.user._id.toString()) {
       return next(new AppError('You do not have permission to view this order', 403));
     }

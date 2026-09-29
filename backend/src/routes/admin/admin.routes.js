@@ -1,6 +1,8 @@
 import express from 'express';
 
-import { protect, authorize } from '../../middlewares/auth.middleware.js';
+import { protect, authorize, verifyRoles } from '../../middlewares/auth.middleware.js';
+import { logAdminActivity } from '../../middlewares/security.middleware.js';
+import ActivityLog from '../../models/ActivityLog.js';
 import {
   checkCategoryCanBeDeleted,
   checkProductCanBeDeleted,
@@ -22,16 +24,16 @@ const router = express.Router();
 
 // Enforce authentication & RBAC for all Admin endpoints
 router.use(protect);
-router.use(authorize('admin', 'staff'));
+router.use(verifyRoles('admin', 'staff', 'superadmin'));
 
 // ---------------------------------------------
 // 1. User & Staff Management (`/api/admin/users`)
 // ---------------------------------------------
 router.get('/users', userCtrl.adminGetAllUsers);
 router.get('/users/:id', userCtrl.adminGetUserById);
-router.patch('/users/:id/role', authorize('admin'), userCtrl.adminUpdateUserRole);
-router.delete('/users/:id', authorize('admin'), userCtrl.adminSoftDeleteUser);
-router.patch('/users/:id/restore', authorize('admin'), userCtrl.adminRestoreUser);
+router.patch('/users/:id/role', verifyRoles('admin', 'superadmin'), logAdminActivity('ROLE_CHANGE', 'User'), userCtrl.adminUpdateUserRole);
+router.delete('/users/:id', verifyRoles('admin', 'superadmin'), logAdminActivity('DELETE_RESOURCE', 'User'), userCtrl.adminSoftDeleteUser);
+router.patch('/users/:id/restore', verifyRoles('admin', 'superadmin'), logAdminActivity('UPDATE_RESOURCE', 'User'), userCtrl.adminRestoreUser);
 
 // ---------------------------------------------
 // 2. Dynamic Navigation (`/api/admin/navigation`)
@@ -55,10 +57,10 @@ router.delete('/categories/:id', checkCategoryCanBeDeleted, catCtrl.adminDeleteC
 // ---------------------------------------------
 router.get('/products', prodCtrl.adminGetAllProducts);
 router.get('/products/:id', prodCtrl.adminGetProductById);
-router.post('/products', prodCtrl.adminCreateProduct);
-router.patch('/products/:id', prodCtrl.adminUpdateProduct);
-router.delete('/products/:id', checkProductCanBeDeleted, prodCtrl.adminDeleteProduct);
-router.patch('/products/:id/restore', prodCtrl.adminRestoreProduct);
+router.post('/products', logAdminActivity('CREATE_RESOURCE', 'Product'), prodCtrl.adminCreateProduct);
+router.patch('/products/:id', logAdminActivity('PRICE_UPDATE', 'Product'), prodCtrl.adminUpdateProduct);
+router.delete('/products/:id', checkProductCanBeDeleted, logAdminActivity('DELETE_RESOURCE', 'Product'), prodCtrl.adminDeleteProduct);
+router.patch('/products/:id/restore', logAdminActivity('UPDATE_RESOURCE', 'Product'), prodCtrl.adminRestoreProduct);
 
 // ---------------------------------------------
 // 5. Dynamic Sidebar Filters (`/api/admin/filters`)
@@ -84,7 +86,7 @@ router.post('/swatches', swatchCtrl.adminCreateSwatch);
 router.patch('/swatches/:id', swatchCtrl.adminUpdateSwatch);
 router.delete('/swatches/:id', swatchCtrl.adminDeleteSwatch);
 router.get('/swatch-orders', swatchCtrl.adminGetSwatchOrders);
-router.patch('/swatch-orders/:id/status', swatchCtrl.adminUpdateSwatchOrderStatus);
+router.patch('/swatch-orders/:id/status', logAdminActivity('ORDER_STATUS_UPDATE', 'SwatchOrder'), swatchCtrl.adminUpdateSwatchOrderStatus);
 
 // ---------------------------------------------
 // 8. Customizer Engine Rules (`/api/admin/customizer`)
@@ -100,7 +102,21 @@ router.delete('/customizer/:id', customizerCtrl.adminDeleteRule);
 // ---------------------------------------------
 router.get('/orders', orderCtrl.adminGetAllOrders);
 router.get('/orders/:id', orderCtrl.adminGetOrderById);
-router.patch('/orders/:id/fulfillment', orderCtrl.adminUpdateFulfillmentStatus);
-router.delete('/orders/:id', orderCtrl.adminSoftDeleteOrder);
+router.patch('/orders/:id/fulfillment', logAdminActivity('ORDER_STATUS_UPDATE', 'Order'), orderCtrl.adminUpdateFulfillmentStatus);
+router.delete('/orders/:id', logAdminActivity('DELETE_RESOURCE', 'Order'), orderCtrl.adminSoftDeleteOrder);
+
+// ---------------------------------------------
+// 10. Security Audit Activity Logs (`/api/admin/activity-logs`)
+// ---------------------------------------------
+router.get('/activity-logs', verifyRoles('admin', 'superadmin'), async (req, res) => {
+  const logs = await ActivityLog.find().sort({ createdAt: -1 }).limit(100);
+  res.status(200).json({
+    status: 'success',
+    results: logs.length,
+    data: {
+      logs
+    }
+  });
+});
 
 export default router;
