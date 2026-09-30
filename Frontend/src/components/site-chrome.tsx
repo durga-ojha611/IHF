@@ -5,9 +5,10 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useCommerce } from "./commerce-context";
+import "@/app/footer.css";
 
 const nav = [
-  ["Drapery", "/products/drapery"],
+  ["Drapery", "/drapery"],
   ["Shades", "/products/shades"],
   ["Valances", "/products/valances"],
   ["Pillows", "/products/pillows"],
@@ -172,75 +173,294 @@ export function Header() {
 }
 
 export function Footer() {
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim() && email.includes("@")) {
+      setSubscribed(true);
+      setEmail("");
+      setTimeout(() => setSubscribed(false), 5000);
+    }
+  };
+
   return (
-    <footer className="footer">
-      <div className="footer-main">
-        {/* Brand Column */}
-        <div className="footer-brand">
-          <Link href="/" className="footer-brand-title">
-            INDIA HOME FURNISHINGS
-          </Link>
-          <div className="footer-brand-divider" />
-          <h3 className="footer-heading">
-            Bespoke drapery for modern life.
-          </h3>
-          <p className="footer-tagline">
-            Timeless designs, quality fabrics and expert craftsmanship for a home that lasts.
-          </p>
-        </div>
-
-        {/* Column 2: SHOP */}
-        <div className="footer-col">
-          <h4>SHOP</h4>
-          <div className="footer-links">
-            <Link href="/products">Collections</Link>
-            <Link href="/drapery/configure">Made to Measure</Link>
-            <Link href="/shipping">Shipping &amp; Returns</Link>
+    <footer className="footer-wrapper">
+      {/* Main Footer Directory (5 Columns) */}
+      <div className="footer-inner-container">
+        <div className="footer-main-row">
+          {/* Column 1: Brand & Atelier Tagline */}
+          <div className="footer-brand-col">
+            {/* Real Official IHF Monogram Logo */}
+            <Link href="/" className="footer-real-logo-link" aria-label="India Home Furnishings">
+              <Image
+                src="/figma/ihf-monogram.svg"
+                alt="India Home Furnishings"
+                width={88}
+                height={38}
+                priority
+              />
+            </Link>
+            <Link href="/" className="footer-brand-heading">
+              INDIA HOME<br />FURNISHINGS
+            </Link>
+            <div className="footer-clean-tagline">
+              ELEVATE YOUR SPACES
+            </div>
+            <p className="footer-brand-desc">
+              Premium draperies, valances and handcrafted home furnishings. Tailored to perfection, designed for timeless living.
+            </p>
+            {/* Social Icons Row (Instagram, Pinterest, Facebook, YouTube, LinkedIn) */}
+            <div className="footer-social-icons">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="Instagram">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                </svg>
+              </a>
+              <a href="https://pinterest.com" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="Pinterest">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="16" x2="12" y2="22" />
+                  <path d="M12 2a10 10 0 0 0-3.6 19.33c-.05-.82-.1-2.09.02-3l1.15-4.88s-.29-.59-.29-1.46c0-1.37.8-2.39 1.79-2.39.84 0 1.25.63 1.25 1.39 0 .85-.54 2.12-.82 3.3-.23 1 .5 1.82 1.48 1.82 1.78 0 3.15-1.88 3.15-4.59 0-2.4-1.72-4.08-4.19-4.08-2.86 0-4.53 2.14-4.53 4.36 0 .86.33 1.79.75 2.29a.3.3 0 0 1 .07.29c-.08.33-.26 1.05-.3 1.2-.05.2-.16.24-.37.15-1.38-.64-2.24-2.65-2.24-4.27 0-3.47 2.52-6.66 7.28-6.66 3.82 0 6.79 2.73 6.79 6.37 0 3.8-2.39 6.85-5.71 6.85-1.12 0-2.17-.58-2.53-1.27l-.69 2.63c-.25.96-.92 2.16-1.37 2.89A10 10 0 1 0 12 2Z" />
+                </svg>
+              </a>
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="Facebook">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                </svg>
+              </a>
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="YouTube">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+                  <polygon points="10 15 15 12 10 9 10 15" />
+                </svg>
+              </a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="LinkedIn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                  <rect width="4" height="12" x="2" y="9" />
+                  <circle cx="4" cy="4" r="2" />
+                </svg>
+              </a>
+            </div>
           </div>
-        </div>
 
-        {/* Column 3: COMPANY */}
-        <div className="footer-col">
-          <h4>COMPANY</h4>
-          <div className="footer-links">
-            <Link href="/our-story">Our Story</Link>
-            <Link href="/journal">Journal</Link>
-            <Link href="/privacy">Privacy Policy</Link>
+          {/* Column 2: SHOP */}
+          <div className="footer-nav-col">
+            <h5>SHOP</h5>
+            <ul className="footer-nav-list">
+              <li><Link href="/drapery">Draperies</Link></li>
+              <li><Link href="/products/valances">Valances</Link></li>
+              <li><Link href="/drapery">Curtain Panels</Link></li>
+              <li><Link href="/drapery">Sheers</Link></li>
+              <li><Link href="/products/decor">Home Decor</Link></li>
+              <li><Link href="/swatches">Fabric by the Yard</Link></li>
+              <li><Link href="/products">New Arrivals</Link></li>
+              <li><Link href="/products">Sale</Link></li>
+            </ul>
           </div>
-        </div>
 
-        {/* Column 4: CONNECT */}
-        <div className="footer-col">
-          <h4>CONNECT</h4>
-          <div className="footer-connect-list">
-            <a href="mailto:concierge@indiahomefurnishings.com" className="footer-connect-item">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <rect width="20" height="16" x="2" y="4" rx="2" />
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-              </svg>
-              <span>Email Us</span>
-            </a>
-            <a href="tel:+18005550199" className="footer-connect-item">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-              </svg>
-              <span>Call Us</span>
-            </a>
-            <a href="/our-story" className="footer-connect-item">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-              <span>Visit Us</span>
-            </a>
+          {/* Column 3: OUR COMPANY */}
+          <div className="footer-nav-col">
+            <h5>OUR COMPANY</h5>
+            <ul className="footer-nav-list">
+              <li><Link href="/our-story">About Us</Link></li>
+              <li><Link href="/our-story">Our Story</Link></li>
+              <li><Link href="/our-story">Sustainability</Link></li>
+              <li><Link href="/our-story">Trade Program</Link></li>
+              <li><Link href="/resources">Design Resources</Link></li>
+              <li><Link href="/journal">Blog</Link></li>
+              <li><Link href="/our-story">Careers</Link></li>
+              <li><a href="mailto:concierge@indiahomefurnishings.com">Contact Us</a></li>
+            </ul>
+          </div>
+
+          {/* Column 4: CUSTOMER SERVICE */}
+          <div className="footer-nav-col">
+            <h5>CUSTOMER SERVICE</h5>
+            <ul className="footer-nav-list">
+              <li><Link href="/resources">FAQs</Link></li>
+              <li><Link href="/shipping">Shipping &amp; Delivery</Link></li>
+              <li><Link href="/shipping">Returns &amp; Exchanges</Link></li>
+              <li><Link href="/account">Order Tracking</Link></li>
+              <li><Link href="/resources">Size Guide</Link></li>
+              <li><Link href="/resources">Fabric Care</Link></li>
+              <li><Link href="/privacy">Privacy Policy</Link></li>
+              <li><Link href="/privacy">Terms &amp; Conditions</Link></li>
+            </ul>
+          </div>
+
+          {/* Column 5: STAY INSPIRED, SHIPPING & ETSY */}
+          <div className="footer-aside-col">
+            <h5>STAY INSPIRED</h5>
+            <p className="footer-aside-desc">
+              Get the latest trends, exclusive offers and design ideas straight to your inbox.
+            </p>
+
+            {/* Newsletter Input with Solid Dark Button */}
+            <form onSubmit={handleSubscribe} className="footer-sub-form">
+              <div className="footer-sub-input-wrap">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <rect width="20" height="16" x="2" y="4" rx="2" />
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email address"
+                  className="footer-sub-input"
+                  aria-label="Enter your email address"
+                />
+              </div>
+              <button type="submit" className="footer-sub-btn">
+                <span>SUBSCRIBE</span>
+                <span>→</span>
+              </button>
+            </form>
+
+            {subscribed && (
+              <div className="footer-sub-success">
+                ✓ Thank you for subscribing to India Home Furnishings!
+              </div>
+            )}
+
+            {/* We Ship To */}
+            <div className="footer-ship-section">
+              <div className="footer-ship-header">
+                <span>WE SHIP TO</span>
+              </div>
+              <div className="footer-ship-badges">
+                {/* USA Flag */}
+                <div className="footer-country-pill">
+                  <svg className="footer-flag-icon" viewBox="0 0 640 480">
+                    <rect width="640" height="480" fill="#bd3d44"/>
+                    <path stroke="#fff" strokeWidth="37" d="M0 55.5h640M0 129h640M0 203h640M0 277h640M0 351h640M0 425h640"/>
+                    <rect width="256" height="258" fill="#192f5d"/>
+                  </svg>
+                  <span>USA</span>
+                </div>
+
+                {/* Canada Flag */}
+                <div className="footer-country-pill">
+                  <svg className="footer-flag-icon" viewBox="0 0 640 480">
+                    <rect width="640" height="480" fill="#fff"/>
+                    <rect width="160" height="480" fill="#d80027"/>
+                    <rect x="480" width="160" height="480" fill="#d80027"/>
+                    <path d="M320 120l18 36 38-8-12 36 28 24-38 6 12 38-34-18-12 40-12-40-34 18 12-38-38-6 28-24-12-36 38 8z" fill="#d80027"/>
+                  </svg>
+                  <span>CANADA</span>
+                </div>
+
+                {/* Europe Flag */}
+                <div className="footer-country-pill">
+                  <svg className="footer-flag-icon" viewBox="0 0 640 480">
+                    <rect width="640" height="480" fill="#003399"/>
+                    <circle cx="320" cy="140" r="10" fill="#ffcc00"/>
+                    <circle cx="320" cy="340" r="10" fill="#ffcc00"/>
+                    <circle cx="220" cy="240" r="10" fill="#ffcc00"/>
+                    <circle cx="420" cy="240" r="10" fill="#ffcc00"/>
+                    <circle cx="250" cy="170" r="10" fill="#ffcc00"/>
+                    <circle cx="390" cy="170" r="10" fill="#ffcc00"/>
+                    <circle cx="250" cy="310" r="10" fill="#ffcc00"/>
+                    <circle cx="390" cy="310" r="10" fill="#ffcc00"/>
+                  </svg>
+                  <span>EUROPE</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Also Available On: Etsy */}
+            <div className="footer-market-section">
+              <div className="footer-market-title">
+                ALSO AVAILABLE ON
+              </div>
+              <a
+                href="https://www.etsy.com/shop/IndiaHomeFurnishings"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-etsy-card"
+                aria-label="Shop India Home Furnishings on Etsy"
+              >
+                <div className="footer-etsy-logo">
+                  E
+                </div>
+                <span className="footer-etsy-brand">Etsy</span>
+                <div className="footer-etsy-divider" />
+                <span className="footer-etsy-sub">Shop our unique designs on Etsy ↗</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="footer-bottom-divider" />
+      {/* 3. Bottom Legal Bar & Payment Assurance */}
+      <div className="footer-bottom-bar-wrap">
+        <div className="footer-inner-container">
+          <div className="footer-bottom-flex">
+            {/* Copyright */}
+            <div className="footer-bottom-copy">
+              © 2026 India Home Furnishings. All rights reserved.
+            </div>
 
-      <div className="footer-copyright">
-        © 2026 INDIA HOME FURNISHINGS. ALL RIGHTS RESERVED.
+            {/* Legal Links */}
+            <div className="footer-bottom-links">
+              <Link href="/privacy">PRIVACY POLICY</Link>
+              <span className="footer-bottom-dot">|</span>
+              <Link href="/privacy">TERMS &amp; CONDITIONS</Link>
+              <span className="footer-bottom-dot">|</span>
+              <Link href="/shipping">SHIPPING &amp; RETURNS</Link>
+              <span className="footer-bottom-dot">|</span>
+              <a href="mailto:concierge@indiahomefurnishings.com">CONTACT CONCIERGE</a>
+            </div>
+
+            {/* Secure Payments Assurances */}
+            <div className="footer-payments-wrap">
+              <span className="footer-payments-label">Secure Payments</span>
+              {/* Visa */}
+              <svg className="footer-payment-icon" viewBox="0 0 38 24" width="34" height="22" aria-label="Visa">
+                <rect width="38" height="24" rx="3" fill="#1A1F71"/>
+                <text x="7" y="16" fill="#FFFFFF" fontFamily="system-ui, -apple-system, sans-serif" fontSize="11" fontWeight="800" fontStyle="italic" letterSpacing="0.5">VISA</text>
+              </svg>
+
+              {/* Mastercard */}
+              <svg className="footer-payment-icon" viewBox="0 0 38 24" width="34" height="22" aria-label="Mastercard">
+                <rect width="38" height="24" rx="3" fill="#FFFFFF" stroke="#E2DDD5"/>
+                <circle cx="15" cy="12" r="6" fill="#EB001B"/>
+                <circle cx="23" cy="12" r="6" fill="#F79E1B" fillOpacity="0.85"/>
+              </svg>
+
+              {/* Amex */}
+              <svg className="footer-payment-icon" viewBox="0 0 38 24" width="34" height="22" aria-label="American Express">
+                <rect width="38" height="24" rx="3" fill="#006FCF"/>
+                <text x="6" y="15" fill="#FFFFFF" fontFamily="system-ui, -apple-system, sans-serif" fontSize="8" fontWeight="bold" letterSpacing="0.5">AMEX</text>
+              </svg>
+
+              {/* PayPal */}
+              <svg className="footer-payment-icon" viewBox="0 0 38 24" width="34" height="22" aria-label="PayPal">
+                <rect width="38" height="24" rx="3" fill="#FFFFFF" stroke="#E2DDD5"/>
+                <text x="6" y="15" fill="#003087" fontFamily="system-ui, -apple-system, sans-serif" fontSize="9" fontWeight="800" fontStyle="italic" letterSpacing="-0.5">Pay<tspan fill="#0079C1">Pal</tspan></text>
+              </svg>
+
+              {/* Apple Pay */}
+              <svg className="footer-payment-icon" viewBox="0 0 38 24" width="34" height="22" aria-label="Apple Pay">
+                <rect width="38" height="24" rx="3" fill="#000000"/>
+                <text x="6" y="15" fill="#FFFFFF" fontFamily="system-ui, -apple-system, sans-serif" fontSize="9" fontWeight="600">Pay</text>
+              </svg>
+            </div>
+
+            {/* Credo with Heart */}
+            <div className="footer-bottom-credo">
+              <span>Designed for Beautiful Homes® Across the Globe</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
     </footer>
   );

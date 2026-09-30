@@ -621,18 +621,7 @@ img, video, canvas, svg {
     grid-column: 2 !important;
   }
 
-  /* Footer */
-  .footer {
-    padding: 50px 0 25px 0 !important;
-  }
-  .footer-main {
-    grid-template-columns: 1fr !important;
-    gap: 30px !important;
-    padding: 0 20px !important;
-  }
-  .footer-copyright {
-    padding-top: 40px !important;
-  }
+  /* Footer handled by footer.css */
 }
 
 /* --------------------------------------------------------------------------
