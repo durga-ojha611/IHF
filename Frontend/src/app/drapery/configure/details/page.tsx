@@ -1,5 +1,5 @@
 import { CustomizerScreen } from "./customizer-screen";
 
 export default function DetailsPage() {
-  return <CustomizerScreen step="measurements" />;
+  return <CustomizerScreen step="panels" />;
 }

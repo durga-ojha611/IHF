@@ -3,35 +3,35 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Footer, Header } from "@/components/site-chrome";
 import { useCommerce } from "@/components/commerce-context";
 import "./details.css";
 
-export const customizerSteps = ["measurements", "mount", "lining", "control", "hardware", "trim", "valance", "tiebacks", "review"] as const;
+export const customizerSteps = ["panels", "mount", "measurements", "lining", "control", "hardware", "trim", "valance", "tiebacks", "review"] as const;
 export type CustomizerStep = (typeof customizerSteps)[number];
 
 type Config = {
-  width: string; height: string; panels: "pair" | "single_panel"; fullness: "standard" | "deluxe";
+  width: string; height: string; panels: "pair" | "single_panel"; panelStack: "left" | "right" | "centre"; fullness: "standard" | "deluxe";
   mount: string; lining: string; control: string; hardware: string; trim: string; valance: string; tiebacks: string;
 };
 
 const initial: Config = {
-  width: "54 1/2", height: "96", panels: "pair", fullness: "standard",
+  width: "54 1/2", height: "96", panels: "pair", panelStack: "centre", fullness: "standard",
   mount: "Outside Mount", lining: "Cotton Privacy Lining", control: "Classic Rod",
   hardware: "Antique Brass", trim: "Clean Finish", valance: "No Valance", tiebacks: "Straight Tieback"
 };
 
 const meta: Record<CustomizerStep, { number: string; eyebrow: string; title: string; copy: string }> = {
-  measurements: { number: "01", eyebrow: "WINDOW DETAILS", title: "Tell Us About Your Window", copy: "Enter finished dimensions. Our atelier adds the correct fullness, returns and hems." },
-  mount: { number: "02", eyebrow: "MOUNT & POSITION", title: "How Will Your Drapery Be Mounted?", copy: "Choose where the hardware will sit in relation to the window frame." },
-  lining: { number: "03", eyebrow: "LIGHT & PRIVACY", title: "Choose Your Lining", copy: "Control light, privacy and the way your finished drapery falls." },
-  control: { number: "04", eyebrow: "OPERATION", title: "Rods, Rails & Motorized Systems", copy: "Select the system that best suits the room and how you live." },
-  hardware: { number: "05", eyebrow: "THE FINISHING DETAIL", title: "Select Your Hardware Finish", copy: "Architectural metalwork, finished by hand to complement your interior." },
-  trim: { number: "06", eyebrow: "ATELIER EMBELLISHMENT", title: "Add a Decorative Trim", copy: "Keep the edge beautifully clean or introduce a subtle hand-finished detail." },
-  valance: { number: "07", eyebrow: "TOP TREATMENT", title: "Valance Configuration", copy: "Complete the installation with a tailored architectural top treatment." },
-  tiebacks: { number: "08", eyebrow: "FINISHING TOUCH", title: "Choose Your Tiebacks", copy: "A considered holdback gives the drapery a graceful, composed silhouette." },
-  review: { number: "09", eyebrow: "ATELIER REVIEW", title: "Your Custom Drapery", copy: "Review every detail before our workroom begins your made-to-measure piece." }
+  panels: { number: "01", eyebrow: "PANEL CONFIGURATION", title: "Choose Your Panel Configuration", copy: "Select how your drapery will gather and rest when drawn open." },
+  mount: { number: "02", eyebrow: "MOUNT TYPE & HARDWARE", title: "Select Your Mount Type", copy: "Choose how the drapery will be installed in relation to the window." },
+  measurements: { number: "03", eyebrow: "PRODUCT MEASUREMENTS", title: "Enter Your Measurements", copy: "Provide the finished width and drop. Fractions are accepted." },
+  lining: { number: "04", eyebrow: "LINING SELECTION", title: "Choose Your Lining", copy: "Control light, privacy and the way your finished drapery falls." },
+  control: { number: "05", eyebrow: "CONTROL SYSTEM", title: "Choose How It Operates", copy: "Select a manual or motorized system for effortless daily use." },
+  hardware: { number: "06", eyebrow: "HARDWARE FINISH", title: "Select Your Hardware Finish", copy: "Choose the architectural metal finish for rods, brackets and finials." },
+  trim: { number: "07", eyebrow: "FABRIC BORDERS & TRIMS", title: "Add a Decorative Border", copy: "Keep a clean edge or add a hand-finished atelier detail." },
+  valance: { number: "08", eyebrow: "TOP TREATMENT", title: "Valance Configuration", copy: "Complete the installation with a tailored top treatment." },
+  tiebacks: { number: "09", eyebrow: "PASSEMENTERIE & TIE BACKS", title: "Choose Your Tiebacks", copy: "Finish the composition with a tailored or decorative holdback." },
+  review: { number: "10", eyebrow: "ROOM LABEL & WORKROOM NOTES", title: "Review Your Custom Drapery", copy: "Name the room, add workroom notes and confirm every detail." }
 };
 
 const choices: Partial<Record<CustomizerStep, { name: string; description: string; image?: string; tone?: string }[]>> = {
@@ -98,18 +98,15 @@ function priceFor(config: Config) {
   return { yards, total: Math.round(yards * 68 + 245 + extras) };
 }
 
-function pathFor(step: CustomizerStep) {
-  return step === "measurements" ? "/drapery/configure/details" : `/drapery/configure/details/${step}`;
-}
-
 export function CustomizerScreen({ step }: { step: CustomizerStep }) {
-  const router = useRouter();
   const { addToCart } = useCommerce();
   const [config, setConfig] = useState<Config>(initial);
   const [ready, setReady] = useState(false);
   const [added, setAdded] = useState(false);
-  const index = customizerSteps.indexOf(step);
-  const info = meta[step];
+  const [openStep, setOpenStep] = useState<CustomizerStep>(step);
+  const [room, setRoom] = useState("Primary Bedroom");
+  const [notes, setNotes] = useState("");
+  const index = customizerSteps.indexOf(openStep);
   const estimate = useMemo(() => priceFor(config), [config]);
   const widthValid = inches(config.width) >= 24 && inches(config.width) <= 240;
   const heightValid = inches(config.height) >= 36 && inches(config.height) <= 200;
@@ -119,11 +116,17 @@ export function CustomizerScreen({ step }: { step: CustomizerStep }) {
     setReady(true);
   }, []);
   useEffect(() => { if (ready) localStorage.setItem("ihf-drapery-config", JSON.stringify(config)); }, [config, ready]);
+  useEffect(() => setOpenStep(step), [step]);
 
   const update = <K extends keyof Config>(key: K, value: Config[K]) => setConfig((old) => ({ ...old, [key]: value }));
-  const go = (direction: number) => router.push(pathFor(customizerSteps[index + direction]));
-  const select = (name: string) => { const field = fieldForStep[step]; if (field) update(field, name as never); };
-  const selected = fieldForStep[step] ? String(config[fieldForStep[step] as keyof Config]) : "";
+  const select = (target: CustomizerStep, name: string) => { const field = fieldForStep[target]; if (field) update(field, name as never); };
+  const selectedFor = (target: CustomizerStep) => fieldForStep[target] ? String(config[fieldForStep[target] as keyof Config]) : "";
+  const summaryFor = (target: CustomizerStep) => ({ panels: config.panels === "pair" ? "Pair · centre open" : `Single panel · ${config.panelStack} stack`, measurements: `${config.width}″ W × ${config.height}″ drop`, mount: config.mount, lining: config.lining, control: config.control, hardware: config.hardware, trim: config.trim, valance: config.valance, tiebacks: config.tiebacks, review: room }[target] || "Select an option");
+  const advance = () => {
+    const next = customizerSteps[Math.min(index + 1, customizerSteps.length - 1)];
+    setOpenStep(next);
+    requestAnimationFrame(() => document.getElementById(`custom-step-${next}`)?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  };
 
   const add = () => {
     addToCart({
@@ -135,16 +138,30 @@ export function CustomizerScreen({ step }: { step: CustomizerStep }) {
     setAdded(true);
   };
 
+  const renderChoices = (target: CustomizerStep) => choices[target] ? <div className={`accordion-choice-grid accordion-choice-${target}`}>
+    {choices[target]!.map((choice, optionIndex) => <button type="button" key={choice.name} className={selectedFor(target) === choice.name ? "selected" : ""} onClick={() => select(target, choice.name)}>
+      <div className="accordion-choice-visual">
+        {choice.image ? <Image src={choice.image} alt="" fill sizes="220px" /> : choice.tone ? <i className="finish-disc" style={{ background: choice.tone }} /> : <span className={`line-diagram diagram-${target}-${optionIndex}`}><i/><i/><i/><i/></span>}
+      </div>
+      <span className="tile-check">{selectedFor(target) === choice.name ? "✓" : ""}</span>
+      <b>{choice.name}</b><small>{choice.description}</small>
+    </button>)}
+  </div> : null;
+
+  const renderExpanded = (target: CustomizerStep) => {
+    if (target === "panels") return <div className="accordion-panel-body"><p className="panel-intro">Select where your single drapery panel will gather when drawn open, or choose a balanced pair.</p><div className="panel-configuration-grid">{[["single_panel","left","LEFT STACK","Panel gathers to the left"],["single_panel","right","RIGHT STACK","Panel gathers to the right"],["pair","centre","PAIR · CENTRE OPEN","Two panels open from the centre"]].map(([value,stack,title,copy],i)=>{const selected=config.panels===value&&config.panelStack===stack;return <button type="button" className={selected?"selected":""} onClick={()=>setConfig(old=>({...old,panels:value as Config["panels"],panelStack:stack as Config["panelStack"]}))} key={title}><div className={`panel-sketch sketch-${i}`}><i/><i/><i/><i/><i/></div><span className="tile-check">{selected?"✓":""}</span><b>{title}</b><small>{copy}</small><em>{i===2?"MOST POPULAR":""}</em></button>})}</div><div className="config-assurance"><b>ATELIER RECOMMENDATION</b><p>A pair creates the most balanced fullness and is recommended for windows wider than 48 inches.</p></div></div>;
+    if (target === "measurements") return <div className="accordion-panel-body"><div className="measurement-fields"><label><span>FINISHED WIDTH</span><div><input className="measurement-number-input" value={config.width} onChange={(e) => update("width", e.target.value)} /><b>IN</b></div><small className={!widthValid ? "error" : ""}>{widthValid ? "24″ minimum — 240″ maximum" : "Enter a width between 24″ and 240″"}</small></label><label><span>FINISHED DROP</span><div><input className="measurement-number-input" value={config.height} onChange={(e) => update("height", e.target.value)} /><b>IN</b></div><small className={!heightValid ? "error" : ""}>{heightValid ? "36″ minimum — 200″ maximum" : "Enter a drop between 36″ and 200″"}</small></label></div><div className="fullness-choice"><span>FULLNESS</span>{(["standard","deluxe"] as const).map((x) => <button type="button" className={config.fullness === x ? "active" : ""} onClick={() => update("fullness", x)} key={x}><b>{x === "standard" ? "2.0× STANDARD" : "2.5× DELUXE"}</b><small>{x === "standard" ? "Refined everyday drape" : "Richer architectural fold"}</small></button>)}</div><div className="measure-help"><span>⌖</span><div><b>NEED HELP MEASURING?</b><p>Use our measuring guide or schedule a complimentary virtual consultation.</p></div><button>VIEW GUIDE →</button></div></div>;
+    if (target === "review") return <div className="accordion-panel-body"><div className="room-note-fields"><label>ROOM LABEL<input value={room} onChange={e=>setRoom(e.target.value)} placeholder="e.g. Primary Bedroom"/></label><label>WORKROOM NOTES<textarea value={notes} onChange={e=>setNotes(e.target.value)} placeholder="Access notes, installation preferences or anything our atelier should know."/></label></div><div className="review-card"><div className="review-heading"><span>YOUR SPECIFICATION</span><strong>${estimate.total.toLocaleString()}</strong></div>{[["Panel configuration",summaryFor("panels")],["Mount",config.mount],["Measurements",summaryFor("measurements")],["Lining",config.lining],["Control",config.control],["Hardware",config.hardware],["Border & trim",config.trim],["Valance",config.valance],["Tiebacks",config.tiebacks]].map(([label,value],i)=><div className="review-row" key={label}><span><b>{String(i+1).padStart(2,"0")}</b>{label}</span><strong>{value}</strong><button onClick={()=>setOpenStep(customizerSteps[i])}>EDIT</button></div>)}</div>{added&&<p className="added-message">✓ Added to your cart. <Link href="/cart">View cart →</Link></p>}</div>;
+    return <div className="accordion-panel-body"><p className="panel-intro">{meta[target].copy}</p>{renderChoices(target)}{target==="mount"&&<div className="config-assurance"><b>INSTALLATION NOTE</b><p>Outside mount is recommended where recess depth is limited or greater light control is required.</p></div>}</div>;
+  };
+
   return <div className="customizer-page">
     <Header />
-    <div className="customizer-progress" aria-label={`Step ${index + 1} of ${customizerSteps.length}`}>
-      <div><span>Custom Drapery</span><b>{String(index + 1).padStart(2,"0")} / {String(customizerSteps.length).padStart(2,"0")}</b></div>
-      <i><em style={{ width: `${((index + 1) / customizerSteps.length) * 100}%` }} /></i>
-    </div>
+    <div className="configurator-title"><span>CUSTOM DRAPERY</span><h1>Ripple Fold Drapery</h1><p>Made to measure in our atelier · Oatmeal Belgian linen</p></div>
     <main className="customizer-shell">
       <aside className="customizer-preview">
         <div className="preview-photo">
-          <Image src="/figma/home-01.jpeg" alt="Pinch pleat drapery in a calm interior" fill priority sizes="45vw" />
+          <Image src="/figma/home-hero-hd.png" alt="Ripple fold drapery in a calm interior" fill priority sizes="50vw" />
           <span className="zoom-badge" title="Inspect drapery preview">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1c1c1a" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="10.5" cy="10.5" r="6" />
@@ -152,37 +169,14 @@ export function CustomizerScreen({ step }: { step: CustomizerStep }) {
             </svg>
           </span>
         </div>
-        <div className="preview-caption"><span>YOUR SELECTION</span><h2>Pinch Pleat Drapery</h2><p>Belgian Flax Linen · Oatmeal</p></div>
+        <div className="preview-spec-card"><span>YOUR SELECTION</span><h2>Ripple Fold Drapery</h2><p>Oatmeal Belgian Flax Linen</p><dl><div><dt>Panel</dt><dd>{summaryFor("panels")}</dd></div><div><dt>Size</dt><dd>{summaryFor("measurements")}</dd></div><div><dt>Lining</dt><dd>{config.lining}</dd></div></dl><Link href="/drapery/configure/fabric">CHANGE FABRIC →</Link></div>
       </aside>
       <section className="customizer-content">
-        <Link className="customizer-edit" href="/drapery/configure/fabric">← EDIT FABRIC</Link>
-        <header><span>{info.number} — {info.eyebrow}</span><h1>{info.title}</h1><p>{info.copy}</p></header>
-
-        {step === "measurements" && <div className="measure-panel">
-          <div className="configuration-toggle"><button className={config.panels === "pair" ? "active" : ""} onClick={() => update("panels", "pair")}>PAIR · 2 PANELS</button><button className={config.panels === "single_panel" ? "active" : ""} onClick={() => update("panels", "single_panel")}>SINGLE PANEL</button></div>
-          <div className="measurement-fields"><label><span>FINISHED WIDTH</span><div><input className="measurement-number-input" value={config.width} onChange={(e) => update("width", e.target.value)} /><b>IN</b></div><small className={!widthValid ? "error" : ""}>{widthValid ? "24″ minimum — 240″ maximum" : "Enter a width between 24″ and 240″"}</small></label><label><span>FINISHED DROP</span><div><input className="measurement-number-input" value={config.height} onChange={(e) => update("height", e.target.value)} /><b>IN</b></div><small className={!heightValid ? "error" : ""}>{heightValid ? "36″ minimum — 200″ maximum" : "Enter a drop between 36″ and 200″"}</small></label></div>
-          <div className="fullness-choice"><span>FULLNESS</span>{(["standard","deluxe"] as const).map((x) => <button className={config.fullness === x ? "active" : ""} onClick={() => update("fullness", x)} key={x}><b>{x === "standard" ? "2.0× STANDARD" : "2.5× DELUXE"}</b><small>{x === "standard" ? "A refined everyday drape" : "A richer, more luxurious fold"}</small></button>)}</div>
-          <div className="atelier-note"><b>COMPLIMENTARY MEASURING SUPPORT</b><p>Share a photograph of your window with our atelier after checkout. We will confirm every dimension before production.</p></div>
-        </div>}
-
-        {choices[step] && <div className={`choice-grid choice-${step}`}>
-          {choices[step]!.map((choice, optionIndex) => <button key={choice.name} className={selected === choice.name ? "selected" : ""} onClick={() => select(choice.name)}>
-            <div className="choice-visual">
-              {choice.image ? <Image src={choice.image} alt="" fill sizes="20vw" /> : choice.tone ? <i className="finish-disc" style={{ background: choice.tone }} /> : <span className={`line-diagram diagram-${step}-${optionIndex}`}><i/><i/><i/><i/></span>}
-            </div>
-            <span className="radio-dot"/><b>{choice.name}</b><small>{choice.description}</small>
-          </button>)}
-        </div>}
-
-        {step === "review" && <div className="review-card">
-          <div className="review-heading"><span>MADE TO YOUR MEASUREMENTS</span><strong>${estimate.total.toLocaleString()}</strong></div>
-          {[["Style","Pinch Pleat Drapery"],["Fabric","Oatmeal Belgian Flax Linen"],["Dimensions",`${config.width}″ W × ${config.height}″ H`],["Panels",config.panels === "pair" ? "Pair · 2 panels" : "Single panel"],["Mount",config.mount],["Lining",config.lining],["Operation",config.control],["Hardware",config.hardware],["Trim",config.trim],["Valance",config.valance],["Tiebacks",config.tiebacks]].map(([label,value], i) => <div className="review-row" key={label}><span><b>{String(i+1).padStart(2,"0")}</b>{label}</span><strong>{value}</strong><Link href={i < 4 ? pathFor("measurements") : pathFor(customizerSteps[Math.min(i-2,7)])}>EDIT</Link></div>)}
-          <div className="workroom-note"><b>HANDCRAFTED IN OUR ATELIER</b><p>Estimated dispatch in 4–6 weeks. Your order is reviewed by a drapery specialist before production begins.</p></div>
-          {added && <p className="added-message">✓ Added to your cart. <Link href="/cart">View cart →</Link></p>}
-        </div>}
+        <div className="accordion-heading"><span>BESPOKE CONFIGURATION</span><h2>Design Your Drapery</h2><p>Complete each section below. Your selections and price update automatically.</p></div>
+        <div className="config-accordion">{customizerSteps.map(target=>{const open=openStep===target;return <article id={`custom-step-${target}`} className={open?"open":""} key={target}><button type="button" className="accordion-trigger" onClick={()=>setOpenStep(target)} aria-expanded={open}><span>{meta[target].number}</span><div><b>{meta[target].eyebrow}</b>{!open&&<small>{summaryFor(target)}</small>}</div><em>{open?"−":"+"}</em></button>{open&&<div className="accordion-expanded"><h3>{meta[target].title}</h3>{renderExpanded(target)}{target!=="review"&&<button type="button" className="accordion-continue" disabled={target==="measurements"&&(!widthValid||!heightValid)} onClick={advance}>SAVE &amp; CONTINUE →</button>}</div>}</article>})}</div>
       </section>
     </main>
-    <div className="customizer-bar"><div><span>PINCH PLEAT DRAPERY</span><small>{config.width}″ × {config.height}″ · {config.panels === "pair" ? "Pair" : "Single"}</small></div><strong>${estimate.total.toLocaleString()}</strong><nav>{index > 0 && <button className="back" onClick={() => go(-1)}>← BACK</button>}{step === "review" ? <button onClick={add}>{added ? "ADDED TO CART ✓" : "ADD TO CART"}</button> : <button disabled={step === "measurements" && (!widthValid || !heightValid)} onClick={() => go(1)}>CONTINUE →</button>}</nav></div>
+    <div className="customizer-bar"><div><span>RIPPLE FOLD DRAPERY</span><small>Oatmeal Linen · {config.width}″ × {config.height}″ · {config.panels === "pair" ? "Pair" : "Single"}</small></div><strong><small>ESTIMATED TOTAL</small>${estimate.total.toLocaleString()}</strong><nav><button className="back" onClick={()=>setOpenStep(customizerSteps[Math.max(0,index-1)])} disabled={index===0}>← BACK</button>{openStep==="review"?<button onClick={add}>{added?"ADDED TO CART ✓":"ADD TO CART"}</button>:<button onClick={advance}>CONTINUE →</button>}</nav></div>
     <Footer />
   </div>;
 }

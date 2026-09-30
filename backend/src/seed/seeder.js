@@ -245,6 +245,43 @@ const seedDatabase = async () => {
       displayOrder: 3
     });
 
+    // Complete storefront taxonomy. These records drive both the header category
+    // pages and the Categories editor in the admin application.
+    const storefrontCategories = [
+      ['drapery','Drapery','Frame Every View','/figma/home-hero-hd.png',['Ripple Fold Drapery','Tailored Pleat Drapery','Pinch Pleat Drapery','Grommet Drapery','Inverted Pleat Drapery']],
+      ['shades','Shades','Shape the Light','/figma/cat-shades-new.png',['Flat Roman Shades','Relaxed Roman Shades','Cascade Shades','Woven Shades','Blackout Shades']],
+      ['valances','Valances & Cornices','Complete the Window','/figma/home-18.jpeg',['Upholstered Cornices','Soft Valances','Board-Mounted Valances','Swags & Cascades','Custom Pelmets']],
+      ['pillows','Pillows','Comfort, Composed','/figma/cat-cushions-new.png',['Decorative Pillows','Lumbar Pillows','Bolsters','Euro Shams','Outdoor Pillows']],
+      ['bedding','Bedding','Elevate Your Bedroom','/figma/product-linen-bedspread-hd.png',['Duvet Covers','Quilts & Coverlets','Comforters','Sheets','Blankets & Throws']],
+      ['table-linen','Table Linen','Set a Beautiful Table','/figma/cat-table-linen.png',['Tablecloths','Table Runners','Napkins','Placemats','Cocktail Linens']],
+      ['decor','Decor & More','Details Make the Room','/figma/cat-decor.png',['Throws','Decorative Objects','Baskets','Wall Decor','Hardware & Trims']],
+      ['fabrics','Fabrics & Swatches','Begin with the Fabric','/figma/home-04.jpeg',['Linen Swatches','Cotton Swatches','Velvet Swatches','Sheers','Trims & Passementerie']]
+    ];
+    for (const [slug, name, headline, heroImage, children] of storefrontCategories) {
+      const parent = await Category.create({
+        name, slug, description: `Explore the complete ${name.toLowerCase()} collection, thoughtfully designed and finished by our atelier.`,
+        image: { url: heroImage, alt: `${name} collection` }, displayOrder: storefrontCategories.findIndex(item => item[0] === slug) + 1,
+        storefront: { eyebrow: `THE ${name.toUpperCase()} COLLECTION`, headline, heroImage, guideTitle: `The ${name} Guide`, guideCopy: `Expert advice for choosing, styling and caring for ${name.toLowerCase()}.`, materialCards: ['Belgian Linen','Organic Cotton','Silk Velvet','Wool Blend'].map((material, index) => ({ name: material, slug: material.toLowerCase().replaceAll(' ','-'), description: 'Natural texture with lasting performance.', image: ['/figma/home-04.jpeg','/figma/home-03.jpeg','/figma/home-12.jpeg','/figma/home-18.jpeg'][index], price: 95 + index * 40 })) }
+      });
+      const childDocs = await Category.insertMany(children.map((child, index) => ({ name: child, slug: child.toLowerCase().replaceAll('&','and').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''), description: `Discover our atelier collection of ${child.toLowerCase()}.`, parentCategory: parent._id, image: { url: ['/figma/product-linen-bedspread-hd.png','/figma/home-15.jpeg','/figma/home-11.png','/figma/home-10.jpeg','/figma/home-01.jpeg'][index], alt: child }, displayOrder: index + 1 })));
+      const catalogImages=['/figma/product-linen-bedspread-hd.png','/figma/home-15.jpeg','/figma/home-11.png','/figma/home-10.jpeg','/figma/home-01.jpeg','/figma/home-17.jpeg'];
+      await Product.insertMany(childDocs.flatMap((child, childIndex) => [0,1].map(variant => ({
+        title:`${variant?'Heritage':'Signature'} ${child.name}`,slug:`${variant?'heritage':'signature'}-${child.slug}`,sku:`IHF-${slug.slice(0,3).toUpperCase()}-${childIndex+1}${variant}`,
+        shortDescription:`A refined ${child.name.toLowerCase()} design in premium natural fibres.`,description:`Thoughtfully developed by the India Home Furnishings atelier, this design combines natural texture, considered proportion and enduring performance.`,
+        category:parent._id,subCategory:child._id,basePrice:145+childIndex*35+variant*55,pricePerYard:68,fabricType:variant?'organic cotton':'linen',
+        colors:[{name:'Natural',hexCode:'#d8d0c1'},{name:'Ivory',hexCode:'#eee9df'},{name:'Slate',hexCode:'#777b78'}],styles:['contemporary','tailored'],features:['natural fibre','hand finished'],standardSizes:['Twin','Double','Queen','King','Custom Size'],
+        images:[0,1,2,3].map(offset=>({url:catalogImages[(childIndex+offset)%catalogImages.length],alt:`${child.name} view ${offset+1}`,isPrimary:offset===0})),
+        materialComposition:variant?'100% long-staple organic cotton':'100% European flax linen',weaveConstruction:'Yarn-dyed atelier weave',finishingProcess:'Garment washed for immediate softness',origin:'Jaipur, India · Master Atelier',weight:'260 GSM balanced year-round weight',
+        careInstructions:['Machine wash cold','Low tumble dry','Warm iron if desired','Do not bleach'],benefits:[{title:'Breathable',description:'Naturally regulates temperature for year-round comfort.',icon:'♧'},{title:'Softer Over Time',description:'Grows softer with every wash.',icon:'≈'},{title:'Impeccably Finished',description:'Hand-finished for longevity.',icon:'×'},{title:'Effortless Layering',description:'A balanced weight that layers beautifully.',icon:'○'}],
+        dimensions:[{size:'King',metric:'275 × 270 cm',imperial:'108 × 106 in'},{size:'Queen',metric:'240 × 260 cm',imperial:'94 × 102 in'},{size:'Double',metric:'220 × 240 cm',imperial:'87 × 94 in'}],
+        faqs:[{question:'How should I care for this piece?',answer:'Use a gentle cold cycle and follow the care label.'},{question:'Can I order a custom size?',answer:'Yes. Our atelier can tailor this design to your requirements.'}],
+        bundleItems:[{name:'Coordinating Pillow Pair',image:catalogImages[(childIndex+2)%catalogImages.length],price:95,variant:'Natural · Pair',selected:true},{name:'Layering Throw',image:catalogImages[(childIndex+3)%catalogImages.length],price:135,variant:'Natural'}],
+        reviews:[{title:'Beautiful material and finish',body:'The texture and tailoring exceeded our expectations.',author:'Verified Client',rating:5,date:'28 Sep 2026'}],ratingAverage:4.9,ratingCount:42,
+        editorial:{eyebrow:'THE ATELIER',title:'Crafted with Intention',description:'Natural materials, quiet detailing and meticulous workmanship come together in a piece intended to last.',image:catalogImages[(childIndex+4)%catalogImages.length]},
+        stockStatus:'in_stock',inventoryCount:24+childIndex,isCustomizable:slug==='drapery'||slug==='shades',isFeatured:childIndex<2,isActive:true
+      }))));
+    }
+
     // 4. Seed Dynamic Filters
     console.log('[Seeder] Creating Filter Attributes...');
     await FilterOption.insertMany([

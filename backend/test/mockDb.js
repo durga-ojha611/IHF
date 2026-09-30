@@ -47,11 +47,21 @@ class QueryMock {
       if (query && typeof query === 'object') {
         this._data = this._data.filter((item) => {
           for (const key of Object.keys(query)) {
+            if (key === '$or') {
+              const matches = query.$or.some((clause) => Object.entries(clause).some(([field, expected]) => {
+                const actual = item[field]?.toString();
+                if (expected?.$in) return expected.$in.some(value => value?.toString() === actual);
+                return expected?.toString() === actual;
+              }));
+              if (!matches) return false;
+              continue;
+            }
             if (key === 'isActive' && item.isActive !== query[key]) return false;
             if (key === 'isDeleted' && (item.isDeleted || false) !== (query[key] || false)) return false;
             if (key === 'isPublished' && item.isPublished !== query[key]) return false;
             if (key === 'parent' && item.parent !== query[key]) return false;
-            if (key === 'parentCategory' && item.parentCategory !== query[key]) return false;
+            if (key === 'parentCategory' && item.parentCategory?.toString() !== query[key]?.toString()) return false;
+            if (key === 'subCategory' && item.subCategory?.toString() !== query[key]?.toString()) return false;
             if (key === 'fabricType' && item.fabricType !== query[key]) return false;
             if (key === 'category' && item.category?.toString() !== query[key]?.toString()) return false;
             if (key === 'isFeatured' && item.isFeatured !== query[key]) return false;
@@ -99,6 +109,10 @@ class QueryMock {
   }
 
   select() {
+    return this;
+  }
+
+  lean() {
     return this;
   }
 
@@ -498,6 +512,22 @@ export function setupMockDatabase() {
     }
   ];
 
+  db.categories.push(...[
+    ['drapery','Drapery','Frame Every View','/figma/home-hero-hd.png'],
+    ['shades','Shades','Shape the Light','/figma/cat-shades-new.png'],
+    ['valances','Valances & Cornices','Complete the Window','/figma/home-18.jpeg'],
+    ['pillows','Pillows','Comfort, Composed','/figma/cat-cushions-new.png'],
+    ['bedding','Bedding','Elevate Your Bedroom','/figma/product-linen-bedspread-hd.png'],
+    ['table-linen','Table Linen','Set a Beautiful Table','/figma/cat-table-linen.png'],
+    ['decor','Decor & More','Details Make the Room','/figma/cat-decor.png'],
+    ['fabrics','Fabrics & Swatches','Begin with the Fabric','/figma/home-04.jpeg']
+  ].map(([slug,name,headline,heroImage],index)=>({
+    _id:`67000000000000000000000${index}`, name, slug, description:`Complete ${name.toLowerCase()} storefront collection.`,
+    parentCategory:null, displayOrder:index+1, isActive:true, isDeleted:false,
+    image:{url:heroImage,alt:name}, storefront:{eyebrow:`THE ${name.toUpperCase()} COLLECTION`,headline,heroImage,guideTitle:`The ${name} Guide`,guideCopy:`Expert advice for choosing ${name.toLowerCase()}.`,materialCards:['Belgian Linen','Organic Cotton','Silk Velvet','Wool Blend'].map((material,materialIndex)=>({name:material,slug:material.toLowerCase().replaceAll(' ','-'),description:'Natural texture with lasting performance.',image:['/figma/home-04.jpeg','/figma/home-03.jpeg','/figma/home-12.jpeg','/figma/home-18.jpeg'][materialIndex],price:95+materialIndex*40}))},
+    subcategories:[], save:async function(){return this;}
+  })));
+
   db.products = [
     {
       _id: prodId,
@@ -595,6 +625,45 @@ export function setupMockDatabase() {
       save: async function () { return this; }
     }
   ];
+
+  const childSets = {
+    drapery:['Ripple Fold Drapery','Tailored Pleat Drapery','Pinch Pleat Drapery','Grommet Drapery','Inverted Pleat Drapery'],
+    shades:['Flat Roman Shades','Relaxed Roman Shades','Cascade Shades','Woven Shades','Blackout Shades'],
+    valances:['Upholstered Cornices','Soft Valances','Board-Mounted Valances','Swags & Cascades','Custom Pelmets'],
+    pillows:['Decorative Pillows','Lumbar Pillows','Bolsters','Euro Shams','Outdoor Pillows'],
+    bedding:['Duvet Covers','Quilts & Coverlets','Comforters','Sheets','Blankets & Throws'],
+    'table-linen':['Tablecloths','Table Runners','Napkins','Placemats','Cocktail Linens'],
+    decor:['Throws','Decorative Objects','Baskets','Wall Decor','Hardware & Trims'],
+    fabrics:['Linen Swatches','Cotton Swatches','Velvet Swatches','Sheers','Trims & Passementerie']
+  };
+  const productImages=['/figma/product-linen-bedspread-hd.png','/figma/home-15.jpeg','/figma/home-11.png','/figma/home-10.jpeg','/figma/home-01.jpeg','/figma/home-17.jpeg','/figma/home-12.jpeg','/figma/home-18.jpeg'];
+  const slugifyLocal = value => value.toLowerCase().replaceAll('&','and').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+  Object.entries(childSets).forEach(([parentSlug, names], categoryIndex) => {
+    const parent = db.categories.find(category => category.slug === parentSlug);
+    names.forEach((name, childIndex) => {
+      const subId = `68${String(categoryIndex).padStart(2,'0')}${String(childIndex).padStart(2,'0')}000000000000000000`;
+      const slug = slugifyLocal(name);
+      db.categories.push({_id:subId,name,slug,description:`Explore our atelier collection of ${name.toLowerCase()}.`,parentCategory:parent._id,displayOrder:childIndex+1,isActive:true,isDeleted:false,image:{url:productImages[(categoryIndex+childIndex)%productImages.length],alt:name},save:async function(){return this;}});
+      [0,1].forEach(variant => {
+        const title = `${variant ? 'Heritage' : 'Signature'} ${name}`;
+        db.products.push({
+          _id:`69${String(categoryIndex).padStart(2,'0')}${String(childIndex).padStart(2,'0')}${variant}00000000000000000`, title, slug:slugifyLocal(title), sku:`IHF-${categoryIndex}${childIndex}${variant}`, shortDescription:`A refined ${name.toLowerCase()} design in premium natural fibres.`,
+          description:`Thoughtfully developed by the India Home Furnishings atelier, ${title} combines beautiful natural texture, considered proportion and enduring performance.`, category:parent._id, subCategory:subId,
+          basePrice:145+categoryIndex*25+childIndex*18+variant*55, compareAtPrice:null, currency:'USD', pricePerYard:68, fabricType:variant?'organic cotton':'linen',
+          colors:[{name:'Natural',hexCode:'#d8d0c1',inStock:true},{name:'Ivory',hexCode:'#eee9df',inStock:true},{name:'Slate',hexCode:'#777b78',inStock:true}], styles:['contemporary','tailored'], features:['natural-fibre','hand-finished'], standardSizes:['Twin','Double','Queen','King','Custom Size'],
+          images:[0,1,2,3].map((offset)=>({url:productImages[(categoryIndex+childIndex+offset)%productImages.length],alt:`${title} view ${offset+1}`,isPrimary:offset===0})),
+          materialComposition:variant?'100% long-staple organic cotton':'100% European flax linen',weaveConstruction:'Yarn-dyed atelier weave',finishingProcess:'Garment washed for immediate softness',origin:'Jaipur, India · Master Atelier',weight:'260 GSM balanced year-round weight',
+          careInstructions:['Machine wash cold','Low tumble dry','Warm iron if desired','Do not bleach'], benefits:[{title:'Breathable',description:'Naturally regulates temperature for year-round comfort.',icon:'♧'},{title:'Softer Over Time',description:'Grows softer and more supple with every wash.',icon:'≈'},{title:'Impeccably Finished',description:'Hand-finished details created for longevity.',icon:'×'},{title:'Effortless Layering',description:'A balanced weight designed to layer beautifully.',icon:'○'}],
+          dimensions:[{size:'King',metric:'275 × 270 cm',imperial:'108 × 106 in'},{size:'Queen',metric:'240 × 260 cm',imperial:'94 × 102 in'},{size:'Double',metric:'220 × 240 cm',imperial:'87 × 94 in'}],
+          faqs:[{question:'How should I care for this piece?',answer:'Follow the care label and use a gentle cold cycle for lasting softness.'},{question:'Can I order a custom size?',answer:'Yes. Our atelier can tailor this design to your exact requirements.'},{question:'Can I see the material first?',answer:'Yes. Order a swatch to review colour and texture in your own light.'}],
+          bundleItems:[{name:'Coordinating Pillow Pair',image:productImages[(categoryIndex+2)%productImages.length],price:95,variant:'Natural · Pair',selected:true},{name:'Layering Throw',image:productImages[(categoryIndex+3)%productImages.length],price:135,variant:'Natural',selected:false}],
+          reviews:[{title:'Beautiful material and finish',body:'The texture and tailoring exceeded our expectations.',author:'Verified Client',rating:5,date:'28 Sep 2026'},{title:'Perfectly considered',body:'It changed the entire feeling of the room.',author:'Verified Client',rating:5,date:'14 Sep 2026'}],ratingAverage:4.9,ratingCount:42,
+          editorial:{eyebrow:'THE ATELIER',title:'Crafted with Intention',description:'Natural materials, quiet detailing and meticulous workmanship come together in a piece intended to last.',image:productImages[(categoryIndex+4)%productImages.length]},
+          stockStatus:'in_stock',inventoryCount:24+childIndex,isCustomizable:parentSlug==='drapery'||parentSlug==='shades',isFeatured:childIndex<2,isActive:true,isDeleted:false,save:async function(){return this;}
+        });
+      });
+    });
+  });
 
   db.filterOptions = [
     {
@@ -792,7 +861,7 @@ export function setupMockDatabase() {
   // ----------------------------------------------------
   // Mock Category Model Methods
   // ----------------------------------------------------
-  Category.find = () => new QueryMock(db.categories.filter((c) => !c.isDeleted));
+  Category.find = (query = {}) => new QueryMock(db.categories.filter((c) => !c.isDeleted)).find(query);
   Category.findOne = (query) => {
     const cat = db.categories.find((c) => c.slug === query?.slug && !c.isDeleted);
     return new QueryMock(cat);
@@ -820,7 +889,7 @@ export function setupMockDatabase() {
   // ----------------------------------------------------
   // Mock Product Model Methods
   // ----------------------------------------------------
-  Product.find = () => new QueryMock(db.products.filter((p) => !p.isDeleted));
+  Product.find = (query = {}) => new QueryMock(db.products.filter((p) => !p.isDeleted)).find(query);
   Product.findOne = (query) => {
     const prod = db.products.find((p) => p.slug === query?.slug && !p.isDeleted);
     return new QueryMock(prod);

@@ -19,6 +19,10 @@ export const getAllProducts = catchAsync(async (req, res, next) => {
       filterQuery.$or = [{ category: { $in: categoryIds } }, { subCategory: { $in: categoryIds } }];
     }
   }
+  if (req.query.subcategory) {
+    const subCategoryDoc = await Category.findOne({ slug: req.query.subcategory });
+    if (subCategoryDoc) filterQuery.subCategory = subCategoryDoc._id;
+  }
 
   // Multi-select fabrics
   if (req.query.fabrics) {

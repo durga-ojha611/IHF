@@ -7,13 +7,13 @@ import { usePathname } from "next/navigation";
 import { useCommerce } from "./commerce-context";
 
 const nav = [
-  ["Drapery", "/drapery"],
-  ["Shades", "/roman-shades"],
-  ["Valances", "/valances"],
+  ["Drapery", "/products/drapery"],
+  ["Shades", "/products/shades"],
+  ["Valances", "/products/valances"],
   ["Pillows", "/products/pillows"],
   ["Bedding", "/products/bedding"],
   ["Table Linen", "/products/table-linen"],
-  ["Fabrics & Swatches", "/swatches"],
+  ["Fabrics & Swatches", "/products/fabrics"],
   ["Decor & More", "/products/decor"],
   ["Resources", "/resources"],
 ];

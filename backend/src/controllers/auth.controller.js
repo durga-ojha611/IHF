@@ -10,7 +10,8 @@ import { validatePasswordPolicy } from '../middlewares/security.middleware.js';
  * Sign Short-Lived Access Token (15 Minutes)
  */
 const signAccessToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+  const secret = process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'ihf-local-development-secret-change-in-production' : undefined);
+  return jwt.sign({ id }, secret, {
     expiresIn: process.env.JWT_EXPIRES_IN || '15m'
   });
 };

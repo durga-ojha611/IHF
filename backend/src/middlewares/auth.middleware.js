@@ -29,7 +29,7 @@ export const protect = catchAsync(async (req, res, next) => {
   // 3. Verify token
   let decoded;
   try {
-    decoded = jwt.verify(token, process.env.JWT_SECRET);
+    decoded = jwt.verify(token, process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'ihf-local-development-secret-change-in-production' : undefined));
   } catch (err) {
     if (err.name === 'TokenExpiredError') {
       return next(
@@ -96,7 +96,7 @@ export const optionalAuth = async (req, res, next) => {
 
   if (token) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'ihf-local-development-secret-change-in-production' : undefined));
       const user = await User.findById(decoded.id);
       if (user && !user.isDeleted) {
         req.user = user;

@@ -4,7 +4,7 @@
  */
 
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
 
 function getStoredToken(): string | null {
   if (typeof window === 'undefined') return null;
@@ -118,6 +118,13 @@ export const productsApi = {
   }
 };
 
+export const adminProductsApi = {
+  async getAll() { return apiRequest('/admin/products?limit=100'); },
+  async create(payload: Record<string, unknown>) { return apiRequest('/admin/products', { method: 'POST', body: JSON.stringify(payload) }); },
+  async update(id: string, payload: Record<string, unknown>) { return apiRequest(`/admin/products/${id}`, { method: 'PATCH', body: JSON.stringify(payload) }); },
+  async remove(id: string) { return apiRequest(`/admin/products/${id}`, { method: 'DELETE' }); }
+};
+
 // ---------------------------------------------
 // Categories Endpoints
 // ---------------------------------------------
@@ -129,6 +136,19 @@ export const categoriesApi = {
   async getBySlug(slug: string) {
     return apiRequest(`/categories/${slug}`);
   }
+};
+
+export type AdminCategoryPayload = {
+  name: string; slug?: string; description?: string; parentCategory?: string | { _id?: string; name?: string } | null;
+  displayOrder?: number; isActive?: boolean; image?: { url: string; alt?: string };
+  storefront?: { eyebrow?: string; headline?: string; heroImage?: string; guideTitle?: string; guideCopy?: string };
+};
+
+export const adminCategoriesApi = {
+  async getAll() { return apiRequest('/admin/categories'); },
+  async create(payload: AdminCategoryPayload) { return apiRequest('/admin/categories', { method: 'POST', body: JSON.stringify(payload) }); },
+  async update(id: string, payload: Partial<AdminCategoryPayload>) { return apiRequest(`/admin/categories/${id}`, { method: 'PATCH', body: JSON.stringify(payload) }); },
+  async remove(id: string) { return apiRequest(`/admin/categories/${id}`, { method: 'DELETE' }); }
 };
 
 // ---------------------------------------------

@@ -23,6 +23,12 @@ const categorySchema = new mongoose.Schema(
       url: { type: String, default: '' },
       alt: { type: String, default: '' }
     },
+    storefront: {
+      eyebrow: { type: String, default: '' }, headline: { type: String, default: '' }, heroImage: { type: String, default: '' },
+      guideTitle: { type: String, default: '' }, guideCopy: { type: String, default: '' },
+      featuredProductIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+      materialCards: [{ name: String, slug: String, description: String, image: String, price: { type: Number, default: 0 } }]
+    },
     parentCategory: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',

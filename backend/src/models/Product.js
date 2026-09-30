@@ -65,6 +65,8 @@ const productSchema = new mongoose.Schema(
       required: [true, 'Starting base price is required'],
       min: [0, 'Base price cannot be negative']
     },
+    compareAtPrice: { type: Number, default: null },
+    currency: { type: String, default: 'USD' },
     pricePerYard: {
       type: Number,
       default: 45,
@@ -98,6 +100,16 @@ const productSchema = new mongoose.Schema(
         trim: true
       }
     ],
+    materialComposition: { type: String, default: '' }, weaveConstruction: { type: String, default: '' },
+    finishingProcess: { type: String, default: '' }, origin: { type: String, default: '' }, weight: { type: String, default: '' },
+    careInstructions: [{ type: String, trim: true }],
+    benefits: [{ title: String, description: String, icon: String }],
+    dimensions: [{ size: String, metric: String, imperial: String }],
+    faqs: [{ question: String, answer: String }],
+    bundleItems: [{ name: String, image: String, price: Number, variant: String, selected: { type: Boolean, default: false } }],
+    reviews: [{ title: String, body: String, author: String, rating: { type: Number, default: 5 }, date: String }],
+    ratingAverage: { type: Number, default: 0 }, ratingCount: { type: Number, default: 0 },
+    editorial: { eyebrow: String, title: String, description: String, image: String },
     images: [productImageSchema],
     stockStatus: {
       type: String,
