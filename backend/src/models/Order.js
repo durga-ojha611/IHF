@@ -38,6 +38,11 @@ const customCurtainSpecsSchema = new mongoose.Schema(
       hexCode: { type: String, default: '' }
     },
     fabricType: { type: String, required: true },
+    fabricName: { type: String, default: '' },
+    fabricCode: { type: String, default: '' },
+    roomLabel: { type: String, default: '' },
+    motorization: { type: String, default: 'Manual' },
+    notes: { type: String, default: '' },
     panelConfiguration: {
       type: String,
       enum: ['single_panel', 'pair'],
@@ -155,9 +160,25 @@ const orderSchema = new mongoose.Schema(
       paymentMethod: { type: String, default: 'card' },
       paidAt: Date
     },
+    orderType: {
+      type: String,
+      default: 'Custom Drapery'
+    },
     fulfillmentStatus: {
       type: String,
-      enum: ['Pending', 'Manufacturing', 'Shipped', 'Delivered', 'Cancelled'],
+      enum: [
+        'Pending',
+        'Payment Pending',
+        'Sizing Confirmation',
+        'Awaiting Fabric',
+        'Production Pending',
+        'Manufacturing',
+        'Delayed',
+        'Quality Check',
+        'Shipped',
+        'Delivered',
+        'Cancelled'
+      ],
       default: 'Pending',
       index: true
     },
@@ -174,6 +195,11 @@ const orderSchema = new mongoose.Schema(
       default: ''
     },
     isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true
+    },
+    isArchived: {
       type: Boolean,
       default: false,
       index: true

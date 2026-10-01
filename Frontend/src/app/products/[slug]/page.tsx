@@ -1,23 +1,21 @@
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Footer, Header } from "@/components/site-chrome";
-import { CatalogCard, getCatalogCategory } from "@/lib/catalog";
+import { CatalogCard, getCatalogCategory, getProductRecord } from "@/lib/catalog";
 import { CATEGORY_CUSTOMIZER_CONFIGS } from "@/lib/customizer-configs";
 import "./category.css";
 
 const CUSTOMIZABLE_SLUGS = ["drapery", "shades", "valances"];
 
 function ProductCard({
-  item,
-  isCustomizable,
-  customizerUrl
+  item
 }: {
   item: CatalogCard;
-  isCustomizable: boolean;
-  customizerUrl: string;
+  isCustomizable?: boolean;
+  customizerUrl?: string;
 }) {
-  const targetHref = isCustomizable ? customizerUrl : `/product/${item.slug}`;
+  const targetHref = `/product/${item.slug}`;
 
   return (
     <Link className="cp-product" href={targetHref}>
@@ -28,7 +26,7 @@ function ProductCard({
       <h3>{item.name}</h3>
       <p>{item.description}</p>
       <b>From ${item.price}</b>
-      <span>{isCustomizable ? "CUSTOMIZE THIS STYLE ↗" : "EXPLORE PRODUCT ↗"}</span>
+      <span>EXPLORE PRODUCT ↗</span>
     </Link>
   );
 }
@@ -38,8 +36,12 @@ export default async function Products({ params }: { params: Promise<{ slug: str
   const config = CATEGORY_CUSTOMIZER_CONFIGS[slug];
   const backendCategory = await getCatalogCategory(slug).catch(() => null);
 
-  // If neither config nor backend category found, 404
+  // If neither config nor backend category found, check if it's a product
   if (!config && !backendCategory) {
+    const product = await getProductRecord(slug);
+    if (product) {
+      redirect(`/product/${slug}`);
+    }
     notFound();
   }
 
@@ -100,6 +102,7 @@ export default async function Products({ params }: { params: Promise<{ slug: str
             priority
             quality={92}
             sizes="100vw"
+            style={{ objectFit: "cover", objectPosition: "center" }}
           />
           <div>
             <span>{eyebrow}</span>
@@ -132,10 +135,10 @@ export default async function Products({ params }: { params: Promise<{ slug: str
           </header>
           <div>
             {subcategories.map((item) => {
-              const itemHref = isCustomizable ? customizerUrl : "#collection";
+              const itemHref = `/product/${item.slug}`;
               return (
                 <Link href={itemHref} key={item.slug}>
-                  <Image src={item.image} alt={item.name} width={310} height={330} />
+                  <Image unoptimized src={item.image} alt={item.name} width={310} height={330} />
                   <span>{item.name}</span>
                 </Link>
               );

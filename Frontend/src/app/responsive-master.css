@@ -234,7 +234,16 @@ img, video, canvas, svg {
 
   /* Homepage Hero */
   .home-hero, .hero {
-    height: 520px !important;
+    min-height: 100vh !important;
+    height: 100vh !important;
+    min-height: 100svh !important;
+    height: 100svh !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
   }
   .home-hero-copy, .hero-copy {
     left: 18px !important;
@@ -775,7 +784,16 @@ img, video, canvas, svg {
     margin-inline: auto !important;
   }
   .home-hero, .hero {
-    height: 760px !important;
+    min-height: 100vh !important;
+    height: 100vh !important;
+    min-height: 100svh !important;
+    height: 100svh !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
   }
   .home-hero-copy, .hero-copy {
     left: max(calc((100% - 1440px)/2), 60px) !important;

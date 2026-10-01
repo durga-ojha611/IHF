@@ -55,6 +55,11 @@ const activityLogSchema = new mongoose.Schema(
     userAgent: {
       type: String,
       default: ''
+    },
+    isArchived: {
+      type: Boolean,
+      default: false,
+      index: true
     }
   },
   {

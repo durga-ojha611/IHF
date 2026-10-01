@@ -1,0 +1,655 @@
+/* Favourites & Wishlist Luxury Atelier Styles */
+.favourites-page {
+  background-color: #fbf9f5;
+  color: #1c1917;
+  min-height: 100vh;
+}
+
+.favourites-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+/* Breadcrumb Navigation */
+.fav-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: #8c827a;
+  margin-bottom: 24px;
+}
+
+.fav-breadcrumb a {
+  color: #8c827a;
+  transition: color 0.15s;
+}
+
+.fav-breadcrumb a:hover {
+  color: #1c1917;
+}
+
+.fav-breadcrumb span {
+  color: #d1cbc1;
+}
+
+/* Hero Header Card */
+.fav-hero-card {
+  position: relative;
+  background: #f5f2ea;
+  border: 1px solid #e5e0d4;
+  border-radius: 4px;
+  padding: 38px 44px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  overflow: hidden;
+}
+
+.fav-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 620px;
+}
+
+.fav-hero-eyebrow {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
+  color: #8f7642;
+  margin-bottom: 10px;
+}
+
+.fav-hero-title {
+  font-family: var(--font-serif), "Cormorant Garamond", Georgia, serif;
+  font-size: 42px;
+  font-weight: 400;
+  line-height: 1.1;
+  color: #1c1917;
+  margin: 0 0 12px;
+}
+
+.fav-hero-subtitle {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #57534e;
+  margin: 0;
+}
+
+.fav-hero-actions {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.fav-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #dcd7cc;
+  color: #1c1917;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  padding: 13px 22px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.fav-btn-secondary:hover {
+  background: #faf8f5;
+  border-color: #b5ac99;
+}
+
+.fav-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #1c1917;
+  border: 1px solid #1c1917;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  padding: 13px 24px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.fav-btn-primary:hover {
+  background: #332f2b;
+  border-color: #332f2b;
+}
+
+/* Background Monogram Watermark */
+.fav-hero-watermark {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 160px;
+  font-weight: 300;
+  color: #8f7642;
+  opacity: 0.07;
+  letter-spacing: -6px;
+  user-select: none;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Filter & Sort Toolbar */
+.fav-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #e5e1d8;
+  border-radius: 4px;
+  padding: 14px 22px;
+  margin-bottom: 30px;
+}
+
+.fav-count-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #1c1917;
+}
+
+.fav-count-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8f7642;
+}
+
+.fav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fav-tab-btn {
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: #78716c;
+  padding: 6px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.fav-tab-btn:hover {
+  color: #1c1917;
+  background: #f5f2ea;
+}
+
+.fav-tab-btn.active {
+  background: #1c1917;
+  color: #ffffff;
+}
+
+.fav-sort-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  color: #78716c;
+}
+
+.fav-sort-select {
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #1c1917;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Main Favourites Items Grid (3 Columns) */
+.fav-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-bottom: 56px;
+}
+
+/* Favourites Product Card */
+.fav-card {
+  background: #ffffff;
+  border: 1px solid #e8e4dc;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.fav-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+}
+
+.fav-card-image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.1 / 1;
+  background: #f4f1eb;
+  overflow: hidden;
+}
+
+.fav-card-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.fav-card:hover .fav-card-image-wrap img {
+  transform: scale(1.04);
+}
+
+/* Card Badges & Heart */
+.fav-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 3;
+  background: rgba(28, 25, 23, 0.88);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 2px;
+}
+
+.fav-heart-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b91c1c;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.fav-heart-btn:hover {
+  transform: scale(1.1);
+  background: #fef2f2;
+}
+
+/* Card Body */
+.fav-card-body {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.fav-card-category {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #8f7642;
+  margin-bottom: 6px;
+}
+
+.fav-card-title {
+  font-family: var(--font-serif), "Cormorant Garamond", Georgia, serif;
+  font-size: 21px;
+  font-weight: 400;
+  color: #1c1917;
+  margin: 0 0 10px;
+  line-height: 1.25;
+}
+
+/* Swatches & Rating Row */
+.fav-card-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.fav-swatch-dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.fav-swatch-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.fav-rating {
+  font-size: 11px;
+  color: #d97706;
+  letter-spacing: 1px;
+}
+
+/* Card Bottom Action Bar */
+.fav-card-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px dashed #e8e4dc;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fav-price-range {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1c1917;
+  letter-spacing: -0.2px;
+}
+
+.fav-add-cart-btn {
+  background: #f5f2ea;
+  border: 1px solid #dcd7cc;
+  color: #1c1917;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.fav-add-cart-btn:hover {
+  background: #1c1917;
+  color: #ffffff;
+  border-color: #1c1917;
+}
+
+/* Empty Favourites State */
+.fav-empty-box {
+  background: #ffffff;
+  border: 1px solid #e8e4dc;
+  border-radius: 4px;
+  padding: 64px 32px;
+  text-align: center;
+  max-width: 540px;
+  margin: 40px auto;
+}
+
+.fav-empty-icon {
+  font-size: 38px;
+  color: #dcd7cc;
+  margin-bottom: 16px;
+}
+
+.fav-empty-box h2 {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 28px;
+  color: #1c1917;
+  margin: 0 0 10px;
+}
+
+.fav-empty-box p {
+  font-size: 14px;
+  color: #78716c;
+  margin: 0 0 24px;
+}
+
+/* Design Consultation & Custom Swatches Section */
+.fav-consult-banner {
+  background: #f3f1ed;
+  border: 1px solid #e5e0d4;
+  border-radius: 4px;
+  padding: 44px 52px;
+  margin-bottom: 64px;
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 44px;
+  align-items: center;
+}
+
+.fav-consult-left-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #87784d;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.fav-consult-left-title {
+  font-family: var(--font-serif), "Cormorant Garamond", Georgia, serif;
+  font-size: 38px;
+  font-weight: 400;
+  color: #1c1917;
+  margin: 0 0 14px;
+  line-height: 1.15;
+}
+
+.fav-consult-left-copy {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #78716c;
+  margin: 0 0 26px;
+  max-width: 530px;
+}
+
+.fav-consult-buttons {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* Right Made to Measure Box */
+.fav-consult-right-card {
+  background: #ffffff;
+  border: 1px solid #e5e0d4;
+  border-radius: 4px;
+  padding: 30px 34px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+}
+
+.fav-consult-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.fav-compass-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #1c1917;
+  margin-top: 2px;
+}
+
+.fav-consult-right-card h3 {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 23px;
+  font-weight: 500;
+  color: #1c1917;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.fav-consult-right-card small {
+  display: block;
+  font-size: 11px;
+  color: #78716c;
+  margin-top: 3px;
+}
+
+.fav-consult-right-card p {
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: #57534e;
+  margin: 0 0 20px;
+}
+
+.fav-consult-link {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: #1c1917;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.fav-consult-link:hover {
+  color: #87784d;
+}
+
+/* Recently Viewed Section */
+.fav-recently-viewed-section {
+  margin-bottom: 40px;
+}
+
+.fav-section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.fav-section-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
+  color: #8f7642;
+  margin-bottom: 6px;
+}
+
+.fav-section-title {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 32px;
+  font-weight: 400;
+  color: #1c1917;
+  margin: 0;
+}
+
+.fav-slider-arrows {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fav-arrow-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #dcd7cc;
+  background: #ffffff;
+  color: #1c1917;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.fav-arrow-btn:hover {
+  background: #1c1917;
+  color: #ffffff;
+  border-color: #1c1917;
+}
+
+.fav-recently-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .fav-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .fav-recently-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .fav-consult-banner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .fav-hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .fav-grid,
+  .fav-recently-grid {
+    grid-template-columns: 1fr;
+  }
+  .fav-toolbar {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .fav-hero-title {
+    font-size: 32px;
+  }
+  .fav-hero-card {
+    padding: 24px;
+  }
+  .fav-consult-banner {
+    padding: 28px 24px;
+  }
+}

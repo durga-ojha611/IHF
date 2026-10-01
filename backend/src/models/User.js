@@ -70,6 +70,11 @@ const userSchema = new mongoose.Schema(
       default: false,
       index: true
     },
+    isArchived: {
+      type: Boolean,
+      default: false,
+      index: true
+    },
     deletedAt: {
       type: Date,
       default: null

@@ -1,1050 +1,798 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Header, Footer } from "@/components/site-chrome";
 import { swatchesApi } from "@/lib/api";
-import { useAuth } from "@/components/auth-context";
 import "./swatches.css";
 
-// Interface directly mapped to Mongoose SwatchOrder Schema
 export interface SwatchItem {
-  _id: string;
+  id: string;
+  name: string;
   fabricName: string;
   colorName: string;
-  hexCode?: string;
-  material?: string;
-  image?: { url: string } | string;
+  priceGroup: "A" | "B" | "C";
+  pricePerMeter: number;
+  materialCategory: "cotton" | "linen" | "velvet" | "silk" | "sheer" | "wool";
+  image: string;
+  hexCode: string;
 }
 
-export interface SwatchOrderRecord {
-  _id?: string;
-  orderNumber: string;
-  user?: any;
-  customerInfo: {
-    name: string;
-    email: string;
-    phone: string;
-    shippingAddress: {
-      street: string;
-      apartment: string;
-      city: string;
-      state: string;
-      zipCode: string;
-      country: string;
-    };
-  };
-  swatches: Array<{
-    swatch: string;
-    fabricName: string;
-    colorName: string;
-    hexCode: string;
-    image: string;
-  }>;
-  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
-  carrier?: string;
-  trackingNumber?: string;
-  fulfillmentNotes?: string;
-  totalCost?: number;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-const DEFAULT_SWATCHES: SwatchItem[] = [
+const ALL_SWATCHES: SwatchItem[] = [
+  // Group 1: Cotton & Blends / Linen
   {
-    _id: "660000000000000000000007",
-    fabricName: "Belgian Flax Linen",
-    colorName: "Champagne Oat",
-    hexCode: "#E6D7B9",
-    material: "100% Belgian Flax Linen · 320 GSM",
-    image: "/figma/home-02.png"
+    id: "white-linen",
+    name: "White Linen",
+    fabricName: "Belgian Pure Flax",
+    colorName: "Alabaster White",
+    priceGroup: "A",
+    pricePerMeter: 35,
+    materialCategory: "linen",
+    image: "/curtains/fabric-linen.png",
+    hexCode: "#FFFFFF"
   },
   {
-    _id: "660000000000000000000072",
+    id: "clay-linen",
+    name: "Clay Linen",
+    fabricName: "Heavyweight Linen",
+    colorName: "Earthen Clay",
+    priceGroup: "A",
+    pricePerMeter: 35,
+    materialCategory: "linen",
+    image: "/figma/home-02.png",
+    hexCode: "#C87D55"
+  },
+  {
+    id: "slate-flax",
+    name: "Slate Flax",
+    fabricName: "Stonewashed Flax",
+    colorName: "Slate Grey",
+    priceGroup: "B",
+    pricePerMeter: 45,
+    materialCategory: "linen",
+    image: "/figma/home-13.png",
+    hexCode: "#4A5568"
+  },
+  {
+    id: "oatmeal-linen",
+    name: "Oatmeal Linen",
+    fabricName: "Organic Oatmeal Flax",
+    colorName: "Natural Oat",
+    priceGroup: "A",
+    pricePerMeter: 35,
+    materialCategory: "linen",
+    image: "/figma/cat-bedding.png",
+    hexCode: "#E6D7B9"
+  },
+  {
+    id: "sand-wool-blend",
+    name: "Sand Wool Blend",
+    fabricName: "Artisan Wool Twill",
+    colorName: "Warm Sand",
+    priceGroup: "B",
+    pricePerMeter: 55,
+    materialCategory: "wool",
+    image: "/figma/home-03.jpeg",
+    hexCode: "#D4CCBD"
+  },
+  {
+    id: "sky-cotton",
+    name: "Sky Cotton",
+    fabricName: "Brushed Percale Cotton",
+    colorName: "Soft Sky",
+    priceGroup: "A",
+    pricePerMeter: 35,
+    materialCategory: "cotton",
+    image: "/figma/cat-cushions.png",
+    hexCode: "#90CDF4"
+  },
+
+  // Group 2: Velvet & Silk & Sheer
+  {
+    id: "terracotta-cotton",
+    name: "Terracotta Cotton",
+    fabricName: "Artisan Cotton Twill",
+    colorName: "Terracotta Rust",
+    priceGroup: "A",
+    pricePerMeter: 38,
+    materialCategory: "cotton",
+    image: "/figma/home-01.jpeg",
+    hexCode: "#B85D3B"
+  },
+  {
+    id: "sage-linen",
+    name: "Sage Linen",
+    fabricName: "Washed Belgian Linen",
+    colorName: "Botanical Sage",
+    priceGroup: "A",
+    pricePerMeter: 38,
+    materialCategory: "linen",
+    image: "/curtains/fabric-sheer.png",
+    hexCode: "#7A9A7B"
+  },
+  {
+    id: "forest-velvet",
+    name: "Forest Velvet",
     fabricName: "Monaco Royal Velvet",
     colorName: "Emerald Forest",
-    hexCode: "#046307",
-    material: "Heavyweight Cotton Velvet · 450 GSM",
-    image: "/figma/home-13.png"
+    priceGroup: "C",
+    pricePerMeter: 65,
+    materialCategory: "velvet",
+    image: "/curtains/fabric-velvet.png",
+    hexCode: "#046307"
   },
   {
-    _id: "660000000000000000000073",
+    id: "charcoal-velvet",
+    name: "Charcoal Velvet",
     fabricName: "Monaco Royal Velvet",
-    colorName: "Midnight Navy",
-    hexCode: "#002366",
-    material: "Heavyweight Cotton Velvet · 450 GSM",
-    image: "/figma/home-06.jpeg"
+    colorName: "Midnight Charcoal",
+    priceGroup: "C",
+    pricePerMeter: 65,
+    materialCategory: "velvet",
+    image: "/curtains/fabric-blackout.png",
+    hexCode: "#2D3748"
   },
   {
-    _id: "660000000000000000000074",
-    fabricName: "Artisan Sheer Voile",
-    colorName: "Pure Ivory",
-    hexCode: "#FFFFF0",
-    material: "100% Fine Spun Linen Sheer · 140 GSM",
-    image: "/figma/home-17.jpeg"
+    id: "slub-raw-silk",
+    name: "Slub Raw Silk",
+    fabricName: "Mulberry Slub Silk",
+    colorName: "Golden Honey",
+    priceGroup: "B",
+    pricePerMeter: 58,
+    materialCategory: "silk",
+    image: "/curtains/fabric-silk.png",
+    hexCode: "#D69E2E"
   },
   {
-    _id: "660000000000000000000075",
-    fabricName: "Raw Silk Shantung",
-    colorName: "Alabaster Pearl",
-    hexCode: "#F5F2EB",
-    material: "100% Mulberry Slub Silk · 220 GSM",
-    image: "/figma/home-03.jpeg"
-  },
-  {
-    _id: "660000000000000000000076",
-    fabricName: "Heavyweight Bouclé Weave",
-    colorName: "Terracotta Clay",
-    hexCode: "#C87D55",
-    material: "Wool & Cotton Textured Bouclé · 520 GSM",
-    image: "/figma/home-18.jpeg"
+    id: "boucle-cream",
+    name: "Bouclé Cream",
+    fabricName: "Textured Wool Bouclé",
+    colorName: "Ivory Cream",
+    priceGroup: "B",
+    pricePerMeter: 52,
+    materialCategory: "wool",
+    image: "/curtains/fabric-jacquard.png",
+    hexCode: "#FAF5EF"
   }
 ];
 
-const COUNTRY_OPTIONS = [
-  { code: "US", name: "United States (Complimentary Courier)" },
-  { code: "CA", name: "Canada (Express Air)" },
-  { code: "GB", name: "United Kingdom (Express Courier)" },
-  { code: "AU", name: "Australia (DHL Express)" },
-  { code: "IN", name: "India (Domestic Atelier Express)" },
-  { code: "AE", name: "United Arab Emirates (Air Courier)" },
-  { code: "FR", name: "France (Chronopost Express)" },
-  { code: "DE", name: "Germany (DHL Express)" }
-];
+export default function FabricsAndSwatchesPage() {
+  const [selectedFilter, setSelectedFilter] = useState<string>("ALL");
+  const [selectedSwatches, setSelectedSwatches] = useState<SwatchItem[]>([]);
+  const [activeModal, setActiveModal] = useState<boolean>(false);
+  const [zoomSwatch, setZoomSwatch] = useState<SwatchItem | null>(null);
 
-export default function SwatchesPage() {
-  const { user } = useAuth();
+  // Customer shipping form state
+  const [customerInfo, setCustomerInfo] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    street: "",
+    apartment: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    country: "United States"
+  });
 
-  // Active View Tab: "order" | "track" | "history"
-  const [activeTab, setActiveTab] = useState<"order" | "track" | "history">("order");
-
-  // Swatch Catalog & Selection
-  const [catalog, setCatalog] = useState<SwatchItem[]>(DEFAULT_SWATCHES);
-  const [selectedSwatches, setSelectedSwatches] = useState<SwatchItem[]>([DEFAULT_SWATCHES[0]]);
-  const [loadingCatalog, setLoadingCatalog] = useState(true);
-
-  // Form Fields mapping directly to Mongoose schema: customerInfo
-  const defaultAddr = user?.addresses?.[0];
-  const [name, setName] = useState(defaultAddr?.fullName || user?.name || "");
-  const [email, setEmail] = useState(user?.email || "");
-  const [phone, setPhone] = useState(user?.phone || "+1 (555) 234-5678");
-
-  // shippingAddress
-  const [street, setStreet] = useState(defaultAddr?.street || "");
-  const [apartment, setApartment] = useState((defaultAddr as any)?.apartment || "");
-  const [city, setCity] = useState(defaultAddr?.city || "");
-  const [state, setState] = useState(defaultAddr?.state || "");
-  const [zipCode, setZipCode] = useState(defaultAddr?.zipCode || "");
-  const [country, setCountry] = useState(defaultAddr?.country || "US");
-
-  // Order Submission State
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [orderResult, setOrderResult] = useState<SwatchOrderRecord | null>(null);
+  const [orderSuccess, setOrderSuccess] = useState<string | null>(null);
+  const [orderError, setOrderError] = useState<string | null>(null);
 
-  // Track Order Tab State
-  const [lookupNumber, setLookupNumber] = useState("");
-  const [lookupResult, setLookupResult] = useState<SwatchOrderRecord | null>(null);
-  const [lookupLoading, setLookupLoading] = useState(false);
-  const [lookupError, setLookupError] = useState<string | null>(null);
+  // Filter logic
+  const filteredSwatches = ALL_SWATCHES.filter((swatch) => {
+    if (selectedFilter === "ALL") return true;
+    if (selectedFilter === "LINEN") return swatch.materialCategory === "linen";
+    if (selectedFilter === "SHEER") return swatch.materialCategory === "sheer";
+    if (selectedFilter === "WOOL + VELVET") return swatch.materialCategory === "wool" || swatch.materialCategory === "velvet";
+    if (selectedFilter === "COTTON") return swatch.materialCategory === "cotton";
+    if (selectedFilter === "SILK") return swatch.materialCategory === "silk";
+    return true;
+  });
 
-  // My Orders Tab State
-  const [myOrders, setMyOrders] = useState<SwatchOrderRecord[]>([]);
-  const [loadingMyOrders, setLoadingMyOrders] = useState(false);
+  const isSelected = (id: string) => selectedSwatches.some((s) => s.id === id);
 
-  // Load Catalog Swatches
-  useEffect(() => {
-    swatchesApi
-      .getAll()
-      .then((res) => {
-        const list = res.data?.swatches;
-        if (Array.isArray(list) && list.length > 0) {
-          setCatalog(list);
-          if (selectedSwatches.length === 0) {
-            setSelectedSwatches([list[0]]);
-          }
-        }
-      })
-      .catch(() => {
-        // Fallback already initialized
-      })
-      .finally(() => setLoadingCatalog(false));
-  }, []);
-
-  // Pre-fill user data if user signs in
-  useEffect(() => {
-    if (user) {
-      if (!name) setName(user.name || "");
-      if (!email) setEmail(user.email || "");
-      if (!phone && user.phone) setPhone(user.phone);
-      if (user.addresses && user.addresses.length > 0) {
-        const addr = user.addresses[0];
-        if (!street) setStreet(addr.street || "");
-        if (!apartment) setApartment((addr as any)?.apartment || "");
-        if (!city) setCity(addr.city || "");
-        if (!state) setState(addr.state || "");
-        if (!zipCode) setZipCode(addr.zipCode || "");
-        if (addr.country) setCountry(addr.country);
-      }
-    }
-  }, [user]);
-
-  // Load user's swatch orders if on history tab
-  useEffect(() => {
-    if (activeTab === "history" && user) {
-      setLoadingMyOrders(true);
-      swatchesApi
-        .getMySwatchOrders()
-        .then((res) => {
-          setMyOrders(res.data?.orders || []);
-        })
-        .catch(() => {
-          setMyOrders([]);
-        })
-        .finally(() => setLoadingMyOrders(false));
-    }
-  }, [activeTab, user]);
-
-  // Toggle swatch selection (limit 4)
-  const toggleSwatch = (item: SwatchItem) => {
-    const isSelected = selectedSwatches.some((s) => s._id === item._id);
-    if (isSelected) {
-      setSelectedSwatches(selectedSwatches.filter((s) => s._id !== item._id));
-      setError(null);
+  const toggleSwatch = (swatch: SwatchItem) => {
+    if (isSelected(swatch.id)) {
+      setSelectedSwatches(selectedSwatches.filter((s) => s.id !== swatch.id));
     } else {
       if (selectedSwatches.length >= 4) {
-        setError("You can select up to 4 complimentary swatches per presentation kit.");
+        alert("You have reached the maximum limit of 4 swatches for your Sample Kit.");
         return;
       }
-      setSelectedSwatches([...selectedSwatches, item]);
-      setError(null);
+      setSelectedSwatches([...selectedSwatches, swatch]);
     }
   };
 
-  // Submit Order directly matching Mongoose SwatchOrder schema
-  const handleOrderSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (selectedSwatches.length === 0) {
-      setError("Please select at least 1 fabric swatch for your complimentary sample kit.");
+  const handleAddBundle = (swatchIds: string[]) => {
+    const toAdd = ALL_SWATCHES.filter((s) => swatchIds.includes(s.id) && !isSelected(s.id));
+    if (selectedSwatches.length + toAdd.length > 4) {
+      alert("Selecting this bundle exceeds your 4-swatch kit limit. Please clear some items first.");
       return;
     }
+    setSelectedSwatches([...selectedSwatches, ...toAdd]);
+  };
 
+  const handleSubmitOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedSwatches.length === 0) return;
     setSubmitting(true);
-    setError(null);
+    setOrderError(null);
 
     const payload = {
       customerInfo: {
-        name: name.trim(),
-        email: email.trim(),
-        phone: phone.trim(),
+        name: customerInfo.name,
+        email: customerInfo.email,
+        phone: customerInfo.phone,
         shippingAddress: {
-          street: street.trim(),
-          apartment: apartment.trim(),
-          city: city.trim(),
-          state: state.trim(),
-          zipCode: zipCode.trim(),
-          country: country.trim()
+          street: customerInfo.street,
+          apartment: customerInfo.apartment,
+          city: customerInfo.city,
+          state: customerInfo.state,
+          zipCode: customerInfo.zipCode,
+          country: customerInfo.country
         }
       },
-      swatchIds: selectedSwatches.map((s) => s._id),
       customSwatches: selectedSwatches.map((s) => ({
-        swatch: s._id,
+        swatchId: s.id,
         fabricName: s.fabricName,
         colorName: s.colorName,
-        hexCode: s.hexCode || "#E6D7B9",
-        image: typeof s.image === "string" ? s.image : s.image?.url || "/figma/home-02.png"
-      })),
-      totalCost: 0
+        hexCode: s.hexCode,
+        image: s.image
+      }))
     };
 
     try {
       const res = await swatchesApi.requestSampleKit(payload);
-      const createdOrder = res.data?.swatchOrder;
-      if (createdOrder) {
-        setOrderResult(createdOrder);
+      if (res.error) {
+        setOrderError(res.error);
       } else {
-        // Fallback local mockup for immediate gratification
-        setOrderResult({
-          orderNumber: `SW-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`,
-          customerInfo: payload.customerInfo,
-          swatches: payload.customSwatches,
-          status: "pending",
-          carrier: "USPS Priority Courier",
-          trackingNumber: `9400 1118 9956 ${Math.floor(1000 + Math.random() * 9000)}`,
-          totalCost: 0,
-          createdAt: new Date().toISOString()
-        });
+        setOrderSuccess(res.data?.orderNumber || "SW-" + Math.floor(100000 + Math.random() * 900000));
+        setSelectedSwatches([]);
       }
-    } catch (err: any) {
-      // In case of network error, construct successful fallback preview
-      setOrderResult({
-        orderNumber: `SW-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`,
-        customerInfo: payload.customerInfo,
-        swatches: payload.customSwatches,
-        status: "pending",
-        carrier: "USPS Priority Courier",
-        trackingNumber: `9400 1118 9956 ${Math.floor(1000 + Math.random() * 9000)}`,
-        totalCost: 0,
-        createdAt: new Date().toISOString()
-      });
+    } catch {
+      // Dev mode fallback success
+      setOrderSuccess("SW-" + Math.floor(100000 + Math.random() * 900000));
+      setSelectedSwatches([]);
     } finally {
       setSubmitting(false);
-    }
-  };
-
-  // Track swatch order by orderNumber
-  const handleTrackLookup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!lookupNumber.trim()) return;
-
-    setLookupLoading(true);
-    setLookupError(null);
-    setLookupResult(null);
-
-    try {
-      const res = await swatchesApi.trackOrder(lookupNumber.trim());
-      if (res.data?.order) {
-        setLookupResult(res.data.order);
-      } else {
-        setLookupError("No active swatch order found matching that reference number.");
-      }
-    } catch (err: any) {
-      setLookupError("No active swatch order found with that order number. Please verify the number.");
-    } finally {
-      setLookupLoading(false);
     }
   };
 
   return (
     <>
       <Header />
-      <main className="swatches-page">
-        {/* Atelier Hero */}
-        <section className="swatches-hero">
-          <span className="swatches-kicker">ATELIER MATERIAL PALETTES</span>
-          <h1>Complimentary Swatch Studio</h1>
-          <p>
-            Assess fabric hand-feel, inspect natural fiber weight, and observe subtle light filtering in your own room
-            prior to commissioning custom architectural drapery.
-          </p>
+      <div className="swatch-studio-page">
+        <div className="swatch-studio-container">
+          {/* Breadcrumb Navigation */}
+          <nav className="swatch-breadcrumb" aria-label="Breadcrumb">
+            <Link href="/">HOME</Link>
+            <span>/</span>
+            <strong style={{ color: "#1c1917" }}>FABRICS & SWATCHES</strong>
+          </nav>
 
-          {/* Navigation Mode Tabs */}
-          <nav className="swatches-nav-tabs">
-            <button
-              type="button"
-              className={`swatches-tab-btn ${activeTab === "order" ? "active" : ""}`}
-              onClick={() => {
-                setActiveTab("order");
-                setOrderResult(null);
-              }}
-            >
-              <span>1. Order Swatch Kit</span>
-              <span className="swatches-tab-badge">{selectedSwatches.length}</span>
-            </button>
-            <button
-              type="button"
-              className={`swatches-tab-btn ${activeTab === "track" ? "active" : ""}`}
-              onClick={() => setActiveTab("track")}
-            >
-              <span>2. Track Order</span>
-            </button>
-            {user && (
+          {/* Hero Feature Box */}
+          <section className="swatch-hero-box">
+            <div className="swatch-hero-bg-photo">
+              <Image
+                src="/figma/bedding-hero-exact.png"
+                alt="Find Your Perfect Fabric Swatch Set"
+                fill
+                priority
+                unoptimized
+                style={{ objectFit: "cover", objectPosition: "center 30%" }}
+              />
+              <div className="swatch-hero-overlay-shade" />
+            </div>
+
+            <div className="swatch-hero-card-panel">
+              <h1 className="swatch-hero-title">Find Your Perfect Fabric</h1>
+              <p className="swatch-hero-subtitle">
+                See the colours, textures and finishes in person before choosing your custom pieces.
+              </p>
+
+              <div className="swatch-hero-select-pill">
+                <div className="pill-info">
+                  <strong>4 Fabric Swatches &middot; $20</strong>
+                  <span>Choose any four from our collection.</span>
+                </div>
+              </div>
+
               <button
                 type="button"
-                className={`swatches-tab-btn ${activeTab === "history" ? "active" : ""}`}
-                onClick={() => setActiveTab("history")}
+                className="swatch-hero-action-btn"
+                onClick={() => {
+                  const el = document.getElementById("collection-section");
+                  el?.scrollIntoView({ behavior: "smooth" });
+                }}
               >
-                <span>3. My Swatch Kits</span>
+                BUILD YOUR SWATCH SET
               </button>
-            )}
-          </nav>
-        </section>
-
-        {/* ===================================================================
-            VIEW 1: ORDER CONFIRMATION VIEW (Exact Mongoose Schema Breakdown)
-           =================================================================== */}
-        {orderResult && activeTab === "order" && (
-          <section className="order-confirmation-card">
-            <div className="order-conf-hero">
-              <span className="order-conf-kicker">ORDER DISPATCH CONFIRMED</span>
-              <h2>Atelier Kit Being Prepared</h2>
-              <p className="order-conf-num">
-                Order Reference: <strong>{orderResult.orderNumber}</strong>
-              </p>
             </div>
+          </section>
 
-            {/* Live Status Tracker Stepper */}
-            <div className="order-status-stepper">
-              <div className="stepper-steps">
-                <div className={`stepper-step ${orderResult.status ? "completed" : ""}`}>
-                  <div className="step-dot">✓</div>
-                  <div className="step-title">Received</div>
-                </div>
-                <div
-                  className={`stepper-step ${
-                    orderResult.status === "processing"
-                      ? "active"
-                      : orderResult.status === "shipped" || orderResult.status === "delivered"
-                      ? "completed"
-                      : "active"
-                  }`}
-                >
-                  <div className="step-dot">2</div>
-                  <div className="step-title">Packaging</div>
-                </div>
-                <div
-                  className={`stepper-step ${
-                    orderResult.status === "shipped"
-                      ? "active"
-                      : orderResult.status === "delivered"
-                      ? "completed"
-                      : ""
-                  }`}
-                >
-                  <div className="step-dot">3</div>
-                  <div className="step-title">In Transit</div>
-                </div>
-                <div className={`stepper-step ${orderResult.status === "delivered" ? "active" : ""}`}>
-                  <div className="step-dot">4</div>
-                  <div className="step-title">Delivered</div>
-                </div>
+          {/* 3-Step Process Row */}
+          <section className="swatch-process-row">
+            <div className="swatch-process-card">
+              <div className="process-icon-circle">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2c2a29" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="3" x2="12" y2="9" />
+                  <path d="M7 15a5 5 0 0 1 10 0Z" />
+                  <line x1="7" y1="15" x2="17" y2="15" />
+                  <circle cx="12" cy="18" r="1" fill="#2c2a29" />
+                </svg>
+              </div>
+              <div className="process-content">
+                <span className="process-step-num">01</span>
+                <h3 className="process-step-title">Choose 4</h3>
+                <p className="process-step-desc">Select four fabrics you&apos;re considering.</p>
               </div>
             </div>
 
-            {/* Schema Breakdown: Customer Info & Shipping Address */}
-            <div className="order-schema-details">
-              <div className="details-col">
-                <h4>Recipient &amp; Contact (customerInfo)</h4>
-                <div className="details-meta-box">
-                  <p>
-                    <strong>Name:</strong> {orderResult.customerInfo.name}
-                  </p>
-                  <p>
-                    <strong>Email:</strong> {orderResult.customerInfo.email}
-                  </p>
-                  <p>
-                    <strong>Phone:</strong> {orderResult.customerInfo.phone || "Not specified"}
-                  </p>
-                </div>
+            <div className="swatch-process-card">
+              <div className="process-icon-circle">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2c2a29" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="1" y="8" width="13" height="8" rx="1" />
+                  <path d="M14 11h4.5l3.5 3.5V16h-8" />
+                  <circle cx="5.5" cy="18.5" r="2" />
+                  <circle cx="17.5" cy="18.5" r="2" />
+                </svg>
               </div>
-
-              <div className="details-col">
-                <h4>Delivery Address (shippingAddress)</h4>
-                <div className="details-meta-box">
-                  <p>
-                    <strong>Street:</strong> {orderResult.customerInfo.shippingAddress.street}
-                    {orderResult.customerInfo.shippingAddress.apartment && (
-                      <>, Apt/Suite {orderResult.customerInfo.shippingAddress.apartment}</>
-                    )}
-                  </p>
-                  <p>
-                    <strong>City / State:</strong> {orderResult.customerInfo.shippingAddress.city},{" "}
-                    {orderResult.customerInfo.shippingAddress.state} {orderResult.customerInfo.shippingAddress.zipCode}
-                  </p>
-                  <p>
-                    <strong>Country:</strong> {orderResult.customerInfo.shippingAddress.country}
-                  </p>
-                  <p style={{ marginTop: 8, fontSize: 11, color: "#8b783a" }}>
-                    Courier: {orderResult.carrier || "USPS Express Courier"} · Tracking:{" "}
-                    {orderResult.trackingNumber || "Pending dispatch assignment"}
-                  </p>
-                </div>
+              <div className="process-content">
+                <span className="process-step-num">02</span>
+                <h3 className="process-step-title">See Them in Person</h3>
+                <p className="process-step-desc">We&apos;ll send your selected swatches directly to your doorstep.</p>
               </div>
             </div>
 
-            {/* Ordered Swatches Summary */}
-            <div className="order-swatches-summary">
-              <h4>Included Physical Swatches ({orderResult.swatches.length})</h4>
-              <div className="ordered-swatches-grid">
-                {orderResult.swatches.map((item, idx) => (
-                  <div className="ordered-swatch-card" key={idx}>
-                    <div style={{ position: "relative", width: "100%", height: 110 }}>
-                      <Image
-                        src={item.image || "/figma/home-02.png"}
-                        alt={item.fabricName}
-                        fill
-                        sizes="180px"
-                        style={{ objectFit: "cover" }}
-                      />
-                    </div>
-                    <div className="ordered-swatch-info">
-                      <b>{item.fabricName}</b>
-                      <span>
-                        <span
-                          style={{
-                            width: 10,
-                            height: 10,
-                            borderRadius: "50%",
-                            background: item.hexCode || "#ddd",
-                            display: "inline-block",
-                            border: "1px solid #ccc"
-                          }}
-                        />
-                        {item.colorName}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+            <div className="swatch-process-card">
+              <div className="process-icon-circle">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2c2a29" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 11V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v5" />
+                  <path d="M4 11h16a1 1 0 0 1 1 1v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4a1 1 0 0 1 1-1z" />
+                  <path d="M6 18v3" />
+                  <path d="M18 18v3" />
+                </svg>
               </div>
-
-              <div style={{ textAlign: "center", marginTop: 36 }}>
-                <Link
-                  href="/drapery/configure"
-                  style={{
-                    background: "#111",
-                    color: "white",
-                    padding: "16px 36px",
-                    borderRadius: 9999,
-                    fontSize: 11,
-                    letterSpacing: 1.5,
-                    textTransform: "uppercase",
-                    fontWeight: 600,
-                    display: "inline-block"
-                  }}
-                >
-                  Configure Drapery With These Fabrics →
-                </Link>
+              <div className="process-content">
+                <span className="process-step-num">03</span>
+                <h3 className="process-step-title">Find Your Favourite</h3>
+                <p className="process-step-desc">Experience the colour, texture and quality before placing your custom order.</p>
               </div>
             </div>
           </section>
-        )}
 
-        {/* ===================================================================
-            VIEW 2: ORDER SWATCHES WORKFLOW (Selection + Schema Form)
-           =================================================================== */}
-        {!orderResult && activeTab === "order" && (
-          <div>
-            {/* Swatch Selection Header */}
-            <div className="swatches-section-header">
-              <div>
-                <h2>Step 1: Select Up to 4 Physical Fabric Samples</h2>
-                <p>
-                  Cut to 8″ × 8″ architectural drapery swatches with hand-serged edges and physical color specification cards.
-                </p>
-              </div>
-              <div className="swatch-counter-pill">{selectedSwatches.length} of 4 Samples Selected</div>
+          {/* Section 01 — CHOOSE YOUR COLLECTION */}
+          <section className="swatch-section-block" id="collection-section">
+            <div className="section-head-tag">01 — CHOOSE YOUR COLLECTION</div>
+
+            {/* Filter Pills Row */}
+            <div className="swatch-pills-row">
+              {["ALL", "LINEN", "SHEER", "WOOL + VELVET", "COTTON", "SILK", "SATIN", "PATTERN", "JUTE", "BOUCLÉ", "OUTDOOR", "MOST POPULAR"].map((filter) => (
+                <button
+                  key={filter}
+                  type="button"
+                  className={`swatch-pill-btn ${selectedFilter === filter ? "active" : ""}`}
+                  onClick={() => setSelectedFilter(filter)}
+                >
+                  {filter}
+                </button>
+              ))}
             </div>
 
-            {error && (
-              <div
-                style={{
-                  background: "#fef2f2",
-                  border: "1px solid #f87171",
-                  color: "#991b1b",
-                  padding: "12px 18px",
-                  borderRadius: "8px",
-                  fontSize: "12px",
-                  marginBottom: "24px"
-                }}
-              >
-                {error}
+            {/* Secondary Toolbar Controls */}
+            <div className="swatch-sub-toolbar">
+              <div className="toolbar-left-info">
+                <strong>FABRIC ({filteredSwatches.length})</strong>
+                <span>• SHOWING ALL AVAILABLE WEAVES</span>
               </div>
-            )}
+              <div className="toolbar-right-dropdowns">
+                <select className="toolbar-select">
+                  <option value="all-colors">COLOR: ALL</option>
+                  <option value="white">WHITE / IVORY</option>
+                  <option value="neutral">NEUTRAL / BEIGE</option>
+                  <option value="charcoal">CHARCOAL / BLACK</option>
+                </select>
+                <select className="toolbar-select">
+                  <option value="all-price">PRICE: ALL GROUPS</option>
+                  <option value="group-a">GROUP A ($35/M)</option>
+                  <option value="group-b">GROUP B ($55/M)</option>
+                  <option value="group-c">GROUP C ($65/M)</option>
+                </select>
+                <select className="toolbar-select">
+                  <option value="popular">SORT BY: MOST POPULAR</option>
+                  <option value="newest">NEWEST ARRIVALS</option>
+                  <option value="price-low">PRICE: LOW TO HIGH</option>
+                </select>
+              </div>
+            </div>
+          </section>
 
-            {/* Swatch Tiles Grid */}
-            <div className="swatches-grid">
-              {catalog.map((swatch) => {
-                const isChecked = selectedSwatches.some((s) => s._id === swatch._id);
-                const imgSrc = typeof swatch.image === "string" ? swatch.image : swatch.image?.url || "/figma/home-02.png";
+          {/* Section 02 — SELECT MATERIAL & COLOR */}
+          <section className="swatch-section-block" id="select-section">
+            <div className="section-head-tag">02 — SELECT MATERIAL & COLOR</div>
+
+            {/* Material Group 1 Header */}
+            <div className="material-group-header">
+              <div className="group-title-line">
+                <h2>MATERIAL: COTTON & BLENDS</h2>
+                <span className="group-badge">PRICE GROUP: A</span>
+                <span className="group-price">FROM $35/M</span>
+              </div>
+              <p className="group-desc">
+                Soft, breathable and wonderfully versatile. Long-staple cotton blends and brushed twills for an elevated yet relaxed everyday texture.
+              </p>
+            </div>
+
+            {/* Grid 1: Cotton & Linen Swatches (6-Columns) */}
+            <div className="swatch-catalog-grid">
+              {filteredSwatches.slice(0, 6).map((swatch) => {
+                const selected = isSelected(swatch.id);
                 return (
-                  <div
-                    key={swatch._id}
-                    className={`swatch-tile ${isChecked ? "selected" : ""}`}
+                  <article
+                    key={swatch.id}
+                    className={`swatch-item-card ${selected ? "selected" : ""}`}
                     onClick={() => toggleSwatch(swatch)}
-                    role="button"
-                    tabIndex={0}
-                    aria-pressed={isChecked}
                   >
-                    <div className="swatch-tile-photo">
+                    <div className="swatch-card-photo">
                       <Image
-                        src={imgSrc}
-                        alt={swatch.fabricName}
+                        src={swatch.image}
+                        alt={swatch.name}
                         fill
-                        sizes="(max-width: 640px) 100vw, 30vw"
+                        unoptimized
                         style={{ objectFit: "cover" }}
                       />
-                      {isChecked && <div className="swatch-check-badge">✓</div>}
+
+                      {/* Zoom Button */}
+                      <button
+                        type="button"
+                        className="swatch-zoom-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setZoomSwatch(swatch);
+                        }}
+                        title="Zoom Swatch Texture"
+                      >
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1c1917" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="11" cy="11" r="7.5" fill="#9ec2e6" fillOpacity="0.75" />
+                          <line x1="21" y1="21" x2="16.5" y2="16.5" />
+                        </svg>
+                      </button>
+
+                      {/* Selection Checkmark Badge */}
+                      {selected && <div className="swatch-selected-checkmark">✓</div>}
                     </div>
-                    <div className="swatch-tile-body">
-                      <div className="swatch-color-row">
-                        <span
-                          className="swatch-color-dot"
-                          style={{ backgroundColor: swatch.hexCode || "#ddd" }}
-                        />
-                        <span className="swatch-color-name">{swatch.colorName}</span>
-                      </div>
-                      <h3 className="swatch-fabric-name">{swatch.fabricName}</h3>
-                      <p className="swatch-material-desc">{swatch.material || "100% Belgian Flax Linen"}</p>
+
+                    <div className="swatch-card-body">
+                      <h3>{swatch.name}</h3>
+                      <span className="swatch-card-group">Price Group {swatch.priceGroup}</span>
                     </div>
+                  </article>
+                );
+              })}
+            </div>
+
+            {/* Material Group 2 Header */}
+            <div className="material-group-header" style={{ marginTop: "48px" }}>
+              <div className="group-title-line">
+                <h2>MATERIAL: SILK & VELVET</h2>
+                <span className="group-badge">PRICE GROUP: B & C</span>
+                <span className="group-price">FROM $65/M</span>
+              </div>
+              <p className="group-desc">
+                Lustrous, rich pile velvets and hand-loomed raw silks providing unmatched depth, weight, and light filtration.
+              </p>
+            </div>
+
+            {/* Grid 2: Velvet & Silk Swatches (6-Columns) */}
+            <div className="swatch-catalog-grid">
+              {filteredSwatches.slice(6, 12).map((swatch) => {
+                const selected = isSelected(swatch.id);
+                return (
+                  <article
+                    key={swatch.id}
+                    className={`swatch-item-card ${selected ? "selected" : ""}`}
+                    onClick={() => toggleSwatch(swatch)}
+                  >
+                    <div className="swatch-card-photo">
+                      <Image
+                        src={swatch.image}
+                        alt={swatch.name}
+                        fill
+                        unoptimized
+                        style={{ objectFit: "cover" }}
+                      />
+
+                      {/* Zoom Button */}
+                      <button
+                        type="button"
+                        className="swatch-zoom-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setZoomSwatch(swatch);
+                        }}
+                        title="Zoom Swatch Texture"
+                      >
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1c1917" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="11" cy="11" r="7.5" fill="#9ec2e6" fillOpacity="0.75" />
+                          <line x1="21" y1="21" x2="16.5" y2="16.5" />
+                        </svg>
+                      </button>
+
+                      {/* Selection Checkmark Badge */}
+                      {selected && <div className="swatch-selected-checkmark">✓</div>}
+                    </div>
+
+                    <div className="swatch-card-body">
+                      <h3>{swatch.name}</h3>
+                      <span className="swatch-card-group">Price Group {swatch.priceGroup}</span>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Recommended Combinations Section */}
+          <section className="swatch-combos-section">
+            <h2 className="combos-section-title">Recommended Combinations</h2>
+            <div className="combos-grid">
+              {/* Combo Card 1 */}
+              <article className="combo-card">
+                <div className="combo-photos-row">
+                  <div className="combo-thumb">
+                    <Image src="/curtains/fabric-linen.png" alt="White Linen" fill unoptimized style={{ objectFit: "cover" }} />
+                  </div>
+                  <div className="combo-thumb">
+                    <Image src="/figma/home-02.png" alt="Clay Linen" fill unoptimized style={{ objectFit: "cover" }} />
+                  </div>
+                </div>
+                <div className="combo-info">
+                  <h3>The Warm Minimalist</h3>
+                  <small>ORGANIC FLAX & EARTHEN TONES</small>
+                  <p>A calming blend of organic textures in earthy tones.</p>
+                  <button
+                    type="button"
+                    className="combo-add-btn"
+                    onClick={() => handleAddBundle(["white-linen", "clay-linen", "oatmeal-linen"])}
+                  >
+                    ADD ALL 3 TO SET
+                  </button>
+                </div>
+              </article>
+
+              {/* Combo Card 2 */}
+              <article className="combo-card">
+                <div className="combo-photos-row">
+                  <div className="combo-thumb">
+                    <Image src="/curtains/fabric-blackout.png" alt="Charcoal Velvet" fill unoptimized style={{ objectFit: "cover" }} />
+                  </div>
+                  <div className="combo-thumb">
+                    <Image src="/curtains/fabric-silk.png" alt="Slub Raw Silk" fill unoptimized style={{ objectFit: "cover" }} />
+                  </div>
+                </div>
+                <div className="combo-info">
+                  <h3>The Evening Luxe</h3>
+                  <small>CHARCOAL VELVET & METALLIC SHANTUNG</small>
+                  <p>Rich, deep hues paired with lustrous metallic highlights.</p>
+                  <button
+                    type="button"
+                    className="combo-add-btn"
+                    onClick={() => handleAddBundle(["charcoal-velvet", "slub-raw-silk", "forest-velvet"])}
+                  >
+                    ADD ALL 3 TO SET
+                  </button>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+
+        {/* Sticky Bottom Swatch Selection Bar */}
+        <div className="swatch-sticky-bar">
+          <div className="sticky-bar-container">
+            <div className="sticky-left-info">
+              <span className="sticky-tag">YOUR SWATCH SET</span>
+              <strong className="sticky-count">{selectedSwatches.length} of 4 selected</strong>
+            </div>
+
+            {/* 4 Swatch Slots */}
+            <div className="sticky-slots-wrap">
+              {[0, 1, 2, 3].map((index) => {
+                const item = selectedSwatches[index];
+                return (
+                  <div key={index} className={`sticky-slot ${item ? "filled" : "empty"}`}>
+                    {item ? (
+                      <>
+                        <Image src={item.image} alt={item.name} fill unoptimized style={{ objectFit: "cover" }} />
+                        <button
+                          type="button"
+                          className="slot-remove-btn"
+                          onClick={() => toggleSwatch(item)}
+                          title={`Remove ${item.name}`}
+                        >
+                          ✕
+                        </button>
+                      </>
+                    ) : (
+                      <span className="slot-plus-icon">+</span>
+                    )}
                   </div>
                 );
               })}
             </div>
 
-            {/* Step 2: Customer & Shipping Details Form (Direct Mongoose customerInfo Schema) */}
-            <div className="swatches-order-form-container">
-              <header className="order-form-header">
-                <h2>Step 2: Recipient Details &amp; Shipping Destination</h2>
-                <p>
-                  Matches the atelier SwatchOrder schema. Complimentary global delivery in 2–4 business days. No credit card required.
-                </p>
-              </header>
-
-              <form onSubmit={handleOrderSubmit} className="order-form-body">
-                {/* 1. customerInfo: name, email, phone */}
-                <h3
-                  style={{
-                    fontSize: 12,
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    color: "#8b783a",
-                    margin: "0 0 16px"
-                  }}
-                >
-                  Recipient Profile (customerInfo)
-                </h3>
-                <div className="form-grid-2">
-                  <div className="field-group">
-                    <label className="field-label">Recipient Full Name *</label>
-                    <input
-                      type="text"
-                      className="field-input"
-                      placeholder="e.g. Eleanor Vance"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="field-group">
-                    <label className="field-label">Email Address (for courier updates) *</label>
-                    <input
-                      type="email"
-                      className="field-input"
-                      placeholder="client@luxurydrapes.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="field-group">
-                  <label className="field-label">Mobile Phone (for delivery SMS)</label>
-                  <input
-                    type="tel"
-                    className="field-input"
-                    placeholder="+1 (555) 234-5678"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
-                </div>
-
-                {/* 2. customerInfo.shippingAddress: street, apartment, city, state, zipCode, country */}
-                <h3
-                  style={{
-                    fontSize: 12,
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    color: "#8b783a",
-                    margin: "24px 0 16px"
-                  }}
-                >
-                  Shipping Destination (customerInfo.shippingAddress)
-                </h3>
-                <div className="form-grid-2">
-                  <div className="field-group">
-                    <label className="field-label">Street Address *</label>
-                    <input
-                      type="text"
-                      className="field-input"
-                      placeholder="740 Park Avenue"
-                      value={street}
-                      onChange={(e) => setStreet(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="field-group">
-                    <label className="field-label">Apartment / Suite / Penthouse (Optional)</label>
-                    <input
-                      type="text"
-                      className="field-input"
-                      placeholder="Suite 14B"
-                      value={apartment}
-                      onChange={(e) => setApartment(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-grid-3">
-                  <div className="field-group">
-                    <label className="field-label">City *</label>
-                    <input
-                      type="text"
-                      className="field-input"
-                      placeholder="New York"
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="field-group">
-                    <label className="field-label">State / Region *</label>
-                    <input
-                      type="text"
-                      className="field-input"
-                      placeholder="NY"
-                      value={state}
-                      onChange={(e) => setState(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="field-group">
-                    <label className="field-label">Postal / ZIP Code *</label>
-                    <input
-                      type="text"
-                      className="field-input"
-                      placeholder="10021"
-                      value={zipCode}
-                      onChange={(e) => setZipCode(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="field-group">
-                  <label className="field-label">Country (shippingAddress.country) *</label>
-                  <select
-                    className="field-select"
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                  >
-                    {COUNTRY_OPTIONS.map((c) => (
-                      <option key={c.code} value={c.code}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Swatches Review inside Form */}
-                <div className="form-swatches-review">
-                  <h3>Included Swatches ({selectedSwatches.length} of 4)</h3>
-                  <div className="review-chips-row">
-                    {selectedSwatches.map((s) => (
-                      <div className="review-chip-card" key={s._id}>
-                        <div style={{ position: "relative", width: 32, height: 32, borderRadius: 4, overflow: "hidden" }}>
-                          <Image
-                            src={typeof s.image === "string" ? s.image : s.image?.url || "/figma/home-02.png"}
-                            alt={s.fabricName}
-                            fill
-                            sizes="40px"
-                            style={{ objectFit: "cover" }}
-                          />
-                        </div>
-                        <div>
-                          <b style={{ fontSize: 11, display: "block" }}>{s.fabricName}</b>
-                          <span style={{ fontSize: 10, color: "#666" }}>{s.colorName}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Pricing Breakdown (totalCost) */}
-                <div className="form-cost-summary">
-                  <span className="cost-total-label">Complimentary Presentation Swatch Kit</span>
-                  <span className="cost-total-badge">FREE ($0.00)</span>
-                </div>
-
-                <button type="submit" className="order-submit-btn" disabled={submitting || selectedSwatches.length === 0}>
-                  {submitting
-                    ? "DISPATCHING ATELIER KIT..."
-                    : `REQUEST COMPLIMENTARY BOX (${selectedSwatches.length} SWATCHES)`}
-                </button>
-              </form>
+            <div className="sticky-right-actions">
+              <span className="sticky-price">$20</span>
+              <button
+                type="button"
+                className="sticky-order-btn"
+                disabled={selectedSwatches.length === 0}
+                onClick={() => setActiveModal(true)}
+              >
+                ORDER YOUR SWATCH SET
+              </button>
             </div>
           </div>
-        )}
+        </div>
 
-        {/* ===================================================================
-            VIEW 3: TRACK SWATCH ORDER LOOKUP
-           =================================================================== */}
-        {activeTab === "track" && (
-          <div style={{ maxWidth: 820, margin: "0 auto" }}>
-            <div className="order-lookup-box">
-              <h3>Track Your Swatch Order</h3>
-              <p>Enter your unique order number (e.g. SW-824192-452) to check live atelier preparation and courier tracking.</p>
-              <form onSubmit={handleTrackLookup} className="lookup-input-row">
-                <input
-                  type="text"
-                  className="field-input"
-                  placeholder="Enter Swatch Order Number (e.g. SW-103942-814)"
-                  value={lookupNumber}
-                  onChange={(e) => setLookupNumber(e.target.value)}
-                  required
-                />
-                <button type="submit" className="lookup-btn" disabled={lookupLoading}>
-                  {lookupLoading ? "Locating..." : "Track Kit"}
-                </button>
-              </form>
-            </div>
+        {/* Swatch Checkout Customer Info Modal */}
+        {activeModal && (
+          <div className="swatch-modal-backdrop" onClick={() => setActiveModal(false)}>
+            <div className="swatch-modal-content" onClick={(e) => e.stopPropagation()}>
+              <button type="button" className="modal-close-btn" onClick={() => setActiveModal(false)}>
+                ✕
+              </button>
 
-            {lookupError && (
-              <div
-                style={{
-                  background: "#fef2f2",
-                  border: "1px solid #f87171",
-                  color: "#991b1b",
-                  padding: "14px 20px",
-                  borderRadius: "8px",
-                  fontSize: "12px",
-                  marginBottom: "24px",
-                  textAlign: "center"
-                }}
-              >
-                {lookupError}
-              </div>
-            )}
-
-            {lookupResult && (
-              <div className="order-confirmation-card" style={{ marginTop: 24 }}>
-                <div className="order-conf-hero">
-                  <span className="order-conf-kicker">LIVE ATELIER STATUS</span>
-                  <h2>{lookupResult.status.toUpperCase()}</h2>
-                  <p className="order-conf-num">
-                    Order Reference: <strong>{lookupResult.orderNumber}</strong>
+              {orderSuccess ? (
+                <div className="modal-success-box">
+                  <span className="success-icon">✓</span>
+                  <h2>Swatch Sample Kit Ordered!</h2>
+                  <p>Order Reference: <strong>{orderSuccess}</strong></p>
+                  <p className="success-sub">
+                    Your physical presentation kit of 5 hand-cut swatches is being assembled by our atelier. Dispatched with express tracking within 24 hours.
                   </p>
+                  <button type="button" className="swatch-modal-submit-btn" onClick={() => { setOrderSuccess(null); setActiveModal(false); }}>
+                    DONE
+                  </button>
                 </div>
+              ) : (
+                <form onSubmit={handleSubmitOrder} className="swatch-checkout-form">
+                  <span className="form-eyebrow">EXPRESS CONCIERGE DISPATCH</span>
+                  <h2>Complete Swatch Kit Request</h2>
+                  <p className="form-copy">Enter your shipping details below. 5 Physical Swatches ($15 flat rate).</p>
 
-                <div className="order-status-stepper">
-                  <div className="stepper-steps">
-                    <div className={`stepper-step ${lookupResult.status ? "completed" : ""}`}>
-                      <div className="step-dot">✓</div>
-                      <div className="step-title">Received</div>
-                    </div>
-                    <div
-                      className={`stepper-step ${
-                        lookupResult.status === "processing"
-                          ? "active"
-                          : lookupResult.status === "shipped" || lookupResult.status === "delivered"
-                          ? "completed"
-                          : "active"
-                      }`}
-                    >
-                      <div className="step-dot">2</div>
-                      <div className="step-title">Packaging</div>
-                    </div>
-                    <div
-                      className={`stepper-step ${
-                        lookupResult.status === "shipped"
-                          ? "active"
-                          : lookupResult.status === "delivered"
-                          ? "completed"
-                          : ""
-                      }`}
-                    >
-                      <div className="step-dot">3</div>
-                      <div className="step-title">In Transit</div>
-                    </div>
-                    <div className={`stepper-step ${lookupResult.status === "delivered" ? "active" : ""}`}>
-                      <div className="step-dot">4</div>
-                      <div className="step-title">Delivered</div>
-                    </div>
-                  </div>
-                </div>
+                  {orderError && <div className="form-error-alert">⚠ {orderError}</div>}
 
-                <div className="order-schema-details">
-                  <div className="details-col">
-                    <h4>Recipient (customerInfo)</h4>
-                    <div className="details-meta-box">
-                      <p>
-                        <strong>Name:</strong> {lookupResult.customerInfo?.name}
-                      </p>
-                      <p>
-                        <strong>Email:</strong> {lookupResult.customerInfo?.email}
-                      </p>
-                      <p>
-                        <strong>Phone:</strong> {lookupResult.customerInfo?.phone || "None specified"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="details-col">
-                    <h4>Delivery Address</h4>
-                    <div className="details-meta-box">
-                      <p>
-                        {lookupResult.customerInfo?.shippingAddress?.street}
-                        {lookupResult.customerInfo?.shippingAddress?.apartment && (
-                          <>, Apt {lookupResult.customerInfo?.shippingAddress?.apartment}</>
-                        )}
-                      </p>
-                      <p>
-                        {lookupResult.customerInfo?.shippingAddress?.city},{" "}
-                        {lookupResult.customerInfo?.shippingAddress?.state}{" "}
-                        {lookupResult.customerInfo?.shippingAddress?.zipCode}
-                      </p>
-                      <p>{lookupResult.customerInfo?.shippingAddress?.country || "US"}</p>
-                      <p style={{ marginTop: 8, fontSize: 11, color: "#8b783a" }}>
-                        Courier: {lookupResult.carrier || "USPS"} · Tracking:{" "}
-                        {lookupResult.trackingNumber || "Pending Courier Assignment"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {lookupResult.swatches && lookupResult.swatches.length > 0 && (
-                  <div className="order-swatches-summary">
-                    <h4>Swatches in this Kit ({lookupResult.swatches.length})</h4>
-                    <div className="ordered-swatches-grid">
-                      {lookupResult.swatches.map((item, idx) => (
-                        <div className="ordered-swatch-card" key={idx}>
-                          <div style={{ position: "relative", width: "100%", height: 110 }}>
-                            <Image
-                              src={item.image || "/figma/home-02.png"}
-                              alt={item.fabricName}
-                              fill
-                              sizes="180px"
-                              style={{ objectFit: "cover" }}
-                            />
-                          </div>
-                          <div className="ordered-swatch-info">
-                            <b>{item.fabricName}</b>
-                            <span>{item.colorName}</span>
-                          </div>
-                        </div>
+                  <div className="form-swatches-summary-preview">
+                    <strong>SELECTED SWATCHES ({selectedSwatches.length}):</strong>
+                    <div className="summary-chips">
+                      {selectedSwatches.map((s) => (
+                        <span key={s.id} className="summary-chip">
+                          {s.name}
+                        </span>
                       ))}
                     </div>
                   </div>
-                )}
-              </div>
-            )}
+
+                  <div className="form-row-2">
+                    <div>
+                      <label>FULL NAME</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Emily Watson"
+                        value={customerInfo.name}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label>EMAIL ADDRESS</label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="emily@example.com"
+                        value={customerInfo.email}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-row-2">
+                    <div>
+                      <label>PHONE NUMBER</label>
+                      <input
+                        type="tel"
+                        required
+                        placeholder="+1 (555) 019-2834"
+                        value={customerInfo.phone}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label>STREET ADDRESS</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="740 Park Avenue"
+                        value={customerInfo.street}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, street: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-row-3">
+                    <div>
+                      <label>CITY</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="New York"
+                        value={customerInfo.city}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, city: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label>STATE / PROVINCE</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="NY"
+                        value={customerInfo.state}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, state: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label>ZIP / POSTAL CODE</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="10021"
+                        value={customerInfo.zipCode}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, zipCode: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <button type="submit" className="swatch-modal-submit-btn" disabled={submitting}>
+                    {submitting ? "PROCESSING DISPATCH..." : "CONFIRM & ORDER SWATCH SET ($15)"}
+                  </button>
+                </form>
+              )}
+            </div>
           </div>
         )}
 
-        {/* ===================================================================
-            VIEW 4: USER SWATCH ORDERS HISTORY (Authenticated)
-           =================================================================== */}
-        {activeTab === "history" && user && (
-          <div style={{ maxWidth: 880, margin: "0 auto" }}>
-            <div className="swatches-section-header">
-              <div>
-                <h2>Your Atelier Swatch Kits</h2>
-                <p>Track historical complimentary swatch boxes requested under {user.email}.</p>
+        {/* Zoom Swatch Texture Lightbox Modal */}
+        {zoomSwatch && (
+          <div className="swatch-zoom-backdrop" onClick={() => setZoomSwatch(null)}>
+            <div className="swatch-zoom-modal" onClick={(e) => e.stopPropagation()}>
+              <button type="button" className="zoom-close-btn" onClick={() => setZoomSwatch(null)}>
+                ✕
+              </button>
+              <div className="zoom-photo-wrap">
+                <Image src={zoomSwatch.image} alt={zoomSwatch.name} fill unoptimized style={{ objectFit: "cover" }} />
               </div>
-            </div>
-
-            {loadingMyOrders ? (
-              <p style={{ textAlign: "center", color: "#666", padding: "40px" }}>Loading your swatch history...</p>
-            ) : myOrders.length === 0 ? (
-              <div
-                style={{
-                  background: "#ffffff",
-                  border: "1px solid #ded9ce",
-                  borderRadius: "12px",
-                  padding: "48px",
-                  textAlign: "center"
-                }}
-              >
-                <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "22px", margin: "0 0 8px" }}>
-                  No Swatch Kits Requested Yet
-                </h3>
-                <p style={{ fontSize: "12px", color: "#666", marginBottom: "20px" }}>
-                  You have not ordered any complimentary fabric swatch boxes under this account.
-                </p>
+              <div className="zoom-info-bar">
+                <h3>{zoomSwatch.name}</h3>
+                <p>{zoomSwatch.fabricName} · Price Group {zoomSwatch.priceGroup} (${zoomSwatch.pricePerMeter}/m)</p>
                 <button
                   type="button"
-                  className="dock-action-btn"
-                  onClick={() => setActiveTab("order")}
+                  className="zoom-select-btn"
+                  onClick={() => {
+                    toggleSwatch(zoomSwatch);
+                    setZoomSwatch(null);
+                  }}
                 >
-                  Order Complimentary Swatches →
+                  {isSelected(zoomSwatch.id) ? "REMOVE FROM SWATCH SET" : "+ ADD TO SWATCH SET"}
                 </button>
               </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                {myOrders.map((ord) => (
-                  <div
-                    key={ord.orderNumber}
-                    style={{
-                      background: "#ffffff",
-                      border: "1px solid #ded9ce",
-                      borderRadius: "12px",
-                      padding: "24px",
-                      boxShadow: "0 4px 16px rgba(0,0,0,0.03)"
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        borderBottom: "1px solid #eee",
-                        paddingBottom: "12px",
-                        marginBottom: "16px"
-                      }}
-                    >
-                      <div>
-                        <b style={{ fontSize: "14px" }}>{ord.orderNumber}</b>
-                        <span style={{ fontSize: "11px", color: "#777", marginLeft: "12px" }}>
-                          {ord.createdAt ? new Date(ord.createdAt).toLocaleDateString() : ""}
-                        </span>
-                      </div>
-                      <span
-                        style={{
-                          background: ord.status === "delivered" ? "#ecfdf5" : "#fef3c7",
-                          color: ord.status === "delivered" ? "#065f46" : "#92400e",
-                          padding: "4px 12px",
-                          borderRadius: "9999px",
-                          fontSize: "11px",
-                          fontWeight: 600,
-                          textTransform: "uppercase"
-                        }}
-                      >
-                        {ord.status}
-                      </span>
-                    </div>
-
-                    <div style={{ fontSize: "12px", color: "#444", marginBottom: "14px" }}>
-                      Shipping to: {ord.customerInfo.name} · {ord.customerInfo.shippingAddress.street},{" "}
-                      {ord.customerInfo.shippingAddress.city}, {ord.customerInfo.shippingAddress.state} (
-                      {ord.customerInfo.shippingAddress.country})
-                    </div>
-
-                    <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                      {ord.swatches.map((sw, i) => (
-                        <div
-                          key={i}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                            background: "#faf8f4",
-                            border: "1px solid #e7e2d7",
-                            borderRadius: "6px",
-                            padding: "6px 10px",
-                            fontSize: "11px"
-                          }}
-                        >
-                          <span
-                            style={{
-                              width: 10,
-                              height: 10,
-                              borderRadius: "50%",
-                              background: sw.hexCode || "#ddd",
-                              border: "1px solid #ccc"
-                            }}
-                          />
-                          <b>{sw.fabricName}</b> ({sw.colorName})
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            </div>
           </div>
         )}
-      </main>
+      </div>
+
       <Footer />
     </>
   );

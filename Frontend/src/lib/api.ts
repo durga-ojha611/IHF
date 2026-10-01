@@ -4,7 +4,7 @@
  */
 
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 function getStoredToken(): string | null {
   if (typeof window === 'undefined') return null;
@@ -293,3 +293,288 @@ export const filtersApi = {
     return apiRequest('/filters');
   }
 };
+
+// ---------------------------------------------
+// Atelier Consultations Endpoints
+// ---------------------------------------------
+export interface ConsultationBookingPayload {
+  name: string;
+  email: string;
+  phone: string;
+  date: string;
+  time?: string;
+  room?: string;
+  notes?: string;
+  type?: 'phone';
+}
+
+export interface AdminConsultationRecord extends ConsultationBookingPayload {
+  _id: string;
+  consultationNumber: string;
+  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  isArchived: boolean;
+  internalNotes?: string;
+  assignedDesigner?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const consultationsApi = {
+  async create(payload: ConsultationBookingPayload) {
+    return apiRequest<{ consultation: AdminConsultationRecord }>('/consultations', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  }
+};
+
+export const adminConsultationsApi = {
+  async getAll(params?: { status?: string; search?: string; isArchived?: string }) {
+    const query = params
+      ? '?' +
+        Object.entries(params)
+          .filter(([_, v]) => v !== undefined && v !== '')
+          .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v as string)}`)
+          .join('&')
+      : '';
+    return apiRequest<{ consultations: AdminConsultationRecord[] }>(`/admin/consultations${query}`);
+  },
+
+  async getById(id: string) {
+    return apiRequest<{ consultation: AdminConsultationRecord }>(`/admin/consultations/${id}`);
+  },
+
+  async update(id: string, payload: Partial<AdminConsultationRecord>) {
+    return apiRequest<{ consultation: AdminConsultationRecord }>(`/admin/consultations/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    });
+  },
+
+  async archive(id: string) {
+    return apiRequest<{ consultation: AdminConsultationRecord }>(`/admin/consultations/${id}`, {
+      method: 'DELETE'
+    });
+  },
+
+  async restore(id: string) {
+    return apiRequest<{ consultation: AdminConsultationRecord }>(`/admin/consultations/${id}/restore`, {
+      method: 'PATCH'
+    });
+  }
+};
+
+// ---------------------------------------------
+// Admin Orders & Fulfillment Endpoints
+// ---------------------------------------------
+export interface AdminOrderCustomSpecs {
+  width?: { raw: string; decimal: number; formatted: string };
+  height?: { raw: string; decimal: number; formatted: string };
+  fullness?: { id: string; label: string; factor: number };
+  lining?: { id: string; name: string; type: string };
+  pleatHeader?: { id: string; name: string };
+  hardware?: Array<{ id: string; name: string; price?: number }>;
+  color?: { name: string; hexCode: string };
+  fabricType?: string;
+  fabricName?: string;
+  fabricCode?: string;
+  roomLabel?: string;
+  motorization?: string;
+  notes?: string;
+  panelConfiguration?: 'single_panel' | 'pair';
+  priceBreakdown?: any;
+}
+
+export interface AdminOrderItem {
+  _id?: string;
+  itemType: 'custom_curtain' | 'standard_product' | 'swatch_kit';
+  product?: any;
+  title: string;
+  image?: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  customCurtainSpecs?: AdminOrderCustomSpecs | null;
+  swatchKitDetails?: any[];
+}
+
+export interface AdminOrderRecord {
+  _id: string;
+  orderNumber: string;
+  orderType?: string;
+  user?: any;
+  customerInfo: {
+    name: string;
+    email: string;
+    phone?: string;
+  };
+  items: AdminOrderItem[];
+  pricing: {
+    subtotal: number;
+    shipping: number;
+    tax: number;
+    discount: number;
+    total: number;
+  };
+  shippingAddress: {
+    fullName: string;
+    street: string;
+    apartment?: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country?: string;
+    phone?: string;
+  };
+  paymentInfo: {
+    stripePaymentIntentId?: string;
+    paymentStatus: 'pending' | 'authorized' | 'paid' | 'failed' | 'refunded';
+    paymentMethod?: string;
+    paidAt?: string;
+  };
+  fulfillmentStatus:
+    | 'Pending'
+    | 'Payment Pending'
+    | 'Sizing Confirmation'
+    | 'Awaiting Fabric'
+    | 'Production Pending'
+    | 'Manufacturing'
+    | 'Delayed'
+    | 'Quality Check'
+    | 'Shipped'
+    | 'Delivered'
+    | 'Cancelled';
+  carrier?: string;
+  trackingNumber?: string;
+  manufacturingNotes?: string;
+  isArchived: boolean;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminCreateManualOrderPayload {
+  customerInfo: {
+    name: string;
+    email: string;
+    phone?: string;
+  };
+  shippingAddress?: {
+    fullName: string;
+    street: string;
+    apartment?: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country?: string;
+    phone?: string;
+  };
+  items: Array<{
+    itemType?: string;
+    title: string;
+    quantity: number;
+    unitPrice: number;
+    width?: string | number;
+    height?: string | number;
+    fullnessId?: string;
+    fullnessLabel?: string;
+    liningId?: string;
+    liningName?: string;
+    pleatId?: string;
+    pleatName?: string;
+    fabricType?: string;
+    fabricName?: string;
+    fabricCode?: string;
+    roomLabel?: string;
+    motorization?: string;
+    colorName?: string;
+    panelConfiguration?: string;
+    notes?: string;
+  }>;
+  orderType?: string;
+  pricing?: {
+    subtotal?: number;
+    shipping?: number;
+    tax?: number;
+    discount?: number;
+    total?: number;
+  };
+  paymentStatus?: string;
+  paymentMethod?: string;
+  fulfillmentStatus?: string;
+  carrier?: string;
+  trackingNumber?: string;
+  manufacturingNotes?: string;
+}
+
+export const adminOrdersApi = {
+  async getAll(params?: {
+    tab?: string;
+    fulfillmentStatus?: string;
+    paymentStatus?: string;
+    orderType?: string;
+    search?: string;
+    isArchived?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    const query = params
+      ? '?' +
+        Object.entries(params)
+          .filter(([_, v]) => v !== undefined && v !== '')
+          .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v as string)}`)
+          .join('&')
+      : '';
+    return apiRequest<{
+      orders: AdminOrderRecord[];
+      total: number;
+      counts: { all: number; active: number; draft: number; archived: number };
+    }>(`/admin/orders${query}`);
+  },
+
+  async getById(id: string) {
+    return apiRequest<{ order: AdminOrderRecord }>(`/admin/orders/${id}`);
+  },
+
+  async createManual(payload: AdminCreateManualOrderPayload) {
+    return apiRequest<{ order: AdminOrderRecord }>('/admin/orders', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  },
+
+  async update(id: string, payload: Partial<AdminOrderRecord>) {
+    return apiRequest<{ order: AdminOrderRecord }>(`/admin/orders/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    });
+  },
+
+  async updateFulfillment(
+    id: string,
+    payload: {
+      fulfillmentStatus?: string;
+      trackingNumber?: string;
+      carrier?: string;
+      manufacturingNotes?: string;
+    }
+  ) {
+    return apiRequest<{ order: AdminOrderRecord }>(`/admin/orders/${id}/fulfillment`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    });
+  },
+
+  async archive(id: string) {
+    return apiRequest<{ message: string }>(`/admin/orders/${id}`, {
+      method: 'DELETE'
+    });
+  },
+
+  async restore(id: string) {
+    return apiRequest<{ order: AdminOrderRecord }>(`/admin/orders/${id}/restore`, {
+      method: 'PATCH'
+    });
+  }
+};
+

@@ -124,11 +124,12 @@ export default function CategoryCustomizerClient({ config, initialStyleSlug, ini
         {config.styles.map((style) => {
           const isConfiguring = configuringStyleId === style.id;
           const currentPrice = isConfiguring ? calculatePrice(style) : style.price;
+          const activeImage = (isConfiguring && selectedFabric?.image) ? selectedFabric.image : style.image;
 
           return (
             <article key={style.id} className={isConfiguring ? "is-active" : ""}>
               <div className="style-media">
-                <Image src={style.image} alt={style.name} fill priority sizes="(max-width: 800px) 100vw, 55vw" />
+                <Image src={activeImage} alt={style.name} fill priority sizes="(max-width: 800px) 100vw, 55vw" />
               </div>
 
               <div className="style-content">

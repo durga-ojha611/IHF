@@ -12,6 +12,7 @@ import customizerRoutes from './customizer.routes.js';
 import customizerBuilderRoutes from './customizer.builder.routes.js';
 import orderRoutes from './order.routes.js';
 import uploadRoutes from './upload.routes.js';
+import consultationRoutes from './consultation.routes.js';
 import adminRoutes from './admin/admin.routes.js';
 
 const router = express.Router();
@@ -37,6 +38,7 @@ router.use('/swatches', swatchRoutes);
 router.use('/customizer', customizerRoutes);
 router.use('/orders', orderRoutes);
 router.use('/upload', uploadRoutes);
+router.use('/consultations', consultationRoutes);
 
 // Client Live Preview & Configurator Sync
 router.use('/client/customizer', customizerBuilderRoutes);

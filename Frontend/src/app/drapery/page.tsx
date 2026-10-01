@@ -128,7 +128,7 @@ const FALLBACK_CATEGORY: CatalogCategory = {
 
 function ProductCard({ item }: { item: CatalogCard }) {
   return (
-    <Link className="cp-product" href="/drapery/configure">
+    <Link className="cp-product" href={`/product/${item.slug}`}>
       <div>
         <Image src={item.image} alt={item.name} fill sizes="30vw" />
       </div>
@@ -136,7 +136,7 @@ function ProductCard({ item }: { item: CatalogCard }) {
       <h3>{item.name}</h3>
       <p>{item.description}</p>
       <b>From ${item.price}</b>
-      <span>CUSTOMIZE THIS STYLE ↗</span>
+      <span>EXPLORE PRODUCT ↗</span>
     </Link>
   );
 }
@@ -169,6 +169,7 @@ export default async function DraperyPage() {
             fill
             priority
             sizes="100vw"
+            style={{ objectFit: "cover", objectPosition: "center" }}
           />
           <div />
           <article>
@@ -196,7 +197,7 @@ export default async function DraperyPage() {
           </header>
           <div>
             {subcategories.map((item) => (
-              <Link href="/drapery/configure" key={item.slug}>
+              <Link href={`/product/${item.slug}`} key={item.slug}>
                 <Image src={item.image} alt={item.name} width={310} height={330} />
                 <span>{item.name}</span>
               </Link>

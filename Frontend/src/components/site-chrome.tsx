@@ -92,9 +92,8 @@ export function Header() {
 
         {/* Right Actions */}
         <div className="actions">
-          <Link className="count-link" href="/favourites" aria-label="Favourites">
+          <Link href="/favourites" aria-label="Favourites">
             <Image src="/figma/ihf-icon-1.svg" alt="Favourites" width={20} height={20} />
-            {favouriteCount > 0 && <b>{favouriteCount}</b>}
           </Link>
           <Link className="count-link" href="/cart" aria-label="Cart">
             <Image src="/figma/ihf-icon-2.svg" alt="Cart" width={20} height={20} />
@@ -197,8 +196,8 @@ export function Footer() {
               <Image
                 src="/figma/ihf-monogram.svg"
                 alt="India Home Furnishings"
-                width={88}
-                height={38}
+                width={120}
+                height={52}
                 priority
               />
             </Link>

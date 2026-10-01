@@ -62,9 +62,9 @@ export const CATEGORY_CUSTOMIZER_CONFIGS: Record<string, CategoryCustomizerConfi
   drapery: {
     slug: "drapery",
     name: "Drapery",
-    eyebrow: "THE DRAPERY COLLECTION",
-    headline: "Frame Every View",
-    description: "Thoughtfully crafted made-to-measure drapery tailored to your exact window measurements.",
+    eyebrow: "MADE TO MEASURE",
+    headline: "Drapery, made for your space.",
+    description: "Choose your fabric, heading, lining and finish. Every panel is tailored to your measurements and finished by hand.",
     heroImage: "/figma/home-01.jpeg",
     customizerHeadline: "Choose Your Drapery Style",
     customizerSubhead: "Handcrafted over precision header systems, tailored with crisp architectural folds, seamless linings, and whisper-quiet control options.",
@@ -480,10 +480,10 @@ export const CATEGORY_CUSTOMIZER_CONFIGS: Record<string, CategoryCustomizerConfi
   bedding: {
     slug: "bedding",
     name: "Bedding",
-    eyebrow: "THE BEDDING COLLECTION",
+    eyebrow: "BEDDING",
     headline: "Elevate Your Bedroom",
-    description: "Artisan-spun Belgian linen duvet covers, pickstitched coverlets, and crisp cotton percale sheets woven for restorative, breathable sleep.",
-    heroImage: "/figma/product-linen-bedspread-hd.png",
+    description: "Discover beautifully crafted bedding designed to bring comfort, texture and timeless style to your everyday space.",
+    heroImage: "/figma/bedding-hero-exact.png",
     customizerHeadline: "Customize Your Atelier Bedding Suite",
     customizerSubhead: "Crafted from yarn-dyed European flax pre-washed for cloud-like softness that grows more supple with every laundering.",
     craftPillars: [

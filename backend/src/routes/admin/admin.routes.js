@@ -19,6 +19,7 @@ import * as blogCtrl from '../../controllers/blog.controller.js';
 import * as swatchCtrl from '../../controllers/swatch.controller.js';
 import * as customizerCtrl from '../../controllers/customizer.controller.js';
 import * as orderCtrl from '../../controllers/order.controller.js';
+import * as consultCtrl from '../../controllers/consultation.controller.js';
 
 const router = express.Router();
 
@@ -101,9 +102,12 @@ router.delete('/customizer/:id', customizerCtrl.adminDeleteRule);
 // 9. Orders & Manufacturing Fulfillment (`/api/admin/orders`)
 // ---------------------------------------------
 router.get('/orders', orderCtrl.adminGetAllOrders);
+router.post('/orders', logAdminActivity('CREATE_RESOURCE', 'Order'), orderCtrl.adminCreateManualOrder);
 router.get('/orders/:id', orderCtrl.adminGetOrderById);
+router.patch('/orders/:id', logAdminActivity('UPDATE_RESOURCE', 'Order'), orderCtrl.adminUpdateOrder);
 router.patch('/orders/:id/fulfillment', logAdminActivity('ORDER_STATUS_UPDATE', 'Order'), orderCtrl.adminUpdateFulfillmentStatus);
 router.delete('/orders/:id', logAdminActivity('DELETE_RESOURCE', 'Order'), orderCtrl.adminSoftDeleteOrder);
+router.patch('/orders/:id/restore', logAdminActivity('UPDATE_RESOURCE', 'Order'), orderCtrl.adminRestoreOrder);
 
 // ---------------------------------------------
 // 10. Security Audit Activity Logs (`/api/admin/activity-logs`)
@@ -118,5 +122,14 @@ router.get('/activity-logs', verifyRoles('admin', 'superadmin'), async (req, res
     }
   });
 });
+
+// ---------------------------------------------
+// 11. Atelier Consultations Management (`/api/admin/consultations`)
+// ---------------------------------------------
+router.get('/consultations', consultCtrl.adminGetConsultations);
+router.get('/consultations/:id', consultCtrl.adminGetConsultationById);
+router.patch('/consultations/:id', logAdminActivity('UPDATE_RESOURCE', 'Consultation'), consultCtrl.adminUpdateConsultation);
+router.delete('/consultations/:id', logAdminActivity('DELETE_RESOURCE', 'Consultation'), consultCtrl.adminSoftDeleteConsultation);
+router.patch('/consultations/:id/restore', logAdminActivity('UPDATE_RESOURCE', 'Consultation'), consultCtrl.adminRestoreConsultation);
 
 export default router;

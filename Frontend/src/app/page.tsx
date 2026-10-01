@@ -4,6 +4,7 @@ import { Header, Footer } from "@/components/site-chrome";
 import { BenefitSection } from "@/components/benefit-section";
 import { CustomerStoriesSection } from "@/components/customer-stories-section";
 import { InTheirHomesSection } from "@/components/in-their-homes-section";
+import { ConsultSection } from "@/components/consult-section";
 import "./home.css";
 import "./home-tuning.css";
 import "./hero-tuning.css";
@@ -46,7 +47,7 @@ export default function Home() {
     <Header />
     <main>
       <section className="home-hero">
-        <Image src="/figma/home-hero-hd.png" alt="Custom made bedroom drapery" fill priority quality={92} sizes="100vw" />
+        <Image src="/figma/home-hero-hd.png" alt="Custom made bedroom drapery" fill priority quality={92} sizes="100vw" style={{ objectFit: "cover", objectPosition: "center" }} />
         <div className="home-hero-copy">
           <span className="home-kicker hero-kicker">CUSTOM MADE · EST. 1998</span>
           <h1>Custom Made.<br/><em>Beautifully Yours.</em></h1>
@@ -165,11 +166,11 @@ export default function Home() {
               </div>
               <div className="cat-card-graphic cat-graphic-bedding">
                 <Image
-                  src="/figma/cat-bedding-transparent.png"
+                  src="/figma/bedding-hero-exact.png"
                   alt="Bedding"
                   width={370}
                   height={220}
-                  className="object-contain"
+                  className="object-cover"
                 />
               </div>
             </div>
@@ -238,7 +239,7 @@ export default function Home() {
 
       <InTheirHomesSection />
 
-      <section className="consult"><div><span className="home-kicker">PERSONAL DESIGN GUIDANCE</span><h2>Consult with Our<br/><em>Designers.</em></h2><p>Not sure where to begin? Our design team will help you choose the right styles, fabrics and finishes for your space.</p><div><ArrowLink>BOOK A COMPLIMENTARY CALL</ArrowLink><ArrowLink>CHAT WITH A DESIGNER</ArrowLink></div></div><Image src="/figma/home-02.png" alt="Design consultation fabric samples" fill sizes="100vw"/></section>
+      <ConsultSection />
     </main>
     <Footer />
   </div>;

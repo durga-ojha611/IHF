@@ -16,6 +16,7 @@ import OptionLayer from '../src/models/OptionLayer.js';
 import Order from '../src/models/Order.js';
 import FabricOption from '../src/models/FabricOption.js';
 import ActivityLog from '../src/models/ActivityLog.js';
+import Consultation from '../src/models/Consultation.js';
 
 // In-Memory Data Store
 export const db = {
@@ -33,7 +34,8 @@ export const db = {
   optionLayers: [],
   orders: [],
   fabricOptions: [],
-  activityLogs: []
+  activityLogs: [],
+  consultations: []
 };
 
 // Helper: Chainable Query Mock
@@ -662,6 +664,117 @@ export function setupMockDatabase() {
           stockStatus:'in_stock',inventoryCount:24+childIndex,isCustomizable:parentSlug==='drapery'||parentSlug==='shades',isFeatured:childIndex<2,isActive:true,isDeleted:false,save:async function(){return this;}
         });
       });
+    });
+  });
+
+  const extraCatalogProducts = [
+    { slug: "signature-ripple-fold-drapery", name: "Signature Ripple Fold Drapery", image: "/figma/home-hero-hd.png", description: "Tailored in pure Belgian linen with fluid S-curve folds and smooth ceiling-track glide.", price: 545, cat: "drapery" },
+    { slug: "heritage-ripple-fold-drapery", name: "Heritage Ripple Fold Drapery", image: "/figma/home-03.jpeg", description: "Heavyweight textured linen with blackout interlining for luxurious bedroom retreats.", price: 620, cat: "drapery" },
+    { slug: "signature-tailored-pleat-drapery", name: "Signature Tailored Pleat Drapery", image: "/figma/home-15.jpeg", description: "Crisp architectural waterfall folds tailored to maintain proportion on tall ceilings.", price: 585, cat: "drapery" },
+    { slug: "heritage-pinch-pleat-drapery", name: "Heritage Pinch Pleat Drapery", image: "/figma/home-01.jpeg", description: "Classic hand-stitched triple pleats delivering timeless full-bodied elegance.", price: 650, cat: "drapery" },
+    { slug: "flat-belgian-linen-shade", name: "Pure Belgian Flax Flat Roman Shade", image: "/figma/cat-shades-new.png", description: "Seamless flat linen Roman shade with cordless tensioning and concealed cord shroud.", price: 385, cat: "shades" },
+    { slug: "relaxed-organic-cotton-shade", name: "Relaxed Combed Cotton Shade", image: "/figma/cat-shades.png", description: "Gently curved center fold tailored in heavyweight combed cotton with blackout core.", price: 415, cat: "shades" },
+    { slug: "cascade-ribbed-roman-shade", name: "Cascade Architectural Shade", image: "/figma/home-06.jpeg", description: "Structured horizontal front ribs delivering crisp, tailored shadow lines.", price: 435, cat: "shades" },
+    { slug: "blackout-silk-velvet-shade", name: "Monaco Velvet Blackout Shade", image: "/figma/home-12.jpeg", description: "Opulent silk velvet shade with thermal core blocking 100% of intrusive light.", price: 485, cat: "shades" },
+    { slug: "box-pleat-valance-oatmeal", name: "Atelier Tailored Box Pleat Valance", image: "/figma/home-18.jpeg", description: "Linen board-mounted valance with crisp inverted box pleats and 3.5″ return.", price: 280, cat: "valances" },
+    { slug: "upholstered-cornice-linen", name: "Upholstered Architectural Cornice", image: "/figma/home-15.jpeg", description: "Hand-padded birch frame upholstered in pure Belgian linen with French cleat mounting.", price: 440, cat: "valances" },
+    { slug: "scalloped-linen-valance", name: "French Scalloped Pelmet", image: "/figma/home-04.jpeg", description: "Graceful sculpted bottom silhouette with satin gimp rope trim.", price: 310, cat: "valances" },
+    { slug: "signature-french-piped-pillow", name: "Signature French Piped Linen Cushion", image: "/figma/cushion-french-piped.jpg", description: "Belgian flax pillow finished with hand-turned self-piping and 90/10 goose down insert.", price: 135, cat: "pillows" },
+    { slug: "silk-velvet-accent-pillow", name: "Chateau Silk Velvet Lumbar", image: "/figma/home-12.jpeg", description: "Elongated velvet lumbar cushion with rich tactile sheen and brass concealed closure.", price: 165, cat: "pillows" },
+    { slug: "modern-knife-edge-cushion", name: "Atelier Knife-Edge Flax Pillow", image: "/figma/cat-cushions.png", description: "Clean modern profile tailored in pure washed flax linen.", price: 115, cat: "pillows" },
+    { slug: "alpine-boucle-bolster", name: "Alpine Boucle Bolster Roll", image: "/figma/home-03.jpeg", description: "Sculptural cylindrical bolster wrapped in cozy tactile boucle with buttoned ends.", price: 150, cat: "pillows" },
+    { slug: "signature-linen-duvet", name: "Atelier Pure Belgian Linen Duvet", image: "/figma/product-linen-bedspread-hd.png", description: "Relaxed stonewashed linen duvet cover with internal corner ties and shell button placket.", price: 345, cat: "bedding" },
+    { slug: "hand-stitched-coverlet", name: "Heritage Hand-Pickstitched Coverlet", image: "/figma/cat-bedding.png", description: "Artisan quilted coverlet with lightweight cotton batting core.", price: 395, cat: "bedding" },
+    { slug: "flanged-euro-shams", name: "Belgian Linen Euro Shams (Set of 2)", image: "/figma/cat-bedding-mockup.png", description: "26″×26″ square shams with 2″ mitered flanges and deep envelope closure.", price: 145, cat: "bedding" },
+    { slug: "signature-mitered-tablecloth", name: "Atelier Mitered Linen Tablecloth", image: "/figma/cat-table-linen.png", description: "Pure Belgian flax tablecloth with generous 2-inch mitered borders.", price: 185, cat: "table-linen" },
+    { slug: "hemstitched-runner-linen", name: "Heritage Hemstitched Table Runner", image: "/figma/home-19.png", description: "Hand-drawn thread openwork runner tailored for center tabletop styling.", price: 95, cat: "table-linen" },
+    { slug: "bistro-napkins-set", name: "Belgian Linen Napkins (Set of 4)", image: "/figma/home-08.png", description: "Four 20″×20″ pre-washed flax dinner napkins with mitered corners.", price: 85, cat: "table-linen" },
+    { slug: "presentation-swatch-box", name: "Complimentary 4-Piece Swatch Kit", image: "/figma/home-04.jpeg", description: "Curated 8″×8″ samples cut and serged by hand, shipped free.", price: 0, cat: "fabrics" },
+    { slug: "belgian-flax-yardage", name: "Belgian Flax Yardage (Per Yard)", image: "/figma/home-02.png", description: "Continuous 54″ width pure flax linen cut to order.", price: 68, cat: "fabrics" },
+    { slug: "silk-velvet-yardage", name: "Royal Silk Velvet Yardage", image: "/figma/home-12.jpeg", description: "Heavyweight 450 GSM velvet by the running yard.", price: 85, cat: "fabrics" },
+    { slug: "solid-brass-pole-kit", name: "Solid Brass Architectural Rod Set", image: "/figma/cat-decor.png", description: "Solid brass 1.25″ rod with finials, brackets, and quiet nylon-lined rings.", price: 245, cat: "decor" },
+    { slug: "french-return-curtain-rod", name: "French Return Blackout Curtain Pole", image: "/figma/home-10.jpeg", description: "Continuous 90-degree curved rod wrapping drapery flush against wall.", price: 215, cat: "decor" },
+    { slug: "cast-brass-tiebacks", name: "Architectural Cast Tiebacks (Pair)", image: "/figma/home-18.jpeg", description: "Solid brass drapery holdbacks with concealed wall anchors.", price: 110, cat: "decor" },
+    { slug: "virtual-design-service", name: "Complimentary Virtual Atelier Consultation", image: "/figma/home-13.png", description: "Book 30 minutes with our master window treatment designers.", price: 0, cat: "decor" },
+    { slug: "precision-measure-guide", name: "The Atelier Window Measurement Guide", image: "/figma/home-18.jpeg", description: "Step-by-step illustrated manual for measuring drops, widths, and clearances.", price: 0, cat: "decor" }
+  ];
+
+  extraCatalogProducts.forEach((item, idx) => {
+    if (db.products.some(p => p.slug === item.slug)) return;
+    const parent = db.categories.find(c => c.slug === item.cat) || db.categories[0];
+    db.products.push({
+      _id: `6999990000000000000000${String(idx).padStart(2, '0')}`,
+      title: item.name,
+      slug: item.slug,
+      sku: `IHF-CAT-${String(idx + 1).padStart(3, '0')}`,
+      shortDescription: item.description,
+      description: `Thoughtfully developed by the India Home Furnishings atelier, ${item.name} combines beautiful natural texture, considered proportion and enduring performance.`,
+      category: parent ? parent._id : '670000000000000000000000',
+      basePrice: item.price || 145,
+      compareAtPrice: Math.round((item.price || 145) * 1.25),
+      currency: 'USD',
+      pricePerYard: 68,
+      fabricType: 'Belgian Linen',
+      colors: [
+        { name: 'Natural Flax', hexCode: '#d8d0c1', inStock: true },
+        { name: 'Alabaster White', hexCode: '#eee9df', inStock: true },
+        { name: 'Warm Oatmeal', hexCode: '#c4b8a5', inStock: true },
+        { name: 'Slate Charcoal', hexCode: '#777b78', inStock: true }
+      ],
+      styles: ['contemporary', 'tailored'],
+      features: ['100% natural-fibre', 'hand-finished', 'pre-washed'],
+      standardSizes: ['Standard', 'Queen', 'King', 'Custom Size'],
+      images: [
+        { url: item.image || '/figma/cat-table-linen.png', alt: `${item.name} view 1`, isPrimary: true },
+        { url: '/figma/home-19.png', alt: `${item.name} view 2`, isPrimary: false },
+        { url: '/figma/home-08.png', alt: `${item.name} view 3`, isPrimary: false },
+        { url: '/figma/home-02.png', alt: `${item.name} view 4`, isPrimary: false }
+      ],
+      materialComposition: '100% European flax linen',
+      weaveConstruction: 'Yarn-dyed atelier weave',
+      finishingProcess: 'Garment washed for immediate softness',
+      origin: 'Jaipur, India · Master Atelier',
+      weight: '240 GSM balanced year-round weight',
+      careInstructions: ['Machine wash cold', 'Low tumble dry', 'Warm iron if desired', 'Do not bleach'],
+      benefits: [
+        { title: 'Breathable', description: 'Naturally regulates temperature for year-round comfort.', icon: '♧' },
+        { title: 'Softer Over Time', description: 'Grows softer and more supple with every wash.', icon: '≈' },
+        { title: 'Impeccably Finished', description: 'Hand-finished details created for longevity.', icon: '×' },
+        { title: 'Effortless Layering', description: 'A balanced weight designed to layer beautifully.', icon: '○' }
+      ],
+      dimensions: [
+        { size: 'Standard', metric: '40 × 230 cm', imperial: '16 × 90 in' },
+        { size: 'Large', metric: '45 × 300 cm', imperial: '18 × 120 in' },
+        { size: 'Custom', metric: 'Tailored to Order', imperial: 'Made-to-Measure' }
+      ],
+      faqs: [
+        { question: 'How should I care for this piece?', answer: 'Follow the care label and use a gentle cold cycle for lasting softness.' },
+        { question: 'Can I order a custom size?', answer: 'Yes. Our atelier can tailor this design to your exact requirements.' },
+        { question: 'Can I see the material first?', answer: 'Yes. Order a swatch to review colour and texture in your own light.' }
+      ],
+      bundleItems: [
+        { name: 'Coordinating Accent Piece', image: '/figma/home-08.png', price: 85, variant: 'Natural · Standard', selected: true },
+        { name: 'Layering Throw', image: '/figma/home-01.jpeg', price: 135, variant: 'Natural', selected: false }
+      ],
+      reviews: [
+        { title: 'Exceptional craftsmanship and texture', body: 'The texture and tailoring exceeded our expectations.', author: 'Verified Client', rating: 5, date: '28 Sep 2026' },
+        { title: 'Perfect in every detail', body: 'Transformed our room instantly.', author: 'Verified Client', rating: 5, date: '14 Sep 2026' }
+      ],
+      ratingAverage: 5.0,
+      ratingCount: 38,
+      editorial: {
+        eyebrow: 'THE ATELIER',
+        title: 'Crafted with Intention',
+        description: 'Natural materials, quiet detailing and meticulous workmanship come together in a piece intended to last.',
+        image: '/figma/home-19.png'
+      },
+      stockStatus: 'in_stock',
+      inventoryCount: 28,
+      isCustomizable: false,
+      isFeatured: true,
+      isActive: true,
+      isDeleted: false,
+      save: async function () { return this; }
     });
   });
 
@@ -1694,6 +1807,593 @@ export function setupMockDatabase() {
     return item;
   };
   ActivityLog.countDocuments = async () => db.activityLogs.length;
+
+  // Consultation Mock Seed Data
+  db.consultations = [
+    {
+      _id: '6600000000000000000000e1',
+      consultationNumber: 'IHF-CON-1049',
+      name: 'Priya Sharma',
+      email: 'priya@example.com',
+      phone: '+91 98200 12345',
+      room: 'Living Room',
+      date: '2026-10-12',
+      time: '10:00 AM - 12:00 PM',
+      type: 'phone',
+      notes: 'Two large floor-to-ceiling sliding windows, looking for sheer + blackout combination in off-white linen.',
+      status: 'pending',
+      isArchived: false,
+      isDeleted: false,
+      internalNotes: 'Client expressed interest in Belgian Flax Oatmeal Linen.',
+      assignedDesigner: 'Aria - Senior Atelier Consultant',
+      createdAt: new Date(Date.now() - 3600000 * 2),
+      updatedAt: new Date(Date.now() - 3600000 * 2)
+    },
+    {
+      _id: '6600000000000000000000e2',
+      consultationNumber: 'IHF-CON-1048',
+      name: 'Vikram Singhania',
+      email: 'vikram.singhania@heritagehomes.in',
+      phone: '+91 98111 88990',
+      room: 'Master Bedroom',
+      date: '2026-10-14',
+      time: '02:00 PM - 05:00 PM',
+      type: 'phone',
+      notes: 'Heritage high ceiling double-height curtains with motorized French pinch pleats.',
+      status: 'confirmed',
+      isArchived: false,
+      isDeleted: false,
+      internalNotes: 'Scheduled telephone call for 2:30 PM with designer Kabir.',
+      assignedDesigner: 'Kabir - Master Drapery Specialist',
+      createdAt: new Date(Date.now() - 3600000 * 24),
+      updatedAt: new Date(Date.now() - 3600000 * 12)
+    },
+    {
+      _id: '6600000000000000000000e3',
+      consultationNumber: 'IHF-CON-1045',
+      name: 'Ananya Mehta',
+      email: 'ananya@luxuryliving.com',
+      phone: '+91 98765 43210',
+      room: 'Dining Room',
+      date: '2026-10-08',
+      time: '12:00 PM - 02:00 PM',
+      type: 'phone',
+      notes: 'Looking for thermal interlining and bronze curtain hardware to match dining fixture.',
+      status: 'completed',
+      isArchived: false,
+      isDeleted: false,
+      internalNotes: 'Dimensions finalized: 120" width x 108" drop. Swatches dispatched.',
+      assignedDesigner: 'Aria - Senior Atelier Consultant',
+      createdAt: new Date(Date.now() - 3600000 * 72),
+      updatedAt: new Date(Date.now() - 3600000 * 20)
+    }
+  ];
+
+  Consultation.find = (query) => {
+    let items = [...db.consultations];
+    if (query) {
+      if (query.status && query.status !== 'all') {
+        items = items.filter((c) => c.status === query.status);
+      }
+      if (query.isArchived !== undefined) {
+        if (typeof query.isArchived === 'object' && query.isArchived.$ne !== undefined) {
+          items = items.filter((c) => c.isArchived !== query.isArchived.$ne);
+        } else {
+          items = items.filter((c) => Boolean(c.isArchived) === Boolean(query.isArchived));
+        }
+      }
+      if (query.$or) {
+        items = items.filter((item) => {
+          return query.$or.some((clause) => {
+            return Object.entries(clause).some(([field, regex]) => {
+              const val = item[field];
+              if (!val) return false;
+              if (regex instanceof RegExp) return regex.test(val);
+              return val.toString().toLowerCase().includes(regex.toString().toLowerCase());
+            });
+          });
+        });
+      }
+    }
+    return new QueryMock(items);
+  };
+
+  Consultation.findById = (id) => new QueryMock(db.consultations.find((c) => c._id.toString() === id.toString()));
+
+  Consultation.findByIdAndUpdate = async (id, update, options) => {
+    const item = db.consultations.find((c) => c._id.toString() === id.toString());
+    if (item) {
+      Object.assign(item, update);
+      item.updatedAt = new Date();
+    }
+    return item;
+  };
+
+  Consultation.create = async (data) => {
+    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+    const item = {
+      _id: `6600000000000000000000e${db.consultations.length + 1}`,
+      consultationNumber: data.consultationNumber || `IHF-CON-${randomSuffix}`,
+      room: data.room || 'Living Room',
+      time: data.time || '11:00 AM',
+      type: 'phone',
+      notes: data.notes || '',
+      status: 'pending',
+      isArchived: false,
+      isDeleted: false,
+      internalNotes: '',
+      assignedDesigner: 'Atelier Senior Consultant',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...data
+    };
+    db.consultations.unshift(item);
+    return item;
+  };
+
+  Consultation.countDocuments = async (query) => {
+    return db.consultations.filter((c) => !c.isArchived).length;
+  };
+
+  // Seed realistic luxury orders matching admin visual expectations
+  db.orders = [
+    {
+      _id: '660000000000000000000f01',
+      orderNumber: 'IHF-10432',
+      orderType: 'Custom Drapery',
+      customerInfo: {
+        name: 'Priya Sharma',
+        email: 'priya.sharma@luxuryestate.in',
+        phone: '+91 98111 22334'
+      },
+      items: [
+        {
+          _id: '660000000000000000000f11',
+          itemType: 'custom_curtain',
+          title: 'Belgian Linen French Pinch Pleat Drapery',
+          quantity: 2,
+          unitPrice: 41000,
+          totalPrice: 82000,
+          customCurtainSpecs: {
+            width: { raw: '96', decimal: 96, formatted: '96"' },
+            height: { raw: '108', decimal: 108, formatted: '108"' },
+            fullness: { id: 'deluxe', label: '2.5x Custom Deluxe Fullness', factor: 2.5 },
+            lining: { id: 'blackout', name: 'Blackout Thermal Interlining', type: 'thermal_blackout' },
+            pleatHeader: { id: 'pinch-pleat', name: 'Three-Finger French Pinch Pleat' },
+            hardware: [{ id: 'hw-motor-somfy', name: 'Somfy RTS Motorized Track', price: 12500 }],
+            color: { name: 'Oatmeal Heritage Linen', hexCode: '#DDD5C7' },
+            fabricType: 'Belgian Heritage Linen',
+            fabricName: 'Pure Belgian Heritage Linen',
+            fabricCode: 'BHL-04',
+            roomLabel: 'Master Bedroom Ocean Suite',
+            motorization: 'Somfy RTS Motorized Smart Track',
+            panelConfiguration: 'pair',
+            priceBreakdown: {
+              fabricCost: 48000,
+              liningCost: 14000,
+              pleatLaborCost: 8000,
+              hardwareCost: 12000,
+              calculatedUnitPrice: 41000
+            }
+          }
+        }
+      ],
+      pricing: {
+        subtotal: 82000,
+        shipping: 0,
+        tax: 2900,
+        discount: 0,
+        total: 84900
+      },
+      shippingAddress: {
+        fullName: 'Priya Sharma',
+        street: 'Penthouse 4B, The Magnolias, Golf Course Road',
+        apartment: 'Tower 2',
+        city: 'Gurugram',
+        state: 'HR',
+        zipCode: '122002',
+        country: 'IN',
+        phone: '+91 98111 22334'
+      },
+      paymentInfo: {
+        stripePaymentIntentId: 'pi_mock_10432',
+        paymentStatus: 'paid',
+        paymentMethod: 'card',
+        paidAt: new Date(Date.now() - 3600000 * 48)
+      },
+      fulfillmentStatus: 'Delayed',
+      carrier: 'BlueDart Luxury Express',
+      trackingNumber: 'BD-IN-98734201',
+      manufacturingNotes: 'Custom weaving delay in Belgian mill for Oatmeal batch. Expected dispatch in 3 days.',
+      isArchived: false,
+      isDeleted: false,
+      createdAt: new Date(Date.now() - 3600000 * 48),
+      updatedAt: new Date(Date.now() - 3600000 * 6)
+    },
+    {
+      _id: '660000000000000000000f02',
+      orderNumber: 'IHF-10431',
+      orderType: 'Roman Shades',
+      customerInfo: {
+        name: 'Ananya Mehta',
+        email: 'ananya@luxuryliving.com',
+        phone: '+91 98765 43210'
+      },
+      items: [
+        {
+          _id: '660000000000000000000f12',
+          itemType: 'custom_curtain',
+          title: 'Flat Fold Waterfall Roman Shades',
+          quantity: 2,
+          unitPrice: 16000,
+          totalPrice: 32000,
+          customCurtainSpecs: {
+            width: { raw: '52', decimal: 52, formatted: '52"' },
+            height: { raw: '72', decimal: 72, formatted: '72"' },
+            fullness: { id: 'flat', label: '1.5x Flat Tailored', factor: 1.5 },
+            lining: { id: 'privacy', name: 'Privacy Sateen Lining', type: 'privacy' },
+            pleatHeader: { id: 'flat-roman', name: 'Flat Waterfall Roman Fold' },
+            hardware: [{ id: 'hw-cordless', name: 'Cordless Precision Spring Roller', price: 3200 }],
+            color: { name: 'Earthy Sand Washed Silk', hexCode: '#C8B9A6' },
+            fabricType: 'Raw Silk Slub',
+            fabricName: 'Artisanal Raw Silk',
+            fabricCode: 'ARS-12',
+            roomLabel: 'Formal Dining Room East',
+            motorization: 'Precision Cordless Spring Roller',
+            panelConfiguration: 'single_panel',
+            priceBreakdown: {
+              fabricCost: 18000,
+              liningCost: 6000,
+              pleatLaborCost: 4000,
+              hardwareCost: 4000,
+              calculatedUnitPrice: 16000
+            }
+          }
+        }
+      ],
+      pricing: {
+        subtotal: 32000,
+        shipping: 0,
+        tax: 2200,
+        discount: 0,
+        total: 34200
+      },
+      shippingAddress: {
+        fullName: 'Ananya Mehta',
+        street: '14 Carmichael Road, Malabar Hill',
+        apartment: 'Villa Sea Crest',
+        city: 'Mumbai',
+        state: 'MH',
+        zipCode: '400026',
+        country: 'IN',
+        phone: '+91 98765 43210'
+      },
+      paymentInfo: {
+        stripePaymentIntentId: 'pi_mock_10431',
+        paymentStatus: 'paid',
+        paymentMethod: 'card',
+        paidAt: new Date(Date.now() - 3600000 * 36)
+      },
+      fulfillmentStatus: 'Awaiting Fabric',
+      carrier: 'FedEx Custom Freight',
+      trackingNumber: '',
+      manufacturingNotes: 'Awaiting raw silk roll delivery from Varanasi weaving workshop.',
+      isArchived: false,
+      isDeleted: false,
+      createdAt: new Date(Date.now() - 3600000 * 36),
+      updatedAt: new Date(Date.now() - 3600000 * 12)
+    },
+    {
+      _id: '660000000000000000000f03',
+      orderNumber: 'IHF-10429',
+      orderType: 'Curtains & Drapes',
+      customerInfo: {
+        name: 'Rohan Kapoor',
+        email: 'rohan.kapoor@atelier.com',
+        phone: '+91 99200 11445'
+      },
+      items: [
+        {
+          _id: '660000000000000000000f13',
+          itemType: 'custom_curtain',
+          title: 'Royal Velvet Ripplefold Drapes',
+          quantity: 2,
+          unitPrice: 29000,
+          totalPrice: 58000,
+          customCurtainSpecs: {
+            width: { raw: '110', decimal: 110, formatted: '110"' },
+            height: { raw: '120', decimal: 120, formatted: '120"' },
+            fullness: { id: 'ripplefold', label: '2.2x Ripplefold Wave', factor: 2.2 },
+            lining: { id: 'thermal-sateen', name: 'Thermal Acoustic Sateen', type: 'thermal' },
+            pleatHeader: { id: 'ripplefold', name: 'Contemporary Ripplefold Wave' },
+            hardware: [{ id: 'hw-track', name: 'Ceiling Recessed Architectural Track', price: 8000 }],
+            color: { name: 'Deep Midnight Sapphire', hexCode: '#1A2942' },
+            fabricType: 'Heavy Weight Royal Velvet',
+            fabricName: 'Atelier Royal Velvet',
+            fabricCode: 'ARV-09',
+            roomLabel: 'Formal Drawing Room',
+            motorization: 'Manual Architectural Baton',
+            panelConfiguration: 'pair'
+          }
+        }
+      ],
+      pricing: {
+        subtotal: 58000,
+        shipping: 0,
+        tax: 3500,
+        discount: 0,
+        total: 61500
+      },
+      shippingAddress: {
+        fullName: 'Rohan Kapoor',
+        street: '88 Friends Colony West',
+        apartment: '',
+        city: 'New Delhi',
+        state: 'DL',
+        zipCode: '110065',
+        country: 'IN',
+        phone: '+91 99200 11445'
+      },
+      paymentInfo: {
+        paymentStatus: 'paid',
+        paymentMethod: 'wire',
+        paidAt: new Date(Date.now() - 3600000 * 54)
+      },
+      fulfillmentStatus: 'Production Pending',
+      carrier: 'FedEx Custom Freight',
+      trackingNumber: '',
+      manufacturingNotes: 'Measurements verified by Atelier representative. Ready to cut.',
+      isArchived: false,
+      isDeleted: false,
+      createdAt: new Date(Date.now() - 3600000 * 54),
+      updatedAt: new Date(Date.now() - 3600000 * 24)
+    },
+    {
+      _id: '660000000000000000000f04',
+      orderNumber: 'IHF-10427',
+      orderType: 'Bedding Set',
+      customerInfo: {
+        name: 'Neha Verma',
+        email: 'neha.verma@delhidesign.co',
+        phone: '+91 98102 33445'
+      },
+      items: [
+        {
+          _id: '660000000000000000000f14',
+          itemType: 'standard_product',
+          title: 'Signature Mulberry Silk King Duvet & Pillow Suite',
+          quantity: 1,
+          unitPrice: 26500,
+          totalPrice: 26500
+        }
+      ],
+      pricing: {
+        subtotal: 26500,
+        shipping: 400,
+        tax: 2000,
+        discount: 0,
+        total: 28900
+      },
+      shippingAddress: {
+        fullName: 'Neha Verma',
+        street: 'Flat 1204, DLF Camellias',
+        apartment: 'Tower 6',
+        city: 'Gurugram',
+        state: 'HR',
+        zipCode: '122009',
+        country: 'IN',
+        phone: '+91 98102 33445'
+      },
+      paymentInfo: {
+        paymentStatus: 'pending',
+        paymentMethod: 'manual_invoice'
+      },
+      fulfillmentStatus: 'Payment Pending',
+      carrier: 'BlueDart Luxury Express',
+      trackingNumber: '',
+      manufacturingNotes: 'Awaiting client approval of proforma wire invoice.',
+      isArchived: false,
+      isDeleted: false,
+      createdAt: new Date(Date.now() - 3600000 * 60),
+      updatedAt: new Date(Date.now() - 3600000 * 30)
+    },
+    {
+      _id: '660000000000000000000f05',
+      orderNumber: 'IHF-10425',
+      orderType: 'Custom Drapery',
+      customerInfo: {
+        name: 'Simran Kaur',
+        email: 'simran.kaur@lifestyle.in',
+        phone: '+91 97110 55667'
+      },
+      items: [
+        {
+          _id: '660000000000000000000f15',
+          itemType: 'custom_curtain',
+          title: 'Tussar Raw Silk Goblet Pleat Drapes',
+          quantity: 2,
+          unitPrice: 37000,
+          totalPrice: 74000,
+          customCurtainSpecs: {
+            width: { raw: '104', decimal: 104, formatted: '104"' },
+            height: { raw: '114', decimal: 114, formatted: '114"' },
+            fullness: { id: 'goblet', label: '2.5x Goblet Classical Pleat', factor: 2.5 },
+            lining: { id: 'blackout', name: 'Blackout Interlining', type: 'thermal_blackout' },
+            pleatHeader: { id: 'goblet', name: 'Classical Goblet Pleat' },
+            hardware: [{ id: 'hw-rod', name: 'Burnished Brass Decorative Finial Rod', price: 9500 }],
+            color: { name: 'Alabaster Ivory Cream', hexCode: '#FDFBF7' },
+            fabricType: 'Tussar Raw Silk',
+            fabricName: 'Imperial Tussar Silk',
+            fabricCode: 'ITS-01',
+            roomLabel: 'Main Living Gallery',
+            motorization: 'Manual Decorative Ring Pull',
+            panelConfiguration: 'pair'
+          }
+        }
+      ],
+      pricing: {
+        subtotal: 74000,
+        shipping: 0,
+        tax: 4300,
+        discount: 0,
+        total: 78300
+      },
+      shippingAddress: {
+        fullName: 'Simran Kaur',
+        street: 'Villa 18, Palm Meadows, Whitefield',
+        apartment: '',
+        city: 'Bengaluru',
+        state: 'KA',
+        zipCode: '560066',
+        country: 'IN',
+        phone: '+91 97110 55667'
+      },
+      paymentInfo: {
+        paymentStatus: 'paid',
+        paymentMethod: 'card',
+        paidAt: new Date(Date.now() - 3600000 * 72)
+      },
+      fulfillmentStatus: 'Sizing Confirmation',
+      carrier: 'FedEx Custom Freight',
+      trackingNumber: '',
+      manufacturingNotes: 'Consultant visiting site to verify drop allowance for marble floor molding.',
+      isArchived: false,
+      isDeleted: false,
+      createdAt: new Date(Date.now() - 3600000 * 72),
+      updatedAt: new Date(Date.now() - 3600000 * 40)
+    }
+  ];
+
+  Order.find = (query) => {
+    let items = [...db.orders];
+    if (query) {
+      if (query.isArchived !== undefined) {
+        if (typeof query.isArchived === 'object' && query.isArchived.$ne !== undefined) {
+          items = items.filter((o) => o.isArchived !== query.isArchived.$ne);
+        } else {
+          items = items.filter((o) => Boolean(o.isArchived) === Boolean(query.isArchived));
+        }
+      }
+      if (query.fulfillmentStatus) {
+        if (typeof query.fulfillmentStatus === 'object' && query.fulfillmentStatus.$nin) {
+          items = items.filter((o) => !query.fulfillmentStatus.$nin.includes(o.fulfillmentStatus));
+        } else if (query.fulfillmentStatus !== 'all') {
+          items = items.filter((o) => o.fulfillmentStatus === query.fulfillmentStatus);
+        }
+      }
+      if (query['paymentInfo.paymentStatus'] && query['paymentInfo.paymentStatus'] !== 'all') {
+        items = items.filter((o) => o.paymentInfo?.paymentStatus === query['paymentInfo.paymentStatus']);
+      }
+      if (query.orderType && query.orderType !== 'all') {
+        items = items.filter((o) => o.orderType === query.orderType);
+      }
+      if (query.user) {
+        items = items.filter((o) => o.user?.toString() === query.user.toString());
+      }
+      if (query.$or) {
+        items = items.filter((item) => {
+          return query.$or.some((clause) => {
+            return Object.entries(clause).some(([field, regex]) => {
+              let val = null;
+              if (field.includes('.')) {
+                const parts = field.split('.');
+                val = item[parts[0]]?.[parts[1]];
+              } else {
+                val = item[field];
+              }
+              if (!val) return false;
+              if (regex instanceof RegExp) return regex.test(val);
+              return val.toString().toLowerCase().includes(regex.toString().toLowerCase());
+            });
+          });
+        });
+      }
+    }
+    return new QueryMock(items);
+  };
+
+  Order.findById = (id) => new QueryMock(db.orders.find((o) => o._id?.toString() === id?.toString()));
+
+  Order.findByIdAndUpdate = async (id, update, options) => {
+    const item = db.orders.find((o) => o._id?.toString() === id?.toString());
+    if (item) {
+      Object.assign(item, update);
+      item.updatedAt = new Date();
+    }
+    return item;
+  };
+
+  Order.findOneAndUpdate = async (filter, update, options) => {
+    let item = null;
+    if (filter['paymentInfo.stripePaymentIntentId']) {
+      item = db.orders.find((o) => o.paymentInfo?.stripePaymentIntentId === filter['paymentInfo.stripePaymentIntentId']);
+    } else if (filter._id) {
+      item = db.orders.find((o) => o._id?.toString() === filter._id?.toString());
+    }
+    if (item) {
+      Object.assign(item, update);
+      item.updatedAt = new Date();
+    }
+    return item;
+  };
+
+  Order.create = async (data) => {
+    const randSuffix = Math.floor(10000 + Math.random() * 90000);
+    const item = {
+      _id: `660000000000000000000f${db.orders.length + 10}`,
+      orderNumber: data.orderNumber || `IHF-${randSuffix}`,
+      orderType: data.orderType || 'Custom Drapery',
+      items: data.items || [],
+      pricing: data.pricing || { subtotal: 0, shipping: 0, tax: 0, discount: 0, total: 0 },
+      customerInfo: data.customerInfo || { name: 'Valued Client', email: 'client@atelier.com', phone: '' },
+      shippingAddress: data.shippingAddress || {
+        fullName: 'Valued Client',
+        street: '1 Atelier Way',
+        city: 'New Delhi',
+        state: 'DL',
+        zipCode: '110001',
+        country: 'IN'
+      },
+      paymentInfo: data.paymentInfo || { paymentStatus: 'pending', paymentMethod: 'card' },
+      fulfillmentStatus: data.fulfillmentStatus || 'Pending',
+      carrier: data.carrier || 'FedEx Custom Freight',
+      trackingNumber: data.trackingNumber || '',
+      manufacturingNotes: data.manufacturingNotes || '',
+      isArchived: false,
+      isDeleted: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...data,
+      save: async function () {
+        return this;
+      }
+    };
+    db.orders.unshift(item);
+    return item;
+  };
+
+  Order.countDocuments = async (query) => {
+    if (!query) return db.orders.length;
+    let list = [...db.orders];
+    if (query.isArchived !== undefined) {
+      if (typeof query.isArchived === 'object' && query.isArchived.$ne !== undefined) {
+        list = list.filter((o) => o.isArchived !== query.isArchived.$ne);
+      } else {
+        list = list.filter((o) => Boolean(o.isArchived) === Boolean(query.isArchived));
+      }
+    }
+    if (query.fulfillmentStatus) {
+      if (typeof query.fulfillmentStatus === 'object' && query.fulfillmentStatus.$nin) {
+        list = list.filter((o) => !query.fulfillmentStatus.$nin.includes(o.fulfillmentStatus));
+      } else if (query.fulfillmentStatus !== 'all') {
+        list = list.filter((o) => o.fulfillmentStatus === query.fulfillmentStatus);
+      }
+    }
+    if (query['paymentInfo.paymentStatus']) {
+      list = list.filter((o) => o.paymentInfo?.paymentStatus === query['paymentInfo.paymentStatus']);
+    }
+    return list.length;
+  };
 }
 
 export default {
