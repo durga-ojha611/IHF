@@ -27,6 +27,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   register: (name: string, email: string, password: string, phone?: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -70,6 +71,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const loginWithGoogle = async () => {
+    const { signInWithGoogle } = await import("@/lib/firebase");
+    const cred = await signInWithGoogle();
+    if (cred.user && cred.user.email) {
+      const res = await authApi.googleLogin({
+        email: cred.user.email,
+        name: cred.user.displayName || undefined,
+        googleId: cred.user.uid,
+        photo: cred.user.photoURL || undefined
+      });
+      if (res?.data?.user) {
+        setUser(res.data.user);
+      }
+    }
+  };
+
   const register = async (name: string, email: string, password: string, phone?: string) => {
     return await authApi.register({ name, email, password, phone });
   };
@@ -80,7 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, login, loginWithGoogle, register, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -58,7 +58,7 @@ function GoogleIcon() {
 
 export default function Account() {
   const router = useRouter();
-  const { user, login, register, logout } = useAuth();
+  const { user, login, loginWithGoogle, register, logout } = useAuth();
   const [isRegister, setIsRegister] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -141,9 +141,19 @@ export default function Account() {
     }
   };
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
     setError(null);
-    setSuccess("Google Sign-In is configured. Please enter your email and password to proceed.");
+    setSuccess(null);
+    setSubmitting(true);
+    try {
+      await loginWithGoogle();
+      setSuccess("Successfully authenticated with Google!");
+    } catch (err: any) {
+      console.error("Google Sign-In Error:", err);
+      setError(err.message || "Google Sign-In failed. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (

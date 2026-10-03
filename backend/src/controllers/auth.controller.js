@@ -166,6 +166,38 @@ export const login = catchAsync(async (req, res, next) => {
 });
 
 /**
+ * Google Authentication (Firebase SSO)
+ */
+export const googleLogin = catchAsync(async (req, res, next) => {
+  const { email, name, googleId, photo } = req.body;
+
+  if (!email) {
+    return next(new AppError('Google authentication failed: Email address is required.', 400));
+  }
+
+  let user = await User.findOne({ email: email.toLowerCase() });
+
+  if (user) {
+    if (user.isDeleted) {
+      return next(new AppError('This account has been deactivated. Please contact support.', 403));
+    }
+    user.lastLogin = Date.now();
+    await user.save({ validateBeforeSave: false });
+  } else {
+    // Generate secure random password for Firebase OAuth user
+    const randomPassword = `GoogleAuth#${crypto.randomBytes(8).toString('hex')}!`;
+    user = await User.create({
+      name: name || email.split('@')[0],
+      email: email.toLowerCase(),
+      password: randomPassword,
+      role: 'customer'
+    });
+  }
+
+  await createSendTokens(user, 200, res);
+});
+
+/**
  * Refresh Access Token with Token Rotation & Reuse Detection
  */
 export const refreshSession = catchAsync(async (req, res, next) => {
@@ -357,6 +389,7 @@ export const updatePassword = catchAsync(async (req, res, next) => {
 export default {
   register,
   login,
+  googleLogin,
   refreshSession,
   logout,
   getMe,

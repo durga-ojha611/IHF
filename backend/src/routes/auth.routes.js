@@ -2,6 +2,7 @@ import express from 'express';
 import {
   register,
   login,
+  googleLogin,
   refreshSession,
   logout,
   getMe,
@@ -17,6 +18,7 @@ const router = express.Router();
 // Strict Rate-Limited & Sanitized Public Auth Endpoints
 router.post('/register', authLimiter, requireStrongPassword, register);
 router.post('/login', authLimiter, login);
+router.post('/google', authLimiter, googleLogin);
 router.post('/refresh', refreshSession);
 router.post('/logout', logout);
 router.post('/forgot-password', authLimiter, forgotPassword);

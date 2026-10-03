@@ -69,6 +69,17 @@ export const authApi = {
     return res;
   },
 
+  async googleLogin(body: { email: string; name?: string; googleId?: string; photo?: string }) {
+    const res = await apiRequest('/auth/google', {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+    if (res.token && typeof window !== 'undefined') {
+      localStorage.setItem('ihf_token', res.token);
+    }
+    return res;
+  },
+
   async getMe() {
     return apiRequest('/auth/me');
   },
