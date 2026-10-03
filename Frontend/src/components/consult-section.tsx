@@ -212,20 +212,6 @@ export function ConsultSection() {
                     </label>
 
                     <label>
-                      <span>Room / Space</span>
-                      <select
-                        value={formData.room}
-                        onChange={(e) => setFormData({ ...formData, room: e.target.value })}
-                      >
-                        <option value="Living Room">Living Room</option>
-                        <option value="Master Bedroom">Master Bedroom</option>
-                        <option value="Dining Room">Dining Room</option>
-                        <option value="Full House / Multiple Rooms">Full House / Multiple Rooms</option>
-                        <option value="Commercial / Trade">Commercial / Trade</option>
-                      </select>
-                    </label>
-
-                    <label>
                       <span>Preferred Date *</span>
                       <input
                         type="date"

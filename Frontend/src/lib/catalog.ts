@@ -78,7 +78,7 @@ export async function getCatalogCategory(slug: string): Promise<CatalogCategory 
     eyebrow: `THE ${cleanName.toUpperCase()} ARCHIVE`,
     headline: `Atelier ${cleanName} Collection`,
     description: `Meticulously tailored from natural flax, Egyptian cotton, and organic weaves. Designed for effortless draping and quiet luxury.`,
-    heroImage: "/figma/bedding-hero-exact.png",
+    heroImage: "/figma/cat-bedding-transparent.png",
     subcategories: [
       { slug: "duvet-covers", name: "Duvet Covers", image: "/figma/cat-bedding.png", description: "Linen and sateen duvet covers", price: 285 },
       { slug: "coverlets", name: "Hand-Pickstitched Coverlets", image: "/figma/home-01.jpeg", description: "Pickstitched layerings", price: 310 },

@@ -94,7 +94,7 @@ export default async function Products({ params }: { params: Promise<{ slug: str
       <Header />
       <main>
         {/* Editorial Category Hero */}
-        <section className="cp-hero">
+        <section className={`cp-hero ${slug === "bedding" ? "cp-hero-bedding" : ""}`}>
           <Image
             src={heroImage}
             alt={`${categoryName} collection`}

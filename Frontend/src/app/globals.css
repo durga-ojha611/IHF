@@ -63,15 +63,13 @@ body {
   transform: scale(1.002) !important;
 }
 
-/* Soft white fog gradient overlay behind left hero text matching Picture 2 */
-.home-hero:after,
-.home-hero::after,
-.home-v2 .home-hero:after,
-.home-v2 .home-hero::after,
-.cp-hero:after,
-.cp-hero::after,
+/* Rich dark vignette overlay behind left hero text for optimal contrast with white typography */
 .editorial-hero:after,
-.editorial-hero::after {
+.editorial-hero::after,
+.home-v2 .editorial-hero:after,
+.home-v2 .editorial-hero::after,
+.cp-hero:after,
+.cp-hero::after {
   content: "" !important;
   display: block !important;
   position: absolute !important;
@@ -79,17 +77,17 @@ body {
   z-index: 1 !important;
   background: linear-gradient(
     115deg,
-    rgba(247, 244, 237, 0.93) 0%,
-    rgba(247, 244, 237, 0.82) 28%,
-    rgba(247, 244, 237, 0.38) 46%,
-    rgba(247, 244, 237, 0.08) 60%,
-    transparent 68%
+    rgba(15, 14, 12, 0.78) 0%,
+    rgba(15, 14, 12, 0.58) 36%,
+    rgba(15, 14, 12, 0.22) 58%,
+    rgba(15, 14, 12, 0.05) 72%,
+    transparent 80%
   ) !important;
   opacity: 1 !important;
   pointer-events: none !important;
 }
 
-/* Foreground typography on soft white fog shade */
+/* Foreground typography on hero in WHITE */
 .editorial-hero article,
 .cp-hero > div,
 .home-hero-copy,
@@ -116,9 +114,9 @@ body {
   font-size: 11px !important;
   font-weight: 500 !important;
   text-transform: uppercase !important;
-  color: #4a4e4d !important;
+  color: #FFFFFF !important;
   margin-bottom: 12px !important;
-  text-shadow: none !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
 }
 
 .editorial-hero small:before,
@@ -127,42 +125,36 @@ body {
   content: "" !important;
   width: 32px !important;
   height: 1px !important;
-  background: #547586 !important;
+  background: #FFFFFF !important;
   display: inline-block !important;
 }
 
 .editorial-hero h1,
-.cp-hero h1,
-.home-hero h1,
-.hero h1 {
+.cp-hero h1 {
   font-family: var(--font-serif), "Cormorant Garamond", Georgia, serif !important;
   font-weight: 400 !important;
   font-size: clamp(38px, 5.2vw, 64px) !important;
   line-height: 1.08 !important;
   margin: 15px 0 15px !important;
-  color: #171615 !important;
+  color: #FFFFFF !important;
   letter-spacing: 0 !important;
-  text-shadow: none !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45) !important;
 }
 
 .editorial-hero h1 em,
-.cp-hero h1 em,
-.home-hero h1 em,
-.hero h1 em {
-  color: #424948 !important;
+.cp-hero h1 em {
+  color: #F3F4F6 !important;
 }
 
 .editorial-hero p,
-.cp-hero p,
-.home-hero p,
-.hero p {
+.cp-hero p {
   font-family: var(--font-inter), sans-serif !important;
   font-size: clamp(14px, 1.2vw, 16px) !important;
   line-height: 1.7 !important;
-  color: #3f3f3f !important;
+  color: #FFFFFF !important;
   max-width: 591px !important;
   margin: 0 0 24px !important;
-  text-shadow: none !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4) !important;
 }
 
 .editorial-hero a,

@@ -279,7 +279,7 @@ export default function FavouritesPage() {
                 swatch box or book a virtual session with an Atelier Drapery Specialist.
               </p>
               <div className="fav-consult-buttons">
-                <Link href="/products/fabrics" className="fav-btn-primary">
+                <Link href="/swatches" className="fav-btn-primary">
                   ORDER FREE SWATCH
                 </Link>
                 <Link href="/drapery" className="fav-btn-secondary">

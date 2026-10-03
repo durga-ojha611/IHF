@@ -14,7 +14,7 @@ const nav = [
   ["Pillows", "/products/pillows"],
   ["Bedding", "/products/bedding"],
   ["Table Linen", "/products/table-linen"],
-  ["Fabrics & Swatches", "/products/fabrics"],
+  ["Fabrics & Swatches", "/swatches"],
   ["Decor & More", "/products/decor"],
   ["Resources", "/resources"],
 ];
@@ -23,6 +23,7 @@ export function Header() {
   const { cartCount, favouriteCount } = useCommerce();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const isLandingPage = pathname === "/";
 
   // Close mobile drawer on route navigation
   useEffect(() => {

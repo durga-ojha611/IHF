@@ -483,7 +483,7 @@ export const CATEGORY_CUSTOMIZER_CONFIGS: Record<string, CategoryCustomizerConfi
     eyebrow: "BEDDING",
     headline: "Elevate Your Bedroom",
     description: "Discover beautifully crafted bedding designed to bring comfort, texture and timeless style to your everyday space.",
-    heroImage: "/figma/bedding-hero-exact.png",
+    heroImage: "/figma/cat-bedding-transparent.png",
     customizerHeadline: "Customize Your Atelier Bedding Suite",
     customizerSubhead: "Crafted from yarn-dyed European flax pre-washed for cloud-like softness that grows more supple with every laundering.",
     craftPillars: [

@@ -91,7 +91,7 @@ export default function Home() {
       <section className="craft-story">
         <div className="craft-copy"><span className="home-kicker">OUR PHILOSOPHY</span><h2><em>Beautifully</em> Made.<br/><em>Thoughtfully Delivered.</em></h2><p>We believe your home should be a true reflection of you — your story, your values, your way of life. Every piece is thoughtfully handcrafted in India, bringing together time-honoured craftsmanship, beautiful materials and contemporary design.</p><div className="craft-stats"><b>18<small>DAYS LEAD TIME</small></b><b>96%<small>NATURAL FIBRES</small></b><b>12k+<small>HOMES DRESSED</small></b></div></div>
         <Image src="/figma/home-13.png" alt="Hand finishing custom drapery" width={720} height={720}/>
-        <div className="sample-card"><Image src="/figma/home-02.png" alt="Fabric samples" width={230} height={150}/><b>25</b><span>YEARS OF DESIGN EXPERTISE</span></div>
+        <div className="sample-card"><b>25</b><span>YEARS OF DESIGN EXPERTISE</span></div>
       </section>
 
       <section className="shop-category home-shell"><span className="home-kicker">EVERY DETAIL, BEAUTIFULLY CONSIDERED</span><h2>Shop By Category</h2><p>Discover the pieces that make a room feel complete.</p>
@@ -166,11 +166,11 @@ export default function Home() {
               </div>
               <div className="cat-card-graphic cat-graphic-bedding">
                 <Image
-                  src="/figma/bedding-hero-exact.png"
-                  alt="Bedding"
+                  src="/figma/cat-bedding-transparent.png"
+                  alt="Luxury Bedding Set"
                   width={370}
                   height={220}
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
             </div>
@@ -227,7 +227,29 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="right-details home-shell"><div><span className="home-kicker">DETAILS THAT TRANSFORM A ROOM</span><h2>Every beautiful drape begins with the right details.</h2><p>Explore the materials, trims and finishes that bring your vision together.</p></div><div className="three-grid">{[["/figma/home-18.jpeg","FABRICS"],["/figma/home-02.png","SWATCHES"],["/figma/home-07.jpeg","TRIMS & FINISHES"]].map(([src,label])=><article key={label}><Image src={src} alt={label} width={520} height={420}/><span className="home-kicker">{label}</span><h3>Chosen for the way you live.</h3><ArrowLink>DISCOVER</ArrowLink></article>)}</div></section>
+      <section className="right-details home-shell">
+        <div>
+          <span className="home-kicker">DETAILS THAT TRANSFORM A ROOM</span>
+          <h2>Every beautiful drape begins with the right details.</h2>
+          <p>Explore the materials, trims and finishes that bring your vision together.</p>
+        </div>
+        <div className="three-grid">
+          {[
+            ["/figma/home-details-swatches.png", "FABRICS", "/swatches"],
+            ["/figma/home-details-swatches.png", "SWATCHES", "/swatches"],
+            ["/figma/home-07.jpeg", "TRIMS & FINISHES", "/drapery"]
+          ].map(([src, label, targetHref]) => (
+            <article key={label}>
+              <Link href={targetHref} style={{ display: "block", color: "inherit", textDecoration: "none" }}>
+                <Image src={src} alt={label} width={520} height={420} style={{ objectFit: "cover", width: "100%", height: "330px", borderRadius: "2px" }} />
+                <span className="home-kicker" style={{ marginTop: "16px" }}>{label}</span>
+                <h3>Chosen for the way you live.</h3>
+              </Link>
+              <ArrowLink href={targetHref}>DISCOVER</ArrowLink>
+            </article>
+          ))}
+        </div>
+      </section>
 
       <section className="fabric-split"><Image src="/figma/home-03.jpeg" alt="Natural linen fabric finish" width={1130} height={754} quality={90}/><div><span className="home-kicker">CURATED MATERIALS</span><h2>Fabrics &amp; Finishes.<br/>Chosen for You.</h2><p>Explore a thoughtful collection of natural textures, elegant weaves and enduring colours—selected to work beautifully throughout your home.</p><ArrowLink href="/swatches">ORDER COMPLIMENTARY SWATCHES</ArrowLink></div></section>
 
