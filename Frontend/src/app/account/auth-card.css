@@ -200,6 +200,16 @@
   color: #aaa59c;
 }
 
+/* Disable Chrome / Edge browser autofill background highlight */
+.auth-input:-webkit-autofill,
+.auth-input:-webkit-autofill:hover,
+.auth-input:-webkit-autofill:focus,
+.auth-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #faf8f5 inset !important;
+  -webkit-text-fill-color: #1a1917 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 .auth-input.has-toggle {
   padding-right: 44px;
 }

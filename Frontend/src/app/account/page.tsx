@@ -349,7 +349,7 @@ export default function Account() {
                 {error && <div className="auth-alert-error">{error}</div>}
                 {success && <div className="auth-alert-success">{success}</div>}
 
-                <form onSubmit={handleSubmit} noValidate>
+                <form onSubmit={handleSubmit} noValidate autoComplete="off">
                   {/* SIGN UP ONLY FIELDS */}
                   {!isForgotPassword && isRegister && (
                     <>
@@ -407,11 +407,11 @@ export default function Account() {
                         id="auth-email"
                         className="auth-input"
                         type="email"
-                        placeholder="durga@example.com"
+                        placeholder="name@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        autoComplete="email"
+                        autoComplete="off"
                       />
                     </div>
                   </div>
@@ -434,7 +434,7 @@ export default function Account() {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           required
-                          autoComplete={isRegister ? "new-password" : "current-password"}
+                          autoComplete="off"
                         />
                         <button
                           type="button"
