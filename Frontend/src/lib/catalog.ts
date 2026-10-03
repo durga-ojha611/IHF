@@ -1,6 +1,9 @@
 import { CATEGORY_CUSTOMIZER_CONFIGS } from "./customizer-configs";
 
-export type CatalogCard = { _id?: string; slug: string; name: string; image: string; description: string; price: number };
+export type CatalogCard = {
+  _id?: string; slug: string; name: string; image: string; description: string; price: number;
+  compareAtPrice?: number; productType?: string; colorCount?: number; variantCount?: number; customizable?: boolean;
+};
 export type CatalogCategory = {
   slug: string; name: string; eyebrow: string; headline: string; description: string; heroImage: string;
   subcategories: CatalogCard[]; fabrics: CatalogCard[]; products: CatalogCard[]; guideTitle: string; guideCopy: string;

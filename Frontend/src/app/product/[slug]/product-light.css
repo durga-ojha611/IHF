@@ -5,7 +5,19 @@
 .detail-page .detail-config>p{color:#625f58}
 .detail-page .detail-price-row{border-color:#bdb8ad}
 .detail-page .detail-swatches i{border-color:#f6f3ed;outline-color:#77736a}
+.detail-page .detail-swatches button{border-color:#f6f3ed;outline-color:#77736a}
+.detail-page .detail-swatches button.active{outline-color:#24221e}
 .detail-page .detail-sizes button{background:transparent;color:#24221e;border-color:#9c978d}
 .detail-page .detail-sizes button.active{background:#24221e;color:#fff}
 .detail-page .detail-continue{background:#24221e;color:#fff}
 .detail-page .detail-thumbs img{border-color:#cbc6bb}
+.detail-page .detail-thumbs button{background:#eeeae1;border-color:#cbc6bb}
+.detail-page .detail-thumbs button.active{border-color:#24221e}
+.detail-page .detail-choice,.detail-page .detail-selection{border-color:#bdb8ad}
+.detail-page .detail-more-sizes>button{color:#24221e}
+.detail-page .detail-more-sizes select{background:#fff;color:#24221e;border-color:#9c978d}
+.detail-page .detail-price-row span{color:#6f6b63}
+.detail-page .detail-selection b{color:#75652f}
+.detail-page .detail-add{background:#24221e;color:#fff;border-color:#24221e}
+.detail-page .detail-add:hover{background:#75652f;border-color:#75652f}
+.detail-page .detail-service{color:#77736a!important}

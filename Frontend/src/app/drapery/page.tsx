@@ -131,12 +131,13 @@ function ProductCard({ item }: { item: CatalogCard }) {
     <Link className="cp-product" href={`/product/${item.slug}`}>
       <div>
         <Image src={item.image} alt={item.name} fill sizes="30vw" />
+        {item.customizable && <em>MADE TO MEASURE</em>}
       </div>
-      <small>★ ★ ★ ★ ★</small>
+      <small>{item.productType || "DRAPERY COLLECTION"}</small>
       <h3>{item.name}</h3>
       <p>{item.description}</p>
-      <b>From ${item.price}</b>
-      <span>EXPLORE PRODUCT ↗</span>
+      <footer><b>From ${item.price}</b></footer>
+      <span>VIEW DETAILS <i>→</i></span>
     </Link>
   );
 }

@@ -16,6 +16,8 @@
   padding: 28px 24px 80px;
 }
 
+.material-group-header[style]{display:none}
+
 /* Breadcrumb Navigation */
 .swatch-breadcrumb {
   display: flex;
@@ -450,6 +452,11 @@
   color: #1c1917;
   margin: 0 0 3px;
   line-height: 1.25;
+  min-height: 33px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .swatch-card-group {

@@ -141,7 +141,8 @@ export const getRelatedProducts = catchAsync(async (req, res, next) => {
     ]
   })
     .limit(4)
-    .select('title slug basePrice pricePerYard fabricType images');
+    .select('title slug basePrice pricePerYard fabricType colors images category')
+    .populate('category', 'name slug');
 
   res.status(200).json({
     status: 'success',

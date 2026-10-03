@@ -13,11 +13,35 @@ const productColorSchema = new mongoose.Schema(
 
 const productImageSchema = new mongoose.Schema(
   {
+    externalId: { type: String, default: '' },
     url: { type: String, required: true },
     alt: { type: String, default: '' },
-    isPrimary: { type: Boolean, default: false }
+    isPrimary: { type: Boolean, default: false },
+    width: { type: Number, default: null },
+    height: { type: Number, default: null },
+    variantIds: [{ type: String }]
   },
   { _id: true }
+);
+
+const productVariantSchema = new mongoose.Schema(
+  {
+    externalId: { type: String, required: true },
+    title: { type: String, default: '' },
+    sku: { type: String, default: '' },
+    options: [{ name: String, value: String }],
+    price: { type: Number, required: true, min: 0 },
+    compareAtPrice: { type: Number, default: null },
+    available: { type: Boolean, default: true },
+    requiresShipping: { type: Boolean, default: true },
+    taxable: { type: Boolean, default: true },
+    grams: { type: Number, default: 0 },
+    position: { type: Number, default: 0 },
+    featuredImage: { type: String, default: '' },
+    sourceCreatedAt: { type: Date, default: null },
+    sourceUpdatedAt: { type: Date, default: null }
+  },
+  { _id: false }
 );
 
 const productSchema = new mongoose.Schema(
@@ -47,6 +71,22 @@ const productSchema = new mongoose.Schema(
     description: {
       type: String,
       required: [true, 'Product detailed description is required']
+    },
+    bodyHtml: { type: String, default: '' },
+    vendor: { type: String, default: '' },
+    productType: { type: String, default: '', index: true },
+    tags: [{ type: String, trim: true }],
+    sourceOptions: [{ name: String, position: Number, values: [String] }],
+    variants: [productVariantSchema],
+    source: {
+      platform: { type: String, default: '' },
+      externalId: { type: String, index: true },
+      handle: { type: String, default: '' },
+      url: { type: String, default: '' },
+      publishedAt: { type: Date, default: null },
+      createdAt: { type: Date, default: null },
+      updatedAt: { type: Date, default: null },
+      syncedAt: { type: Date, default: null }
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
@@ -168,6 +208,7 @@ productSchema.index({ fabricType: 1, basePrice: 1, isDeleted: 1 });
 productSchema.index({ styles: 1, isDeleted: 1 });
 productSchema.index({ features: 1, isDeleted: 1 });
 productSchema.index({ title: 'text', description: 'text', fabricType: 'text' });
+productSchema.index({ 'source.platform': 1, 'source.externalId': 1 }, { unique: true, sparse: true });
 
 // Auto-generate slug
 productSchema.pre('save', function (next) {

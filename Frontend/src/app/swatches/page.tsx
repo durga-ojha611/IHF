@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Header, Footer } from "@/components/site-chrome";
-import { swatchesApi } from "@/lib/api";
+import { productsApi, swatchesApi } from "@/lib/api";
 import "./swatches.css";
 
 export interface SwatchItem {
@@ -159,6 +159,11 @@ const ALL_SWATCHES: SwatchItem[] = [
 
 export default function FabricsAndSwatchesPage() {
   const [selectedFilter, setSelectedFilter] = useState<string>("ALL");
+  const [catalogSwatches, setCatalogSwatches] = useState<SwatchItem[]>(ALL_SWATCHES);
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const [colorFilter, setColorFilter] = useState("all-colors");
+  const [priceFilter, setPriceFilter] = useState("all-price");
+  const [sortBy, setSortBy] = useState("popular");
   const [selectedSwatches, setSelectedSwatches] = useState<SwatchItem[]>([]);
   const [activeModal, setActiveModal] = useState<boolean>(false);
   const [zoomSwatch, setZoomSwatch] = useState<SwatchItem | null>(null);
@@ -180,16 +185,50 @@ export default function FabricsAndSwatchesPage() {
   const [orderSuccess, setOrderSuccess] = useState<string | null>(null);
   const [orderError, setOrderError] = useState<string | null>(null);
 
-  // Filter logic
-  const filteredSwatches = ALL_SWATCHES.filter((swatch) => {
-    if (selectedFilter === "ALL") return true;
-    if (selectedFilter === "LINEN") return swatch.materialCategory === "linen";
-    if (selectedFilter === "SHEER") return swatch.materialCategory === "sheer";
-    if (selectedFilter === "WOOL + VELVET") return swatch.materialCategory === "wool" || swatch.materialCategory === "velvet";
-    if (selectedFilter === "COTTON") return swatch.materialCategory === "cotton";
-    if (selectedFilter === "SILK") return swatch.materialCategory === "silk";
-    return true;
-  });
+  useEffect(() => {
+    let mounted = true;
+    productsApi.getAll({ category: "fabrics", limit: 100, sort: "title" }).then((response) => {
+      const products = (response.data as { products?: Array<Record<string, any>> } | undefined)?.products || [];
+      const mapped = products.flatMap((product): SwatchItem[] => {
+        const image = product.images?.find((item: { isPrimary?: boolean }) => item.isPrimary)?.url || product.images?.[0]?.url;
+        if (!image) return [];
+        const source = `${product.title || ""} ${product.fabricType || ""} ${(product.tags || []).join(" ")}`.toLowerCase();
+        const materialCategory: SwatchItem["materialCategory"] = source.includes("velvet") ? "velvet" : source.includes("silk") || source.includes("satin") ? "silk" : source.includes("sheer") || source.includes("voile") ? "sheer" : source.includes("wool") || source.includes("boucle") ? "wool" : source.includes("cotton") ? "cotton" : "linen";
+        const price = Number(product.basePrice || product.pricePerYard || 0);
+        const priceGroup: SwatchItem["priceGroup"] = price >= 65 ? "C" : price >= 45 ? "B" : "A";
+        const sourceColor = product.colors?.[0];
+        const colorName = sourceColor?.name || product.title?.replace(/fabric|swatch|sample|by the yard/gi, "").trim() || "Natural";
+        return [{ id: product._id || product.slug, name: product.title, fabricName: product.fabricType || product.productType || "Artisan Fabric", colorName, priceGroup, pricePerMeter: price, materialCategory, image, hexCode: sourceColor?.hexCode || "#c8c0b2" }];
+      });
+      if (mounted && mapped.length) setCatalogSwatches(mapped);
+    }).catch(() => undefined).finally(() => mounted && setCatalogLoading(false));
+    return () => { mounted = false; };
+  }, []);
+
+  const filteredSwatches = useMemo(() => {
+    const filtered = catalogSwatches.filter((swatch) => {
+      const searchText = `${swatch.name} ${swatch.fabricName} ${swatch.colorName}`.toLowerCase();
+      const materialMatch = selectedFilter === "ALL" || selectedFilter === "MOST POPULAR" ||
+        (selectedFilter === "LINEN" && swatch.materialCategory === "linen") ||
+        (selectedFilter === "SHEER" && swatch.materialCategory === "sheer") ||
+        (selectedFilter === "WOOL + VELVET" && ["wool", "velvet"].includes(swatch.materialCategory)) ||
+        (selectedFilter === "COTTON" && swatch.materialCategory === "cotton") ||
+        (selectedFilter === "SILK" && swatch.materialCategory === "silk") ||
+        (selectedFilter === "SATIN" && searchText.includes("satin")) ||
+        (selectedFilter === "PATTERN" && /pattern|print|stripe|floral|embroider/.test(searchText)) ||
+        (selectedFilter === "JUTE" && searchText.includes("jute")) ||
+        (selectedFilter === "BOUCLÉ" && /boucle|bouclé/.test(searchText)) ||
+        (selectedFilter === "OUTDOOR" && /outdoor|sunbrella/.test(searchText));
+      const priceMatch = priceFilter === "all-price" || priceFilter === `group-${swatch.priceGroup.toLowerCase()}`;
+      const colorText = `${swatch.name} ${swatch.colorName}`.toLowerCase();
+      const colorMatch = colorFilter === "all-colors" ||
+        (colorFilter === "white" && /white|ivory|cream|oyster|snow/.test(colorText)) ||
+        (colorFilter === "neutral" && /natural|beige|taupe|sand|linen|oat|tan|brown/.test(colorText)) ||
+        (colorFilter === "charcoal" && /black|charcoal|grey|gray|navy/.test(colorText));
+      return materialMatch && priceMatch && colorMatch;
+    });
+    return [...filtered].sort((a, b) => sortBy === "price-low" ? a.pricePerMeter - b.pricePerMeter : sortBy === "newest" ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name));
+  }, [catalogSwatches, selectedFilter, colorFilter, priceFilter, sortBy]);
 
   const isSelected = (id: string) => selectedSwatches.some((s) => s.id === id);
 
@@ -206,7 +245,8 @@ export default function FabricsAndSwatchesPage() {
   };
 
   const handleAddBundle = (swatchIds: string[]) => {
-    const toAdd = ALL_SWATCHES.filter((s) => swatchIds.includes(s.id) && !isSelected(s.id));
+    const requested = catalogSwatches.filter((s) => swatchIds.includes(s.id) && !isSelected(s.id));
+    const toAdd = requested.length ? requested : catalogSwatches.filter((s) => !isSelected(s.id)).slice(0, 3);
     if (selectedSwatches.length + toAdd.length > 4) {
       alert("Selecting this bundle exceeds your 4-swatch kit limit. Please clear some items first.");
       return;
@@ -385,22 +425,22 @@ export default function FabricsAndSwatchesPage() {
             <div className="swatch-sub-toolbar">
               <div className="toolbar-left-info">
                 <strong>FABRIC ({filteredSwatches.length})</strong>
-                <span>• SHOWING ALL AVAILABLE WEAVES</span>
+                <span>• {catalogLoading ? "LOADING ATELIER LIBRARY" : `${catalogSwatches.length} IMPORTED FABRICS AVAILABLE`}</span>
               </div>
               <div className="toolbar-right-dropdowns">
-                <select className="toolbar-select">
+                <select className="toolbar-select" value={colorFilter} onChange={(event) => setColorFilter(event.target.value)}>
                   <option value="all-colors">COLOR: ALL</option>
                   <option value="white">WHITE / IVORY</option>
                   <option value="neutral">NEUTRAL / BEIGE</option>
                   <option value="charcoal">CHARCOAL / BLACK</option>
                 </select>
-                <select className="toolbar-select">
+                <select className="toolbar-select" value={priceFilter} onChange={(event) => setPriceFilter(event.target.value)}>
                   <option value="all-price">PRICE: ALL GROUPS</option>
                   <option value="group-a">GROUP A ($35/M)</option>
                   <option value="group-b">GROUP B ($55/M)</option>
                   <option value="group-c">GROUP C ($65/M)</option>
                 </select>
-                <select className="toolbar-select">
+                <select className="toolbar-select" value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
                   <option value="popular">SORT BY: MOST POPULAR</option>
                   <option value="newest">NEWEST ARRIVALS</option>
                   <option value="price-low">PRICE: LOW TO HIGH</option>
@@ -416,18 +456,18 @@ export default function FabricsAndSwatchesPage() {
             {/* Material Group 1 Header */}
             <div className="material-group-header">
               <div className="group-title-line">
-                <h2>MATERIAL: COTTON & BLENDS</h2>
-                <span className="group-badge">PRICE GROUP: A</span>
-                <span className="group-price">FROM $35/M</span>
+                <h2>THE COMPLETE FABRIC LIBRARY</h2>
+                <span className="group-badge">{filteredSwatches.length} AVAILABLE</span>
+                <span className="group-price">SELECT ANY FOUR</span>
               </div>
               <p className="group-desc">
-                Soft, breathable and wonderfully versatile. Long-staple cotton blends and brushed twills for an elevated yet relaxed everyday texture.
+                Explore every imported fabric, swatch and textile colour from our live catalog. Filter by material, tone and price group, then build your sample set.
               </p>
             </div>
 
             {/* Grid 1: Cotton & Linen Swatches (6-Columns) */}
             <div className="swatch-catalog-grid">
-              {filteredSwatches.slice(0, 6).map((swatch) => {
+              {filteredSwatches.map((swatch) => {
                 const selected = isSelected(swatch.id);
                 return (
                   <article
@@ -443,22 +483,6 @@ export default function FabricsAndSwatchesPage() {
                         unoptimized
                         style={{ objectFit: "cover" }}
                       />
-
-                      {/* Zoom Button */}
-                      <button
-                        type="button"
-                        className="swatch-zoom-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setZoomSwatch(swatch);
-                        }}
-                        title="Zoom Swatch Texture"
-                      >
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1c1917" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="11" cy="11" r="7.5" fill="#9ec2e6" fillOpacity="0.75" />
-                          <line x1="21" y1="21" x2="16.5" y2="16.5" />
-                        </svg>
-                      </button>
 
                       {/* Selection Checkmark Badge */}
                       {selected && <div className="swatch-selected-checkmark">✓</div>}
@@ -487,7 +511,7 @@ export default function FabricsAndSwatchesPage() {
 
             {/* Grid 2: Velvet & Silk Swatches (6-Columns) */}
             <div className="swatch-catalog-grid">
-              {filteredSwatches.slice(6, 12).map((swatch) => {
+              {filteredSwatches.slice(0, 0).map((swatch) => {
                 const selected = isSelected(swatch.id);
                 return (
                   <article
@@ -503,22 +527,6 @@ export default function FabricsAndSwatchesPage() {
                         unoptimized
                         style={{ objectFit: "cover" }}
                       />
-
-                      {/* Zoom Button */}
-                      <button
-                        type="button"
-                        className="swatch-zoom-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setZoomSwatch(swatch);
-                        }}
-                        title="Zoom Swatch Texture"
-                      >
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1c1917" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="11" cy="11" r="7.5" fill="#9ec2e6" fillOpacity="0.75" />
-                          <line x1="21" y1="21" x2="16.5" y2="16.5" />
-                        </svg>
-                      </button>
 
                       {/* Selection Checkmark Badge */}
                       {selected && <div className="swatch-selected-checkmark">✓</div>}
@@ -542,10 +550,10 @@ export default function FabricsAndSwatchesPage() {
               <article className="combo-card">
                 <div className="combo-photos-row">
                   <div className="combo-thumb">
-                    <Image src="/curtains/fabric-linen.png" alt="White Linen" fill unoptimized style={{ objectFit: "cover" }} />
+                    <Image src={catalogSwatches[0]?.image || "/curtains/fabric-linen.png"} alt={catalogSwatches[0]?.name || "Natural Linen"} fill unoptimized style={{ objectFit: "cover" }} />
                   </div>
                   <div className="combo-thumb">
-                    <Image src="/figma/home-02.png" alt="Clay Linen" fill unoptimized style={{ objectFit: "cover" }} />
+                    <Image src={catalogSwatches[1]?.image || "/figma/home-02.png"} alt={catalogSwatches[1]?.name || "Clay Linen"} fill unoptimized style={{ objectFit: "cover" }} />
                   </div>
                 </div>
                 <div className="combo-info">
@@ -555,7 +563,7 @@ export default function FabricsAndSwatchesPage() {
                   <button
                     type="button"
                     className="combo-add-btn"
-                    onClick={() => handleAddBundle(["white-linen", "clay-linen", "oatmeal-linen"])}
+                    onClick={() => handleAddBundle(catalogSwatches.slice(0, 3).map((item) => item.id))}
                   >
                     ADD ALL 3 TO SET
                   </button>
@@ -566,10 +574,10 @@ export default function FabricsAndSwatchesPage() {
               <article className="combo-card">
                 <div className="combo-photos-row">
                   <div className="combo-thumb">
-                    <Image src="/curtains/fabric-blackout.png" alt="Charcoal Velvet" fill unoptimized style={{ objectFit: "cover" }} />
+                    <Image src={catalogSwatches[3]?.image || "/curtains/fabric-blackout.png"} alt={catalogSwatches[3]?.name || "Charcoal Velvet"} fill unoptimized style={{ objectFit: "cover" }} />
                   </div>
                   <div className="combo-thumb">
-                    <Image src="/curtains/fabric-silk.png" alt="Slub Raw Silk" fill unoptimized style={{ objectFit: "cover" }} />
+                    <Image src={catalogSwatches[4]?.image || "/curtains/fabric-silk.png"} alt={catalogSwatches[4]?.name || "Raw Silk"} fill unoptimized style={{ objectFit: "cover" }} />
                   </div>
                 </div>
                 <div className="combo-info">
@@ -579,7 +587,7 @@ export default function FabricsAndSwatchesPage() {
                   <button
                     type="button"
                     className="combo-add-btn"
-                    onClick={() => handleAddBundle(["charcoal-velvet", "slub-raw-silk", "forest-velvet"])}
+                    onClick={() => handleAddBundle(catalogSwatches.slice(3, 6).map((item) => item.id))}
                   >
                     ADD ALL 3 TO SET
                   </button>
