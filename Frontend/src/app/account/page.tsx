@@ -360,6 +360,10 @@ export default function Account() {
                 {success && <div className="auth-alert-success">{success}</div>}
 
                 <form onSubmit={handleSubmit} noValidate autoComplete="off">
+                  {/* Fake hidden inputs to intercept Chrome / Edge password manager autofill popup */}
+                  <input type="text" name="fake_user_remember" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
+                  <input type="password" name="fake_pass_remember" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" />
+
                   {/* SIGN UP ONLY FIELDS */}
                   {!isForgotPassword && isRegister && (
                     <>
@@ -373,12 +377,14 @@ export default function Account() {
                           </span>
                           <input
                             id="register-name"
+                            name="ihf_reg_fullname"
                             className="auth-input"
                             type="text"
                             placeholder="Eleanor Vance"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
+                            autoComplete="off"
                           />
                         </div>
                       </div>
@@ -393,11 +399,13 @@ export default function Account() {
                           </span>
                           <input
                             id="register-phone"
+                            name="ihf_reg_phone"
                             className="auth-input"
                             type="tel"
                             placeholder="+1 (555) 019-2834"
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
+                            autoComplete="off"
                           />
                         </div>
                       </div>
@@ -415,8 +423,10 @@ export default function Account() {
                       </span>
                       <input
                         id="auth-email"
+                        name="ihf_account_identifier"
                         className="auth-input"
-                        type="email"
+                        type="text"
+                        inputMode="email"
                         placeholder="name@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -438,13 +448,14 @@ export default function Account() {
                         </span>
                         <input
                           id="auth-password"
+                          name="ihf_account_secure_key"
                           className="auth-input has-toggle"
                           type={showPassword ? "text" : "password"}
                           placeholder="Enter your password"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           required
-                          autoComplete="off"
+                          autoComplete="new-password"
                         />
                         <button
                           type="button"
