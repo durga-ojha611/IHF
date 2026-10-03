@@ -19,6 +19,12 @@ const seedDatabase = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log('[Seeder] Connected to MongoDB');
 
+    const forceReset = process.argv.includes('--force-reset');
+    const existingProducts = await Product.countDocuments();
+    if (existingProducts > 0 && !forceReset) {
+      throw new Error(`Refusing to purge a non-empty catalog (${existingProducts} products). Re-run with --force-reset only when a full database reset is intentional.`);
+    }
+
     // Clean existing data
     console.log('[Seeder] Purging old records...');
     await Promise.all([

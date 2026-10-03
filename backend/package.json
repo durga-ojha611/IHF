@@ -8,7 +8,7 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "seed": "node src/seed/seeder.js",
-    "seed:destroy": "node src/seed/seeder.js --destroy",
+    "seed:destroy": "node src/seed/seeder.js --destroy --force-reset",
     "import:shopify": "node src/scripts/import-shopify-catalog.js",
     "test": "node test/runApiTests.js"
   },

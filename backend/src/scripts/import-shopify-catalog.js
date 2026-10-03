@@ -171,6 +171,13 @@ async function run() {
   await mongoose.connect(process.env.MONGO_URI);
   console.log(`[MongoDB] connected: ${mongoose.connection.host}`);
   const products = await fetchCatalog();
+  if (process.argv.includes('--archive-existing')) {
+    const result = await Product.updateMany(
+      { 'source.platform': { $ne: 'shopify' }, isActive: true },
+      { $set: { isActive: false, isArchived: true } }
+    );
+    console.log(`[Import] archived ${result.modifiedCount} existing non-Shopify products before canonical catalog restore`);
+  }
   const parents = {};
   for (const [slug, definition] of Object.entries(categoryDefinitions)) parents[slug] = await upsertCategory(slug, definition);
   const subcategories = new Map();
