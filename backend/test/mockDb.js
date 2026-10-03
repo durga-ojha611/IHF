@@ -519,7 +519,7 @@ export function setupMockDatabase() {
     ['shades','Shades','Shape the Light','/figma/cat-shades-new.png'],
     ['valances','Valances & Cornices','Complete the Window','/figma/home-18.jpeg'],
     ['pillows','Pillows','Comfort, Composed','/figma/cat-cushions-new.png'],
-    ['bedding','Bedding','Elevate Your Bedroom','/figma/product-linen-bedspread-hd.png'],
+    ['bedding','Bedding','Elevate Your Bedroom','/figma/cat-bedding-hero-new.jpg'],
     ['table-linen','Table Linen','Set a Beautiful Table','/figma/cat-table-linen.png'],
     ['decor','Decor & More','Details Make the Room','/figma/cat-decor.png'],
     ['fabrics','Fabrics & Swatches','Begin with the Fabric','/figma/home-04.jpeg']

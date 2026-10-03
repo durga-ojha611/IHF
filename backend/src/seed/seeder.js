@@ -252,7 +252,7 @@ const seedDatabase = async () => {
       ['shades','Shades','Shape the Light','/figma/cat-shades-new.png',['Flat Roman Shades','Relaxed Roman Shades','Cascade Shades','Woven Shades','Blackout Shades']],
       ['valances','Valances & Cornices','Complete the Window','/figma/home-18.jpeg',['Upholstered Cornices','Soft Valances','Board-Mounted Valances','Swags & Cascades','Custom Pelmets']],
       ['pillows','Pillows','Comfort, Composed','/figma/cat-cushions-new.png',['Decorative Pillows','Lumbar Pillows','Bolsters','Euro Shams','Outdoor Pillows']],
-      ['bedding','Bedding','Elevate Your Bedroom','/figma/product-linen-bedspread-hd.png',['Duvet Covers','Quilts & Coverlets','Comforters','Sheets','Blankets & Throws']],
+      ['bedding','Bedding','Elevate Your Bedroom','/figma/cat-bedding-hero-new.jpg',['Duvet Covers','Quilts & Coverlets','Comforters','Sheets','Blankets & Throws']],
       ['table-linen','Table Linen','Set a Beautiful Table','/figma/cat-table-linen.png',['Tablecloths','Table Runners','Napkins','Placemats','Cocktail Linens']],
       ['decor','Decor & More','Details Make the Room','/figma/cat-decor.png',['Throws','Decorative Objects','Baskets','Wall Decor','Hardware & Trims']],
       ['fabrics','Fabrics & Swatches','Begin with the Fabric','/figma/home-04.jpeg',['Linen Swatches','Cotton Swatches','Velvet Swatches','Sheers','Trims & Passementerie']]
