@@ -20,7 +20,7 @@ const nav = [
 ];
 
 export function Header() {
-  const { cartCount, favouriteCount } = useCommerce();
+  const { cartCount, favouriteCount, openCartDrawer } = useCommerce();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const isLandingPage = pathname === "/";
@@ -96,10 +96,16 @@ export function Header() {
           <Link href="/favourites" aria-label="Favourites">
             <Image src="/figma/ihf-icon-1.svg" alt="Favourites" width={20} height={20} />
           </Link>
-          <Link className="count-link" href="/cart" aria-label="Cart">
+          <button 
+            type="button" 
+            className="count-link" 
+            onClick={openCartDrawer} 
+            aria-label="Cart"
+            style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+          >
             <Image src="/figma/ihf-icon-2.svg" alt="Cart" width={20} height={20} />
             {cartCount > 0 && <b>{cartCount}</b>}
-          </Link>
+          </button>
           <Link href="/account" aria-label="Account">
             <Image src="/figma/ihf-icon-3.svg" alt="Account" width={20} height={20} />
           </Link>
@@ -386,11 +392,26 @@ export function Footer() {
                 aria-label="Shop India Home Furnishings on Etsy"
               >
                 <div className="footer-etsy-logo">
-                  E
+                  <Image
+                    src="/figma/etsy-orange-logo.png"
+                    alt="Etsy"
+                    width={52}
+                    height={22}
+                    style={{ objectFit: "contain" }}
+                  />
                 </div>
-                <span className="footer-etsy-brand">Etsy</span>
                 <div className="footer-etsy-divider" />
-                <span className="footer-etsy-sub">Shop our unique designs on Etsy ↗</span>
+                <span className="footer-etsy-sub" style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                  Shop our unique designs on
+                  <Image
+                    src="/figma/etsy-orange-logo.png"
+                    alt="Etsy"
+                    width={40}
+                    height={16}
+                    style={{ objectFit: "contain", verticalAlign: "middle" }}
+                  />
+                  ↗
+                </span>
               </a>
             </div>
           </div>

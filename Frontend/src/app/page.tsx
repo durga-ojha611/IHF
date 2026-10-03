@@ -12,10 +12,10 @@ import "./figma-hero.css";
 import "./category-showcase.css";
 
 const finish = [
-  ["/figma/home-04.jpeg", "A touch of grandeur", "Tassel Trims"],
-  ["/figma/home-12.jpeg", "A tailored accent", "Border Trims"],
-  ["/figma/home-07.jpeg", "A beautiful edge", "Decorative Tapes"],
-  ["/figma/home-13.png", "Made by hand", "Custom Details"],
+  ["/figma/home-04.jpeg", "A touch of grandeur", "Tassel Trims", "/blog/a-touch-of-grandeur"],
+  ["/figma/home-12.jpeg", "A tailored accent", "Border Trims", "/blog/a-tailored-accent"],
+  ["/figma/home-07.jpeg", "A beautiful edge", "Decorative Tapes", "/blog/a-beautiful-edge"],
+  ["/figma/home-13.png", "Made by hand", "Custom Details", "/blog/made-by-hand"],
 ];
 
 const romans = [
@@ -36,6 +36,39 @@ const cornices = [
   ["/figma/home-10.jpeg", "Wooden Cornice"],
   ["/figma/home-15.jpeg", "Layered Cornice"],
   ["/figma/home-01.jpeg", "Decorative Cornice"],
+];
+
+const processSteps = [
+  {
+    step: "/ 01",
+    title: "Choose Your Fabric",
+    copy: "Explore our curated collections and select the fabric you love.",
+    image: "/figma/step-1-choose-fabric.jpg",
+  },
+  {
+    step: "/ 02",
+    title: "Measure & Plan",
+    copy: "Share your measurements or let our experts help you get them right.",
+    image: "/figma/step-2-measure-plan.jpg",
+  },
+  {
+    step: "/ 03",
+    title: "Embellish With Trim & Fringe",
+    copy: "Personalize your drapery with beautiful trims, borders, fringe and finishing details.",
+    image: "/figma/step-3-embellish-trim.jpg",
+  },
+  {
+    step: "/ 04",
+    title: "Expert Craftsmanship",
+    copy: "Our skilled artisans transform your selections into beautifully finished window treatments.",
+    image: "/figma/step-4-expert-craftsmanship.jpg",
+  },
+  {
+    step: "/ 05",
+    title: "Beautifully Delivered",
+    copy: "Your custom order arrives beautifully finished and ready for your home.",
+    image: "/figma/step-5-beautifully-delivered.jpg",
+  },
 ];
 
 function ArrowLink({children, href="#"}:{children:React.ReactNode;href?:string}) {
@@ -70,7 +103,7 @@ export default function Home() {
 
       <section className="finish-block">
         <div className="home-heading"><span className="home-kicker">CRAFTED TO THE LAST DETAIL</span><h2>The Art of the Finish</h2><p>From hand-finished trims to considered details, every element is designed to make your window treatments unmistakably yours.</p></div>
-        <div className="four-grid home-shell">{finish.map(([src,title,name])=><article key={name}><Image src={src} alt={name} width={400} height={520}/><span className="home-kicker">FINISHING TOUCHES</span><h3>{title}</h3><p>{name} with a refined, made-to-measure finish.</p><ArrowLink>EXPLORE</ArrowLink></article>)}</div>
+        <div className="four-grid home-shell">{finish.map(([src,title,name,href])=><article key={name}><Link href={href}><Image src={src} alt={name} width={400} height={520}/></Link><span className="home-kicker">FINISHING TOUCHES</span><h3>{title}</h3><p>{name} with a refined, made-to-measure finish.</p><ArrowLink href={href}>EXPLORE</ArrowLink></article>)}</div>
       </section>
 
       <section className="product-family home-shell">
@@ -251,9 +284,53 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="fabric-split"><Image src="/figma/home-03.jpeg" alt="Natural linen fabric finish" width={1130} height={754} quality={90}/><div><span className="home-kicker">CURATED MATERIALS</span><h2>Fabrics &amp; Finishes.<br/>Chosen for You.</h2><p>Explore a thoughtful collection of natural textures, elegant weaves and enduring colours—selected to work beautifully throughout your home.</p><ArrowLink href="/swatches">ORDER COMPLIMENTARY SWATCHES</ArrowLink></div></section>
+      <section className="fabric-split">
+        <Image src="/figma/home-details-swatches.png" alt="Fabrics & Finishes Swatches" width={1130} height={754} quality={90} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+        <div>
+          <span className="home-kicker">CURATED MATERIALS</span>
+          <h2>Fabrics &amp; Finishes.<br />Chosen for You.</h2>
+          <p>Explore a thoughtful collection of natural textures, elegant weaves and enduring colours—selected to work beautifully throughout your home.</p>
+          <div className="fabric-split-actions">
+            <Link href="/swatches" className="fabric-split-btn-solid">
+              ORDER SWATCHES <span className="arrow">→</span>
+            </Link>
+            <Link href="/swatches" className="fabric-split-btn-link">
+              EXPLORE FABRICS &amp; TRIMS <span className="arrow">→</span>
+            </Link>
+          </div>
+        </div>
+      </section>
 
-      <section className="intention home-shell"><div className="home-heading"><span className="home-kicker">FROM OUR HANDS TO YOUR HOME</span><h2>Made With Intention. Delivered Beautifully.</h2></div><div className="five-grid">{[["/figma/home-13.png","Made For You"],["/figma/home-02.png","Material First"],["/figma/home-04.jpeg","Finished By Hand"],["/figma/home-08.png","Delivered With Care"],["/figma/home-18.jpeg","Beautifully At Home"]].map(([src,title],i)=><article key={title}><Image src={src} alt={title} width={300} height={330}/><span>0{i+1}</span><h3>{title}</h3><p>Every detail considered, from first idea to final placement.</p></article>)}</div></section>
+      <section className="process-section home-shell">
+        <div className="home-heading" style={{ marginBottom: "50px" }}>
+          <span className="home-kicker">FROM FABRIC TO FINISH</span>
+          <h2>
+            Made With Intention. Delivered<br />
+            Beautifully.
+          </h2>
+        </div>
+
+        <div className="process-grid">
+          {processSteps.map((item) => (
+            <article key={item.step} className="process-card">
+              <div className="process-img-wrap">
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  width={400}
+                  height={300}
+                  quality={92}
+                />
+              </div>
+              <div className="process-meta">
+                <span className="process-step">{item.step}</span>
+              </div>
+              <h3 className="process-title">{item.title}</h3>
+              <p className="process-copy">{item.copy}</p>
+            </article>
+          ))}
+        </div>
+      </section>
 
       <BenefitSection />
 

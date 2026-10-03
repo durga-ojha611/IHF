@@ -127,7 +127,9 @@ export default function Account() {
       } else if (isRegister) {
         if (!name.trim()) throw new Error("Please enter your full name.");
         await register(name, email, password, phone);
-        setSuccess("Account successfully created. Welcome to IHF!");
+        setSuccess("Account created successfully! Please sign in below with your email and password.");
+        setIsRegister(false);
+        setPassword("");
       } else {
         await login(email, password);
         setSuccess("Signed in successfully.");

@@ -247,7 +247,6 @@ export function CustomerStoriesSection() {
                   className="story-img"
                   priority={i < 3}
                 />
-                <span className="story-badge">{card.badge}</span>
               </div>
 
               {/* Card Body */}
@@ -285,7 +284,15 @@ export function CustomerStoriesSection() {
             className="stories-etsy-link"
             aria-label="Shop our collection on Etsy (opens in a new tab)"
           >
-            SHOP OUR COLLECTION ON ETSY
+            <span>SHOP OUR COLLECTION ON</span>
+            <Image
+              src="/figma/etsy-orange-logo.png"
+              alt="Etsy"
+              width={54}
+              height={22}
+              style={{ objectFit: "contain", display: "inline-block", verticalAlign: "middle" }}
+            />
+            <span>↗</span>
           </a>
         </div>
       </div>

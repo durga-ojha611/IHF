@@ -129,7 +129,16 @@ export const register = catchAsync(async (req, res, next) => {
     role: 'customer'
   });
 
-  await createSendTokens(newUser, 201, res);
+  const sanitizedUser = newUser.toObject();
+  delete sanitizedUser.password;
+
+  res.status(201).json({
+    status: 'success',
+    message: 'Account created successfully! Please sign in with your email and password.',
+    data: {
+      user: sanitizedUser
+    }
+  });
 });
 
 /**

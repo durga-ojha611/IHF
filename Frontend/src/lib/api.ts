@@ -52,14 +52,10 @@ export async function apiRequest<T = any>(
 // ---------------------------------------------
 export const authApi = {
   async register(body: { name: string; email: string; password: string; phone?: string }) {
-    const res = await apiRequest('/auth/register', {
+    return apiRequest('/auth/register', {
       method: 'POST',
       body: JSON.stringify(body)
     });
-    if (res.token && typeof window !== 'undefined') {
-      localStorage.setItem('ihf_token', res.token);
-    }
-    return res;
   },
 
   async login(body: { email: string; password: string }) {

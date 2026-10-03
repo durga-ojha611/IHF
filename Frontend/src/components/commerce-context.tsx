@@ -1,7 +1,8 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
 import { ordersApi } from "@/lib/api";
+import { CartDrawer } from "./cart-drawer";
 
 export interface CustomSpecs {
   width: string;
@@ -44,6 +45,10 @@ interface CheckoutAddress {
 type CommerceValue = {
   cart: CommerceItem[];
   favourites: CommerceItem[];
+  isCartOpen: boolean;
+  openCartDrawer: () => void;
+  closeCartDrawer: () => void;
+  toggleCartDrawer: () => void;
   addToCart: (item: Omit<CommerceItem, "quantity"> & { quantity?: number }) => void;
   toggleFavourite: (item: Omit<CommerceItem, "quantity">) => void;
   removeCart: (id: string) => void;
@@ -63,6 +68,7 @@ const FAV_KEY = "ihf-favourites";
 export function CommerceProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CommerceItem[]>([]);
   const [favourites, setFavourites] = useState<CommerceItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -81,18 +87,28 @@ export function CommerceProvider({ children }: { children: React.ReactNode }) {
     if (ready) localStorage.setItem(FAV_KEY, JSON.stringify(favourites));
   }, [favourites, ready]);
 
+  const openCartDrawer = useCallback(() => setIsCartOpen(true), []);
+  const closeCartDrawer = useCallback(() => setIsCartOpen(false), []);
+  const toggleCartDrawer = useCallback(() => setIsCartOpen((prev) => !prev), []);
+
   const value = useMemo<CommerceValue>(
     () => ({
       cart,
       favourites,
-      addToCart: (item) =>
+      isCartOpen,
+      openCartDrawer,
+      closeCartDrawer,
+      toggleCartDrawer,
+      addToCart: (item) => {
         setCart((c) => {
           const qty = item.quantity || 1;
           const found = c.find((x) => x.id === item.id);
           return found
             ? c.map((x) => (x.id === item.id ? { ...x, quantity: x.quantity + qty } : x))
             : [...c, { ...item, quantity: qty }];
-        }),
+        });
+        setIsCartOpen(true);
+      },
       toggleFavourite: (item) =>
         setFavourites((f) =>
           f.some((x) => x.id === item.id)
@@ -164,10 +180,15 @@ export function CommerceProvider({ children }: { children: React.ReactNode }) {
       favouriteCount: favourites.length,
       subtotal: cart.reduce((n, x) => n + x.price * x.quantity, 0)
     }),
-    [cart, favourites]
+    [cart, favourites, isCartOpen, openCartDrawer, closeCartDrawer, toggleCartDrawer]
   );
 
-  return <CommerceContext.Provider value={value}>{children}</CommerceContext.Provider>;
+  return (
+    <CommerceContext.Provider value={value}>
+      {children}
+      <CartDrawer />
+    </CommerceContext.Provider>
+  );
 }
 
 export function useCommerce() {

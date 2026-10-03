@@ -129,18 +129,6 @@ export function ConsultSection() {
               <span className="arrow">↗</span>
             </button>
 
-            <button
-              type="button"
-              className="consult-btn-outline"
-              onClick={() => setChatOpen(true)}
-              aria-label="Chat with a designer"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
-              <span>CHAT WITH A DESIGNER</span>
-              <span className="arrow">↗</span>
-            </button>
           </div>
         </div>
 

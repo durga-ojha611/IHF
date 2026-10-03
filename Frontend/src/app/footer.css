@@ -394,18 +394,12 @@
 }
 
 .footer-etsy-logo {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: #F1641E;
-  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-serif), Georgia, serif;
-  font-size: 17px;
-  font-weight: 700;
-  line-height: 1;
+  background: transparent;
+  width: auto;
+  height: auto;
 }
 
 .footer-etsy-brand {
