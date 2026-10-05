@@ -268,8 +268,8 @@ export default function Home() {
         </div>
         <div className="three-grid">
           {[
-            ["/figma/home-details-swatches.png", "FABRICS", "/swatches"],
-            ["/figma/home-details-swatches.png", "SWATCHES", "/swatches"],
+            ["/figma/real-swatch-box-ihf.png", "FABRICS", "/swatches"],
+            ["/figma/real-swatch-box-ihf.png", "SWATCHES", "/swatches"],
             ["/figma/home-07.jpeg", "TRIMS & FINISHES", "/drapery"]
           ].map(([src, label, targetHref]) => (
             <article key={label}>
@@ -278,14 +278,13 @@ export default function Home() {
                 <span className="home-kicker" style={{ marginTop: "16px" }}>{label}</span>
                 <h3>Chosen for the way you live.</h3>
               </Link>
-              <ArrowLink href={targetHref}>DISCOVER</ArrowLink>
             </article>
           ))}
         </div>
       </section>
 
-      <section className="fabric-split">
-        <Image src="/figma/home-details-swatches.png" alt="Fabrics & Finishes Swatches" width={1130} height={754} quality={90} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+      <section className="fabric-split home-shell">
+        <Image src="/figma/real-swatch-box-ihf.png" alt="India Home Furnishings Swatch Box" width={1130} height={754} quality={90} style={{ objectFit: "cover", width: "100%", height: "500px", borderRadius: "2px" }} />
         <div>
           <span className="home-kicker">CURATED MATERIALS</span>
           <h2>Fabrics &amp; Finishes.<br />Chosen for You.</h2>

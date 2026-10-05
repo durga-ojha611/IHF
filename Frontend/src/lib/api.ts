@@ -8,13 +8,15 @@ export const API_BASE_URL =
 
 function getStoredToken(): string | null {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem('ihf_token');
+  const token = localStorage.getItem('ihf_token');
+  if (!token || token === 'undefined' || token === 'null') return null;
+  return token;
 }
 
 export async function apiRequest<T = any>(
   endpoint: string,
   options: RequestInit = {}
-): Promise<{ status: 'success' | 'fail' | 'error'; data?: T; message?: string; token?: string; [key: string]: any }> {
+): Promise<{ status: 'success' | 'fail' | 'error'; data?: T; message?: string; token?: string; accessToken?: string; [key: string]: any }> {
   const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
   const token = getStoredToken();
 
@@ -52,10 +54,15 @@ export async function apiRequest<T = any>(
 // ---------------------------------------------
 export const authApi = {
   async register(body: { name: string; email: string; password: string; phone?: string }) {
-    return apiRequest('/auth/register', {
+    const res = await apiRequest('/auth/register', {
       method: 'POST',
       body: JSON.stringify(body)
     });
+    const token = res.token || res.accessToken;
+    if (token && typeof window !== 'undefined') {
+      localStorage.setItem('ihf_token', token);
+    }
+    return res;
   },
 
   async login(body: { email: string; password: string }) {
@@ -63,8 +70,9 @@ export const authApi = {
       method: 'POST',
       body: JSON.stringify(body)
     });
-    if (res.token && typeof window !== 'undefined') {
-      localStorage.setItem('ihf_token', res.token);
+    const token = res.token || res.accessToken;
+    if (token && typeof window !== 'undefined') {
+      localStorage.setItem('ihf_token', token);
     }
     return res;
   },
@@ -74,8 +82,9 @@ export const authApi = {
       method: 'POST',
       body: JSON.stringify(body)
     });
-    if (res.token && typeof window !== 'undefined') {
-      localStorage.setItem('ihf_token', res.token);
+    const token = res.token || res.accessToken;
+    if (token && typeof window !== 'undefined') {
+      localStorage.setItem('ihf_token', token);
     }
     return res;
   },
@@ -103,6 +112,38 @@ export const authApi = {
 };
 
 // ---------------------------------------------
+// User Profile & Address Book Endpoints
+// ---------------------------------------------
+export const userApi = {
+  async updateMe(body: { name?: string; phone?: string; avatar?: string }) {
+    return apiRequest('/users/update-me', {
+      method: 'PATCH',
+      body: JSON.stringify(body)
+    });
+  },
+  async getAddresses() {
+    return apiRequest('/users/addresses');
+  },
+  async addAddress(body: any) {
+    return apiRequest('/users/addresses', {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+  },
+  async updateAddress(addressId: string, body: any) {
+    return apiRequest(`/users/addresses/${addressId}`, {
+      method: 'PUT',
+      body: JSON.stringify(body)
+    });
+  },
+  async deleteAddress(addressId: string) {
+    return apiRequest(`/users/addresses/${addressId}`, {
+      method: 'DELETE'
+    });
+  }
+};
+
+// ---------------------------------------------
 // Products & Catalog Endpoints
 // ---------------------------------------------
 export const productsApi = {
@@ -122,6 +163,13 @@ export const productsApi = {
 
   async getBySlug(slug: string) {
     return apiRequest(`/products/${slug}`);
+  },
+
+  async addReview(productId: string, body: { title: string; body: string; author: string; rating: number; variant?: string; attachedPhoto?: string }) {
+    return apiRequest(`/products/${productId}/reviews`, {
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
   }
 };
 

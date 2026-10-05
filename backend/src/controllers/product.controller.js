@@ -276,11 +276,58 @@ export const adminRestoreProduct = catchAsync(async (req, res, next) => {
   });
 });
 
+/**
+ * Public: Add a review for a product
+ */
+export const addProductReview = catchAsync(async (req, res, next) => {
+  const { title, body, author, rating, variant, attachedPhoto } = req.body;
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    return next(new AppError('Product not found', 404));
+  }
+
+  const reviewRating = Math.min(5, Math.max(1, Number(rating) || 5));
+  const formattedDate = new Date().toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+
+  const newReview = {
+    title: title || 'Exceptional Quality',
+    body: body || '',
+    author: author || 'Verified Client',
+    rating: reviewRating,
+    date: formattedDate,
+    variant: variant || '',
+    attachedPhoto: attachedPhoto || ''
+  };
+
+  product.reviews.unshift(newReview);
+  product.ratingCount = product.reviews.length;
+  const totalScore = product.reviews.reduce((acc, r) => acc + (r.rating || 5), 0);
+  product.ratingAverage = Number((totalScore / product.ratingCount).toFixed(1));
+
+  await product.save();
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      review: newReview,
+      ratingCount: product.ratingCount,
+      ratingAverage: product.ratingAverage,
+      reviews: product.reviews
+    }
+  });
+});
+
 export default {
   getAllProducts,
   getProductBySlug,
   getFeaturedProducts,
   getRelatedProducts,
+  addProductReview,
   adminGetAllProducts,
   adminGetProductById,
   adminCreateProduct,
@@ -288,3 +335,4 @@ export default {
   adminDeleteProduct,
   adminRestoreProduct
 };
+

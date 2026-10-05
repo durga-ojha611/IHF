@@ -4,10 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect } from "react";
 import { useCommerce } from "./commerce-context";
+import { useAuth } from "./auth-context";
 import "./cart-drawer.css";
 
 export function CartDrawer() {
-  const { cart, isCartOpen, closeCartDrawer, removeCart, setQuantity, subtotal, cartCount } = useCommerce();
+  const { user } = useAuth();
+  const { cart, isCartOpen, closeCartDrawer, removeCart, setQuantity, subtotal, cartCount, openAuthModal } = useCommerce();
 
   // Lock scroll when cart drawer is open
   useEffect(() => {
@@ -186,13 +188,20 @@ export function CartDrawer() {
               >
                 VIEW FULL CART
               </Link>
-              <Link 
-                href="/cart" 
+              <button 
+                type="button"
                 className="cart-drawer-btn-primary"
-                onClick={closeCartDrawer}
+                onClick={() => {
+                  closeCartDrawer();
+                  if (!user) {
+                    openAuthModal("checkout");
+                  } else {
+                    window.location.href = "/cart?checkout=true";
+                  }
+                }}
               >
                 PROCEED TO CHECKOUT →
-              </Link>
+              </button>
             </div>
           </div>
         )}

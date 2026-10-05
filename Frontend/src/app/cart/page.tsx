@@ -9,7 +9,7 @@ import { useAuth } from "@/components/auth-context";
 import "../commerce.css";
 
 export default function Cart() {
-  const { cart, subtotal, setQuantity, removeCart, checkout } = useCommerce();
+  const { cart, subtotal, setQuantity, removeCart, checkout, openAuthModal } = useCommerce();
   const { user } = useAuth();
 
   const [checkingOut, setCheckingOut] = useState(false);
@@ -27,6 +27,10 @@ export default function Cart() {
 
   const handleCheckoutSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      openAuthModal("checkout");
+      return;
+    }
     setSubmitting(true);
     setCheckoutError(null);
 
@@ -141,7 +145,13 @@ export default function Cart() {
 
               {!checkingOut ? (
                 <>
-                  <button type="button" onClick={() => setCheckingOut(true)}>
+                  <button type="button" onClick={() => {
+                    if (!user) {
+                      openAuthModal("checkout");
+                      return;
+                    }
+                    setCheckingOut(true);
+                  }}>
                     PROCEED TO CHECKOUT
                   </button>
                   <p>Encrypted Stripe payment with server-side price verification.</p>

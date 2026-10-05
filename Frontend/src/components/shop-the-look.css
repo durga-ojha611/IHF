@@ -1,0 +1,421 @@
+.shop-the-look-wrapper {
+  border-top: 1px solid #e5e2d8;
+  padding: 70px max(calc((100% - 1140px) / 2), 32px);
+  background: #faf8f5;
+  color: #1a1918;
+  font-family: var(--font-inter), sans-serif;
+}
+
+.look-header {
+  margin-bottom: 36px;
+}
+
+.look-kicker {
+  font-size: 9px;
+  letter-spacing: 2.2px;
+  color: #8c887b;
+  text-transform: uppercase;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.look-title {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 34px;
+  font-weight: 400;
+  color: #1a1918;
+  margin: 0 0 10px 0;
+  line-height: 1.1;
+}
+
+.look-subtitle {
+  font-size: 11px;
+  line-height: 1.65;
+  color: #666359;
+  max-width: 680px;
+  margin: 0;
+}
+
+/* CONTAINER GRID */
+.look-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
+  gap: 36px;
+  align-items: start;
+}
+
+/* ROOM PHOTO VIEWPORT */
+.room-photo-card {
+  position: relative;
+  background: #f4f1ea;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid #e3dec3;
+}
+
+.room-photo-viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 2.75;
+  min-height: 480px;
+}
+
+.room-main-img {
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+}
+
+.photo-caption-bar {
+  background: #f2efe7;
+  border-top: 1px solid #e4e0d4;
+  padding: 12px 18px;
+  font-size: 10px;
+  color: #666359;
+}
+
+/* HOTSPOT MARKERS */
+.hotspot-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #1a1918;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  transition: all 0.25s ease;
+  z-index: 10;
+}
+
+.hotspot-marker::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  animation: hotspotPulse 2s infinite ease-in-out;
+}
+
+.hotspot-marker.added {
+  background: #1a1918;
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(26, 25, 24, 0.35);
+}
+
+.hotspot-marker.hovered,
+.hotspot-marker:hover {
+  transform: translate(-50%, -50%) scale(1.15);
+  background: #1a1918;
+  color: #ffffff;
+}
+
+.hotspot-icon {
+  line-height: 1;
+  display: block;
+}
+
+/* TOOLTIP ON HOVER */
+.hotspot-tooltip {
+  position: absolute;
+  bottom: 38px;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: #1a1918;
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 3px;
+  font-size: 9px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.2s ease;
+  z-index: 20;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.hotspot-tooltip small {
+  color: #b5b0a3;
+  font-size: 8px;
+}
+
+.hotspot-marker:hover .hotspot-tooltip,
+.hotspot-marker.hovered .hotspot-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@keyframes hotspotPulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+}
+
+/* RIGHT COLUMN BUNDLE CARD */
+.bundle-card {
+  background: #faf8f5;
+  border: 1px solid #e3dec3;
+  padding: 28px 26px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+}
+
+.bundle-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e7e3d8;
+}
+
+.bundle-title {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: #1a1918;
+  margin: 0 0 6px 0;
+}
+
+.bundle-desc {
+  font-size: 10px;
+  line-height: 1.5;
+  color: #777469;
+  margin: 0;
+}
+
+.bundle-count-badge {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: #8c887b;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* BUNDLE ITEMS LIST */
+.bundle-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bundle-item-row {
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 10px;
+  border-bottom: 1px solid #eae6db;
+  transition: all 0.2s ease;
+  border-radius: 2px;
+}
+
+.bundle-item-row.item-added {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.bundle-item-row.item-hovered,
+.bundle-item-row:hover {
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.item-thumb {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: #e8e4db;
+  flex-shrink: 0;
+  border: 1px solid #ded9cc;
+}
+
+.item-thumb-img {
+  object-fit: cover;
+}
+
+.item-badge-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ece8df;
+  color: #666359;
+  font-size: 8px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.5px;
+  padding: 4px;
+  line-height: 1.2;
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.item-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1a1918;
+  margin: 0 0 2px 0;
+}
+
+.item-specs {
+  font-size: 10px;
+  color: #777469;
+  margin: 0 0 4px 0;
+}
+
+.item-price {
+  font-size: 11px;
+  font-weight: 600;
+  color: #1a1918;
+}
+
+.item-action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-add {
+  background: #ffffff;
+  color: #1a1918;
+  border: 1px solid #1a1918;
+  padding: 7px 16px;
+  font-size: 9px;
+  letter-spacing: 1px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 1px;
+  transition: all 0.2s ease;
+}
+
+.btn-add:hover {
+  background: #1a1918;
+  color: #ffffff;
+}
+
+.btn-added {
+  background: #1a1918;
+  color: #ffffff;
+  border: 1px solid #1a1918;
+  padding: 7px 16px;
+  font-size: 9px;
+  letter-spacing: 1px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 1px;
+}
+
+/* PRICING & ENSEMBLE SUMMARY */
+.bundle-pricing-summary {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e3dec3;
+}
+
+.pricing-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 18px;
+}
+
+.pricing-info b {
+  font-size: 11px;
+  color: #1a1918;
+  font-weight: 600;
+  display: block;
+}
+
+.savings-tag {
+  display: block;
+  font-size: 10px;
+  color: #2b7a4b;
+  font-weight: 500;
+  margin-top: 3px;
+}
+
+.pricing-totals {
+  text-align: right;
+}
+
+.original-price {
+  text-decoration: line-through;
+  font-size: 11px;
+  color: #99958a;
+  margin-right: 8px;
+}
+
+.final-price {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1918;
+  font-family: var(--font-inter), sans-serif;
+}
+
+.add-ensemble-btn {
+  width: 100%;
+  height: 48px;
+  background: #1a1918;
+  color: #ffffff;
+  border: none;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.add-ensemble-btn:hover:not(:disabled) {
+  background: #33302b;
+}
+
+.add-ensemble-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.look-cart-success {
+  background: #eaf5ec;
+  border: 1px solid #bce2c4;
+  color: #1d6332;
+  padding: 14px;
+  font-size: 11px;
+  text-align: center;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 900px) {
+  .look-container {
+    grid-template-columns: 1fr;
+  }
+  .room-photo-viewport {
+    min-height: 360px;
+  }
+}

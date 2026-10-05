@@ -264,9 +264,6 @@ export default async function DraperyPage() {
               <h2>Customer Favorites</h2>
               <p>Top-rated bespoke draperies loved by our design community.</p>
             </div>
-            <div style={{ fontSize: 14, letterSpacing: 4, color: "#888" }}>
-              ← &nbsp; →
-            </div>
           </div>
           <div className="cp-four-products">
             {products.slice(0, 4).map((item) => (

@@ -14,7 +14,7 @@ export const updateMe = catchAsync(async (req, res, next) => {
     return next(new AppError('This route is not for password or role updates.', 400));
   }
 
-  const allowedFields = ['name', 'phone'];
+  const allowedFields = ['name', 'phone', 'avatar'];
   const updateData = {};
   allowedFields.forEach((field) => {
     if (req.body[field] !== undefined) updateData[field] = req.body[field];

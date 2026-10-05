@@ -23,6 +23,7 @@ router.route('/addresses')
 
 router.route('/addresses/:addressId')
   .patch(updateAddress)
+  .put(updateAddress)
   .delete(deleteAddress);
 
 export default router;

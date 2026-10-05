@@ -181,6 +181,28 @@ export function Header() {
 export function Footer() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 250) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+  };
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -274,12 +296,12 @@ export function Footer() {
             <ul className="footer-nav-list">
               <li><Link href="/our-story">About Us</Link></li>
               <li><Link href="/our-story">Our Story</Link></li>
-              <li><Link href="/our-story">Sustainability</Link></li>
-              <li><Link href="/our-story">Trade Program</Link></li>
+              <li><Link href="/sustainability">Sustainability</Link></li>
+              <li><Link href="/trade">Trade Program</Link></li>
               <li><Link href="/resources">Design Resources</Link></li>
               <li><Link href="/journal">Blog</Link></li>
-              <li><Link href="/our-story">Careers</Link></li>
-              <li><a href="mailto:concierge@indiahomefurnishings.com">Contact Us</a></li>
+              <li><Link href="/careers">Careers</Link></li>
+              <li><Link href="/contact">Contact Us</Link></li>
             </ul>
           </div>
 
@@ -287,14 +309,14 @@ export function Footer() {
           <div className="footer-nav-col">
             <h5>CUSTOMER SERVICE</h5>
             <ul className="footer-nav-list">
-              <li><Link href="/resources">FAQs</Link></li>
+              <li><Link href="/faq">FAQs</Link></li>
               <li><Link href="/shipping">Shipping &amp; Delivery</Link></li>
-              <li><Link href="/shipping">Returns &amp; Exchanges</Link></li>
+              <li><Link href="/returns">Returns &amp; Exchanges</Link></li>
               <li><Link href="/account">Order Tracking</Link></li>
-              <li><Link href="/resources">Size Guide</Link></li>
-              <li><Link href="/resources">Fabric Care</Link></li>
+              <li><Link href="/size-guide">Size Guide</Link></li>
+              <li><Link href="/fabric-care">Fabric Care</Link></li>
               <li><Link href="/privacy">Privacy Policy</Link></li>
-              <li><Link href="/privacy">Terms &amp; Conditions</Link></li>
+              <li><Link href="/terms">Terms &amp; Conditions</Link></li>
             </ul>
           </div>
 
@@ -431,7 +453,7 @@ export function Footer() {
             <div className="footer-bottom-links">
               <Link href="/privacy">PRIVACY POLICY</Link>
               <span className="footer-bottom-dot">|</span>
-              <Link href="/privacy">TERMS &amp; CONDITIONS</Link>
+              <Link href="/terms">TERMS &amp; CONDITIONS</Link>
               <span className="footer-bottom-dot">|</span>
               <Link href="/shipping">SHIPPING &amp; RETURNS</Link>
               <span className="footer-bottom-dot">|</span>
@@ -473,13 +495,27 @@ export function Footer() {
               </svg>
             </div>
 
-            {/* Credo with Heart */}
+            {/* Credo with Heart & Single Upward Arrow Button */}
             <div className="footer-bottom-credo">
               <span>Designed for Beautiful Homes® Across the Globe</span>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
               </svg>
             </div>
+
+            {/* Single Upward Arrow Button in Footer */}
+            <button
+              type="button"
+              className="footer-top-arrow-btn"
+              onClick={scrollToTop}
+              title="Scroll to top of page"
+              aria-label="Scroll to top"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="19" x2="12" y2="5" />
+                <polyline points="5 12 12 5 19 12" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>

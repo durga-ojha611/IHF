@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { Footer, Header } from "@/components/site-chrome";
 import { CatalogCard, getCatalogCategory, getProductRecord } from "@/lib/catalog";
 import { CATEGORY_CUSTOMIZER_CONFIGS } from "@/lib/customizer-configs";
-import "./category.css";
+import { CategoryFilterCatalog } from "@/components/category-filter-catalog";
 
 const CUSTOMIZABLE_SLUGS = ["drapery", "shades", "valances"];
 
@@ -167,43 +167,15 @@ export default async function Products({ params }: { params: Promise<{ slug: str
         </section>
 
         {/* 3. Filterable Catalog */}
-        <section className="cp-catalog cp-section" id="collection">
-          <div className="cp-catalog-head">
-            <div>
-              <h2>Find Your Perfect {categoryName}</h2>
-              <p>{products.length} {isCustomizable ? "Atelier Custom Designs" : "Designs"}</p>
-            </div>
-            <button type="button">
-              <span>SORT BY: RECOMMENDED</span> ⌄
-            </button>
-          </div>
-          <div className="cp-catalog-body">
-            <aside>
-              <b>STYLE / TYPE</b>
-              {subcategories.slice(0, 4).map((item, idx) => (
-                <label key={item.slug}>
-                  <input type="checkbox" defaultChecked={idx === 0} /> {item.name}
-                </label>
-              ))}
-              {["MATERIAL", "SIZE", "COLOR", "PRICE"].map((filterName) => (
-                <button type="button" key={filterName}>
-                  {filterName}
-                  <span>+</span>
-                </button>
-              ))}
-            </aside>
-            <div className="cp-product-grid">
-              {products.map((item) => (
-                <ProductCard
-                  key={item.slug}
-                  item={item}
-                  isCustomizable={isCustomizable}
-                  customizerUrl={customizerUrl}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
+        <CategoryFilterCatalog
+          categoryName={categoryName}
+          categorySlug={slug}
+          subcategories={subcategories}
+          fabrics={fabrics}
+          products={products}
+          isCustomizable={isCustomizable}
+          customizerUrl={customizerUrl}
+        />
 
         {/* 4. Customer Favorites */}
         <section className="cp-section cp-favourites">
@@ -211,9 +183,6 @@ export default async function Products({ params }: { params: Promise<{ slug: str
             <div>
               <h2>Customer Favorites</h2>
               <p>Top-rated pieces loved by our design community.</p>
-            </div>
-            <div style={{ fontSize: 14, letterSpacing: 4, color: "#888" }}>
-              ← &nbsp; →
             </div>
           </div>
           <div className="cp-four-products">

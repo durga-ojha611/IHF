@@ -11,6 +11,176 @@
 .pdp{display:grid;grid-template-columns:58% 42%;padding:50px 5vw 120px;gap:55px}.pdp-gallery{display:grid;grid-template-columns:1fr 1fr;gap:12px}.pdp-gallery img{width:100%;height:520px}.pdp-gallery img:first-child{grid-column:1/-1;height:650px}.pdp>section{padding:45px 25px;position:sticky;top:0;align-self:start}.pdp h1{font:400 54px var(--font-serif);margin:15px 0}.pdp section>p{line-height:1.7}.price{font-size:18px}.pdp label{display:block;margin-top:28px;font-size:11px;letter-spacing:1.5px}.swatches{display:flex;gap:10px;margin-top:12px}.swatches i{width:28px;height:28px;border-radius:50%;background:#cbbda9;border:3px solid white;outline:1px solid #999}.swatches i:nth-child(2){background:#85909a}.swatches i:nth-child(3){background:#d5d0c4}.swatches i:nth-child(4){background:#5f6357}.pdp select{width:100%;padding:15px;border:1px solid #bbb;margin-top:12px;background:white}.pdp button{width:100%;padding:18px;background:#1c1c18;color:white;border:0;margin-top:18px;letter-spacing:1.5px}.accordions{border-top:1px solid #ccc;margin-top:32px}.accordions p{border-bottom:1px solid #ccc;padding:17px 0;font-size:12px;letter-spacing:1px}.accordions span{float:right}.pdp section>a{display:block;margin-top:22px;text-decoration:underline;font-size:13px}@media(max-width:800px){.pdp{grid-template-columns:1fr;padding:20px 15px 70px;gap:10px}.pdp-gallery img,.pdp-gallery img:first-child{height:330px}.pdp>section{padding:35px 5px;position:static}.pdp h1{font-size:44px}}
 
 /* ==========================================================================
+   ATELIER AUTHENTICATION REQUIRED MODAL (WISHLIST / FAVOURITES)
+   ========================================================================== */
+.auth-prompt-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background-color: rgba(28, 25, 23, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: authPromptFadeIn 0.22s ease-out forwards;
+}
+
+@keyframes authPromptFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.auth-prompt-modal {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 36px 32px 32px;
+  text-align: center;
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  animation: authPromptPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes authPromptPop {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.auth-prompt-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #f5f3ef;
+  color: #78716c;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.auth-prompt-close:hover {
+  background: #e7e5e4;
+  color: #1c1917;
+}
+
+.auth-prompt-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.auth-prompt-kicker {
+  display: block;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #8b783a;
+  margin-bottom: 8px;
+}
+
+.auth-prompt-title {
+  font-family: var(--font-serif), Cormorant Garamond, Georgia, serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: #1c1917;
+  line-height: 1.2;
+  margin: 0 0 12px;
+}
+
+.auth-prompt-text {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13.5px;
+  color: #57534e;
+  line-height: 1.6;
+  margin: 0 0 28px;
+}
+
+.auth-prompt-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.auth-prompt-btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  background: #1c1917;
+  color: #ffffff;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.auth-prompt-btn-primary:hover {
+  background: #292524;
+}
+
+.auth-prompt-btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  background: #ffffff;
+  color: #1c1917;
+  border: 1.5px solid #e7e5e4;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.auth-prompt-btn-secondary:hover {
+  border-color: #1c1917;
+  background: #fafaf9;
+}
+
+.auth-prompt-dismiss {
+  background: none;
+  border: none;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 12px;
+  color: #78716c;
+  cursor: pointer;
+  padding: 6px;
+  transition: color 0.15s ease;
+}
+
+.auth-prompt-dismiss:hover {
+  color: #1c1917;
+  text-decoration: underline;
+}
+
+/* ==========================================================================
    ALL NAVBAR HERO SECTIONS: 100% FULL LENGTH & 100% FULL WIDTH SCREEN COVERAGE
    ========================================================================== */
 html,

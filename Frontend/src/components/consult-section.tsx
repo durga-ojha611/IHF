@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { consultationsApi } from "@/lib/api";
 
 export function ConsultSection() {
@@ -12,14 +12,33 @@ export function ConsultSection() {
   const [submitError, setSubmitError] = useState("");
   const [bookingRef, setBookingRef] = useState("");
 
-  // Booking Form State - Phone Consultation
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const checkConsultOpen = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (
+          window.location.hash === "#consult" ||
+          urlParams.get("consult") === "true" ||
+          urlParams.get("book") === "true"
+        ) {
+          setBooked(false);
+          setBookingOpen(true);
+        }
+      };
+
+      checkConsultOpen();
+      window.addEventListener("hashchange", checkConsultOpen);
+      return () => window.removeEventListener("hashchange", checkConsultOpen);
+    }
+  }, []);
+
+  // Booking Form State - Design Consultation
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     date: "",
-    time: "11:00 AM - 02:00 PM",
-    room: "Living Room",
+    time: "Morning (9:00 AM – 12:00 PM EST)",
     notes: ""
   });
 
@@ -74,7 +93,7 @@ export function ConsultSection() {
         ...prev,
         {
           sender: "designer",
-          text: "Thank you for reaching out! We've received your note. You can also connect with our direct design line on WhatsApp at +91 98200 12345 for fabric swatches and measurement guidance."
+          text: "Thank you for reaching out! We've received your note. You can also connect with our direct concierge line at +1 (800) 555-0199 for fabric swatches and measurement guidance."
         }
       ]);
     }, 900);
@@ -97,7 +116,7 @@ export function ConsultSection() {
 
   return (
     <>
-      <section className="consult">
+      <section className="consult" id="consult">
         <div>
           <span className="home-kicker">PERSONAL DESIGN GUIDANCE</span>
           <h2>
@@ -136,8 +155,9 @@ export function ConsultSection() {
           src="/figma/home-02.png"
           alt="Design consultation fabric samples"
           fill
-          sizes="100vw"
           priority
+          unoptimized
+          style={{ objectFit: "cover", objectPosition: "center center" }}
         />
       </section>
 
@@ -158,9 +178,9 @@ export function ConsultSection() {
               <>
                 <div className="consult-modal-header">
                   <span className="consult-modal-kicker">ATELIER CONCIERGE</span>
-                  <h3 className="consult-modal-title">Book a Complimentary Consultation</h3>
+                  <h3 className="consult-modal-title">Book a Design Consultation</h3>
                   <p className="consult-modal-sub">
-                    Reserve 30 minutes 1-on-1 with an India Home Furnishings design specialist over a phone call. We’ll discuss fabric weights, window dimensions, and heading options.
+                    Reserve 30 minutes 1-on-1 with an Atelier Drapery Specialist. We’ll guide you through fabric weights, window dimensions, heading options, and custom lining selections.
                   </p>
                 </div>
 
@@ -171,7 +191,7 @@ export function ConsultSection() {
                       <input
                         type="text"
                         required
-                        placeholder="e.g. Priya Sharma"
+                        placeholder="e.g. Eleanor Vance"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       />
@@ -182,18 +202,18 @@ export function ConsultSection() {
                       <input
                         type="email"
                         required
-                        placeholder="e.g. priya@example.com"
+                        placeholder="e.g. eleanor@example.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       />
                     </label>
 
                     <label>
-                      <span>Phone / WhatsApp *</span>
+                      <span>Phone Number *</span>
                       <input
                         type="tel"
                         required
-                        placeholder="+91 98200 00000"
+                        placeholder="+1 (555) 019-2834"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       />
@@ -215,19 +235,20 @@ export function ConsultSection() {
                         value={formData.time}
                         onChange={(e) => setFormData({ ...formData, time: e.target.value })}
                       >
-                        <option value="10:00 AM - 12:00 PM">Morning (10:00 AM – 12:00 PM)</option>
-                        <option value="12:00 PM - 02:00 PM">Midday (12:00 PM – 02:00 PM)</option>
-                        <option value="02:00 PM - 05:00 PM">Afternoon (02:00 PM – 05:00 PM)</option>
-                        <option value="05:00 PM - 07:00 PM">Evening (05:00 PM – 07:00 PM)</option>
+                        <option value="Morning (9:00 AM – 12:00 PM EST)">Morning (9:00 AM – 12:00 PM EST)</option>
+                        <option value="Afternoon (12:00 PM – 4:00 PM EST)">Afternoon (12:00 PM – 4:00 PM EST)</option>
+                        <option value="Evening (4:00 PM – 7:00 PM EST)">Evening (4:00 PM – 7:00 PM EST)</option>
+                        <option value="West Coast Morning (9:00 AM – 12:00 PM PST)">West Coast Morning (9:00 AM – 12:00 PM PST)</option>
+                        <option value="West Coast Afternoon (12:00 PM – 4:00 PM PST)">West Coast Afternoon (12:00 PM – 4:00 PM PST)</option>
                       </select>
                     </label>
                   </div>
 
                   <label className="full-width-label">
-                    <span>Window Details / What would you like help with? (Optional)</span>
+                    <span>WINDOW DETAILS / SPECIFIC DRAPERY REQUIREMENTS (OPTIONAL)</span>
                     <textarea
                       rows={2}
-                      placeholder="e.g. 2 large floor-to-ceiling sliding windows, looking for sheer + blackout combination in off-white linen."
+                      placeholder="e.g. 2 large 96″ × 108″ floor-to-ceiling windows, interested in Belgian Flax Linen with blackout lining."
                       value={formData.notes}
                       onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     />
@@ -238,7 +259,7 @@ export function ConsultSection() {
                       Cancel
                     </button>
                     <button type="submit" disabled={submitting} className="consult-submit-btn">
-                      {submitting ? "CONFIRMING RESERVATION…" : "CONFIRM COMPLIMENTARY SESSION ↗"}
+                      {submitting ? "CONFIRMING RESERVATION…" : "CONFIRM CONSULTATION ↗"}
                     </button>
                   </div>
                 </form>
@@ -249,13 +270,9 @@ export function ConsultSection() {
                 <span className="success-kicker">SESSION RESERVED</span>
                 <h3>We Look Forward to Meeting You</h3>
                 <p>
-                  Thank you, <b>{formData.name || "Client"}</b>. Your complimentary phone consultation has been registered in the atelier system.
+                  Thank you, <b>{formData.name || "Client"}</b>. Your design consultation has been registered in the atelier system.
                 </p>
                 <div className="success-details-card">
-                  <div>
-                    <span>Room:</span>
-                    <b>{formData.room}</b>
-                  </div>
                   <div>
                     <span>Time Window:</span>
                     <b>{formData.time}</b>
@@ -348,12 +365,10 @@ export function ConsultSection() {
 
               <div className="chat-whatsapp-row">
                 <a
-                  href="https://wa.me/919820012345?text=Hello%20IHF%20Atelier!%20I'd%20like%20guidance%20on%20custom%20drapery%20and%20fabrics."
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="tel:+18005550199"
                   className="whatsapp-direct-link"
                 >
-                  <span>Prefer WhatsApp? Chat directly with an Atelier Designer ↗</span>
+                  <span>Need immediate help? Call Atelier Concierge directly at +1 (800) 555-0199 ↗</span>
                 </a>
               </div>
             </div>

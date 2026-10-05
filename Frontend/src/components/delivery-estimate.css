@@ -1,0 +1,319 @@
+.delivery-estimate-wrapper {
+  border-top: 1px solid #e6e2d6;
+  border-bottom: 1px solid #e6e2d6;
+  padding: 60px max(calc((100% - 1140px) / 2), 32px);
+  background: #faf8f5;
+  color: #1a1918;
+  font-family: var(--font-inter), sans-serif;
+}
+
+.delivery-estimate-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr);
+  gap: 70px;
+  align-items: start;
+}
+
+/* LEFT COLUMN PINCODE CHECKER */
+.delivery-left-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.delivery-section-title {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: #1a1918;
+  margin: 0 0 28px 0;
+  line-height: 1.15;
+  letter-spacing: -0.2px;
+}
+
+.pincode-form {
+  margin-bottom: 8px;
+}
+
+.pincode-input-group {
+  display: flex;
+  height: 48px;
+  background: #eeebe3;
+  border: 1px solid #ded9cc;
+  border-radius: 1px;
+  overflow: hidden;
+  max-width: 480px;
+}
+
+.pincode-field {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 0 18px;
+  font-size: 13px;
+  color: #1a1918;
+  font-family: var(--font-inter), sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.pincode-field::placeholder {
+  color: #928e81;
+  font-weight: 400;
+}
+
+.pincode-field:focus {
+  outline: none;
+}
+
+.pincode-check-btn {
+  background: #23211f;
+  color: #ffffff;
+  border: none;
+  padding: 0 32px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, opacity 0.2s ease;
+  font-family: var(--font-inter), sans-serif;
+}
+
+.pincode-check-btn:hover:not(:disabled) {
+  background: #000000;
+}
+
+.pincode-check-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.pincode-reset-btn {
+  background: #ded9cc;
+  color: #38352e;
+  border: none;
+  border-left: 1px solid #d4cebe;
+  padding: 0 18px;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-inter), sans-serif;
+}
+
+.pincode-reset-btn:hover {
+  background: #c8c2b3;
+  color: #1a1918;
+}
+
+.pincode-subnote {
+  font-size: 11px;
+  line-height: 1.55;
+  color: #827e74;
+  margin: 10px 0 0 0;
+  max-width: 480px;
+}
+
+.pincode-error-box {
+  background: #fdf2f2;
+  border: 1px solid #f87171;
+  color: #b91c1c;
+  padding: 10px 14px;
+  font-size: 11px;
+  border-radius: 2px;
+  margin-top: 14px;
+  max-width: 480px;
+}
+
+/* PINCODE RESULT CARD */
+.pincode-result-card {
+  background: #ffffff;
+  border: 1px solid #e4dfd0;
+  padding: 16px 20px;
+  border-radius: 2px;
+  margin-top: 18px;
+  max-width: 480px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.result-reset-action {
+  background: transparent;
+  border: 1px solid #dcd7c8;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 9.5px;
+  letter-spacing: 1.2px;
+  font-weight: 700;
+  color: #686459;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-inter), sans-serif;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.result-reset-action:hover {
+  background: #1a1918;
+  color: #ffffff;
+  border-color: #1a1918;
+}
+
+.result-status-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #e4f2e7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.result-title-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.result-main-title {
+  font-size: 12px;
+  color: #1a1918;
+  font-weight: 400;
+}
+
+.result-main-title strong {
+  font-weight: 700;
+  color: #1a1918;
+}
+
+.result-shipping-sub {
+  font-size: 10.5px;
+  color: #827e74;
+}
+
+.result-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid #f1ece0;
+  padding-top: 12px;
+}
+
+.result-detail-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.detail-label {
+  font-size: 10px;
+  color: #8c887b;
+  text-transform: capitalize;
+}
+
+.detail-value {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #1a1918;
+}
+
+/* RIGHT COLUMN ACCORDION DROPDOWNS */
+.delivery-right-col {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid #e6e2d6;
+}
+
+.delivery-accordion-item {
+  border-bottom: 1px solid #e6e2d6;
+  padding: 18px 0;
+  transition: padding 0.2s ease;
+}
+
+.accordion-header-btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.accordion-title {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: #2a2824;
+  margin: 0;
+  letter-spacing: 0.1px;
+}
+
+.accordion-chevron-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 18px;
+  height: 18px;
+}
+
+.accordion-chevron-icon.rotated {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  margin-top: 14px;
+}
+
+.accordion-content p {
+  font-size: 11.5px;
+  line-height: 1.65;
+  color: #686459;
+  margin: 0;
+  font-weight: 400;
+  font-family: var(--font-inter), sans-serif;
+}
+
+@media (max-width: 850px) {
+  .delivery-estimate-wrapper {
+    padding: 40px 20px;
+  }
+
+  .delivery-estimate-container {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .pincode-input-group,
+  .pincode-subnote,
+  .pincode-result-card,
+  .pincode-error-box {
+    max-width: 100%;
+  }
+}
+
+

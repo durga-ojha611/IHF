@@ -316,12 +316,12 @@ export default function FabricsAndSwatchesPage() {
           <section className="swatch-hero-box">
             <div className="swatch-hero-bg-photo">
               <Image
-                src="/figma/bedding-hero-exact.png"
-                alt="Find Your Perfect Fabric Swatch Set"
+                src="/figma/swatch-box-hero.jpg"
+                alt="India Home Furnishings Fabric Swatch Box"
                 fill
                 priority
                 unoptimized
-                style={{ objectFit: "cover", objectPosition: "center 30%" }}
+                style={{ objectFit: "cover", objectPosition: "center center" }}
               />
               <div className="swatch-hero-overlay-shade" />
             </div>

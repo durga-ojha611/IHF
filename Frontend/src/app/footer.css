@@ -575,3 +575,83 @@
     gap: 10px;
   }
 }
+
+/* ==========================================================================
+   5. BACK TO TOP UPWARD ARROW BUTTONS
+   ========================================================================== */
+.footer-top-arrow-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #1c1b18;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  margin-left: auto;
+}
+
+.footer-top-arrow-btn:hover {
+  background: #ffffff;
+  color: #1c1b18;
+  border-color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.footer-top-arrow-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.footer-top-arrow-btn:hover svg {
+  transform: translateY(-2px);
+}
+
+/* Floating Upward Arrow Button */
+.floating-scroll-top-btn {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #1c1917;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 99990;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+}
+
+.floating-scroll-top-btn.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.floating-scroll-top-btn:hover {
+  background: #8b783a;
+  border-color: #8b783a;
+  transform: translateY(-4px) scale(1.06);
+  box-shadow: 0 12px 28px rgba(139, 120, 58, 0.4);
+}
+
+.floating-scroll-top-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.floating-scroll-top-btn:hover svg {
+  transform: translateY(-2px);
+}
+

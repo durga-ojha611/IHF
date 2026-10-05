@@ -57,6 +57,10 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default: ''
     },
+    avatar: {
+      type: String,
+      default: ''
+    },
     addresses: [addressSchema],
     refreshTokens: [
       {

@@ -9,6 +9,7 @@ export interface User {
   email: string;
   role: string;
   phone?: string;
+  avatar?: string;
   addresses?: Array<{
     _id: string;
     label?: string;

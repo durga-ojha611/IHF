@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Header, Footer } from "@/components/site-chrome";
 import { useCommerce } from "@/components/commerce-context";
+import { ConsultationModal } from "@/components/consult-modal";
 import "./favourites.css";
 
 // Default luxury curated wishlist items matching screenshot when user opens
@@ -50,7 +51,7 @@ const RECENTLY_VIEWED_ITEMS = [
     title: "Waffle Weave Linen Coverlet",
     category: "BEDDING",
     priceRange: "$310 – $360",
-    image: "/figma/bedding-hero-exact.png",
+    image: "/figma/real-swatch-box-ihf.png",
     slug: "belgian-linen-duvet-cover"
   },
   {
@@ -83,6 +84,7 @@ export default function FavouritesPage() {
   const { favourites, removeFavourite, addToCart } = useCommerce();
   const [activeTab, setActiveTab] = useState<"all" | "ready" | "custom">("all");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isConsultModalOpen, setIsConsultModalOpen] = useState(false);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -282,9 +284,13 @@ export default function FavouritesPage() {
                 <Link href="/swatches" className="fav-btn-primary">
                   ORDER FREE SWATCH
                 </Link>
-                <Link href="/drapery" className="fav-btn-secondary">
+                <button
+                  type="button"
+                  className="fav-btn-secondary"
+                  onClick={() => setIsConsultModalOpen(true)}
+                >
                   BOOK VIRTUAL CONSULTATION ↗
-                </Link>
+                </button>
               </div>
             </div>
 
@@ -355,6 +361,12 @@ export default function FavouritesPage() {
       </div>
 
       <Footer />
+
+      {/* Consultation Booking Modal */}
+      <ConsultationModal
+        isOpen={isConsultModalOpen}
+        onClose={() => setIsConsultModalOpen(false)}
+      />
 
       {/* Toast Notification */}
       {toastMessage && (

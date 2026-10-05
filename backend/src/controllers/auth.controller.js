@@ -11,8 +11,9 @@ import { validatePasswordPolicy } from '../middlewares/security.middleware.js';
  */
 const signAccessToken = (id) => {
   const secret = process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'ihf-local-development-secret-change-in-production' : undefined);
-  return jwt.sign({ id }, secret, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '15m'
+  const userIdStr = typeof id === 'object' && id?._id ? id._id.toString() : id ? id.toString() : id;
+  return jwt.sign({ id: userIdStr }, secret, {
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d'
   });
 };
 
@@ -129,16 +130,7 @@ export const register = catchAsync(async (req, res, next) => {
     role: 'customer'
   });
 
-  const sanitizedUser = newUser.toObject();
-  delete sanitizedUser.password;
-
-  res.status(201).json({
-    status: 'success',
-    message: 'Account created successfully! Please sign in with your email and password.',
-    data: {
-      user: sanitizedUser
-    }
-  });
+  await createSendTokens(newUser, 201, res);
 });
 
 /**

@@ -2817,7 +2817,7 @@ function OrderManager({ act }: { act: (msg: string) => void }) {
                       className="manual-input"
                       value={manualForm.customerName}
                       onChange={(e) => setManualForm({ ...manualForm, customerName: e.target.value })}
-                      placeholder="e.g. Priya Sharma"
+                      placeholder="e.g. Eleanor Vance"
                     />
                   </div>
                   <div className="manual-field-group">
@@ -2828,7 +2828,7 @@ function OrderManager({ act }: { act: (msg: string) => void }) {
                       className="manual-input"
                       value={manualForm.customerEmail}
                       onChange={(e) => setManualForm({ ...manualForm, customerEmail: e.target.value })}
-                      placeholder="e.g. priya@luxuryestate.in"
+                      placeholder="e.g. eleanor@example.com"
                     />
                   </div>
                   <div className="manual-field-group">
@@ -2838,7 +2838,7 @@ function OrderManager({ act }: { act: (msg: string) => void }) {
                       className="manual-input"
                       value={manualForm.customerPhone}
                       onChange={(e) => setManualForm({ ...manualForm, customerPhone: e.target.value })}
-                      placeholder="+91 98111 22334"
+                      placeholder="+1 (555) 019-2834"
                     />
                   </div>
                 </div>

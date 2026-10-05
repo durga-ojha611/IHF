@@ -57,3 +57,205 @@
 .cp-product>span i{font-size:13px;font-style:normal;transition:transform .2s}
 .cp-product:hover>span{background:none;color:#927d3d}
 .cp-product:hover>span i{transform:translateX(4px)}
+
+/* Interactive Category Sidebar Filter Styles */
+.cp-sidebar-filters {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.cp-filter-group {
+  border-bottom: 1px solid #e5e1d8;
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+}
+
+.cp-filter-accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 8px 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.cp-filter-title {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #1c1b18;
+}
+
+.cp-filter-icon {
+  font-size: 16px;
+  font-weight: 400;
+  color: #66635a;
+  line-height: 1;
+}
+
+.cp-filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.cp-filter-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13px;
+  color: #3e3b35;
+  cursor: pointer;
+  user-select: none;
+}
+
+.cp-filter-checkbox-label input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #bbb6a9;
+  border-radius: 2px;
+  background: #ffffff;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.cp-filter-checkbox-label input[type="checkbox"]:checked {
+  background: #1c1b18;
+  border-color: #1c1b18;
+}
+
+.cp-filter-checkbox-label input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 4.5px;
+  top: 1.5px;
+  width: 5px;
+  height: 8px;
+  border: solid #ffffff;
+  border-width: 0 1.8px 1.8px 0;
+  transform: rotate(45deg);
+}
+
+.cp-filter-checkbox-label span {
+  transition: color 0.15s ease;
+}
+
+.cp-filter-checkbox-label:hover span {
+  color: #1c1b18;
+}
+
+/* Filter Header Controls */
+.cp-catalog-count {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+  color: #68655d;
+  margin-top: 6px;
+}
+
+.cp-clear-filters-btn {
+  background: none;
+  border: none;
+  color: #8b783a;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.cp-clear-filters-btn:hover {
+  color: #1c1b18;
+}
+
+.cp-sort-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cp-sort-label {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #77746c;
+}
+
+.cp-sort-select {
+  background: transparent;
+  border: none;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  color: #1c1b18;
+  cursor: pointer;
+  outline: none;
+  padding-right: 12px;
+}
+
+/* Product Card Image Container */
+.cp-product-image-container {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  margin-bottom: 16px;
+  background: #eeebe4;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.cp-no-results {
+  padding: 60px 20px;
+  text-align: center;
+  background: #faf8f4;
+  border: 1px dashed #dcd7c9;
+  border-radius: 8px;
+}
+
+.cp-no-results h3 {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 20px;
+  color: #1c1b18;
+  margin: 0 0 8px 0;
+}
+
+.cp-no-results p {
+  font-size: 13px;
+  color: #77746c;
+  margin: 0 0 20px 0;
+}
+
+.cp-clear-filters-btn-large {
+  background: #1c1b18;
+  color: #ffffff;
+  border: none;
+  padding: 12px 28px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.cp-clear-filters-btn-large:hover {
+  background: #8b783a;
+}
