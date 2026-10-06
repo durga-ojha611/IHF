@@ -314,18 +314,18 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Column 2: SHOP */}
+          {/* Column 2: SHOP (Navbar Elements) */}
           <div className="footer-nav-col">
             <h5>SHOP</h5>
             <ul className="footer-nav-list">
-              <li><Link href="/drapery">Draperies</Link></li>
+              <li><Link href="/drapery">Drapery</Link></li>
+              <li><Link href="/products/shades">Shades</Link></li>
               <li><Link href="/products/valances">Valances</Link></li>
-              <li><Link href="/drapery">Curtain Panels</Link></li>
-              <li><Link href="/drapery">Sheers</Link></li>
-              <li><Link href="/products/decor">Home Decor</Link></li>
-              <li><Link href="/swatches">Fabric by the Yard</Link></li>
-              <li><Link href="/products">New Arrivals</Link></li>
-              <li><Link href="/products">Sale</Link></li>
+              <li><Link href="/products/pillows">Pillows</Link></li>
+              <li><Link href="/products/bedding">Bedding</Link></li>
+              <li><Link href="/products/table-linen">Table Linen</Link></li>
+              <li><Link href="/swatches">Fabrics &amp; Swatches</Link></li>
+              <li><Link href="/products/decor">Decor &amp; More</Link></li>
             </ul>
           </div>
 
@@ -333,29 +333,22 @@ export function Footer() {
           <div className="footer-nav-col">
             <h5>OUR COMPANY</h5>
             <ul className="footer-nav-list">
-              <li><Link href="/our-story">About Us</Link></li>
               <li><Link href="/our-story">Our Story</Link></li>
-              <li><Link href="/sustainability">Sustainability</Link></li>
-              <li><Link href="/trade">Trade Program</Link></li>
-              <li><Link href="/resources">Design Resources</Link></li>
-              <li><Link href="/journal">Blog</Link></li>
-              <li><Link href="/careers">Careers</Link></li>
+              <li><Link href="/resources">Resources</Link></li>
+              <li><Link href="/blog">Blog</Link></li>
               <li><Link href="/contact">Contact Us</Link></li>
             </ul>
           </div>
 
-          {/* Column 4: CUSTOMER SERVICE */}
+          {/* Column 4: CLIENT CARE */}
           <div className="footer-nav-col">
-            <h5>CUSTOMER SERVICE</h5>
+            <h5>CLIENT CARE</h5>
             <ul className="footer-nav-list">
-              <li><Link href="/faq">FAQs</Link></li>
+              <li><Link href="/order-tracking">Order Tracking</Link></li>
               <li><Link href="/shipping">Shipping &amp; Delivery</Link></li>
               <li><Link href="/returns">Returns &amp; Exchanges</Link></li>
-              <li><Link href="/account">Order Tracking</Link></li>
-              <li><Link href="/size-guide">Size Guide</Link></li>
-              <li><Link href="/fabric-care">Fabric Care</Link></li>
-              <li><Link href="/privacy">Privacy Policy</Link></li>
-              <li><Link href="/terms">Terms &amp; Conditions</Link></li>
+              <li><Link href="/size-guide">Size &amp; Fit Guide</Link></li>
+              <li><Link href="/faq">FAQs</Link></li>
             </ul>
           </div>
 
@@ -369,7 +362,7 @@ export function Footer() {
             {/* Newsletter Input with Solid Dark Button */}
             <form onSubmit={handleSubscribe} className="footer-sub-form">
               <div className="footer-sub-input-wrap">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <rect width="20" height="16" x="2" y="4" rx="2" />
                   <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                 </svg>
@@ -378,13 +371,13 @@ export function Footer() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email address"
+                  placeholder="Your email address"
                   className="footer-sub-input"
                   aria-label="Enter your email address"
                 />
               </div>
-              <button type="submit" className="footer-sub-btn">
-                <span>SUBSCRIBE</span>
+              <button type="submit" className="footer-sub-btn" aria-label="Subscribe">
+                <span>JOIN</span>
                 <span>→</span>
               </button>
             </form>
@@ -398,7 +391,7 @@ export function Footer() {
             {/* We Ship To */}
             <div className="footer-ship-section">
               <div className="footer-ship-header">
-                <span>WE SHIP TO</span>
+                <span>WE SHIP GLOBALLY</span>
               </div>
               <div className="footer-ship-badges">
                 {/* USA Flag */}
@@ -430,10 +423,6 @@ export function Footer() {
                     <circle cx="320" cy="340" r="10" fill="#ffcc00"/>
                     <circle cx="220" cy="240" r="10" fill="#ffcc00"/>
                     <circle cx="420" cy="240" r="10" fill="#ffcc00"/>
-                    <circle cx="250" cy="170" r="10" fill="#ffcc00"/>
-                    <circle cx="390" cy="170" r="10" fill="#ffcc00"/>
-                    <circle cx="250" cy="310" r="10" fill="#ffcc00"/>
-                    <circle cx="390" cy="310" r="10" fill="#ffcc00"/>
                   </svg>
                   <span>EUROPE</span>
                 </div>
@@ -452,26 +441,15 @@ export function Footer() {
                 className="footer-etsy-card"
                 aria-label="Shop India Home Furnishings on Etsy"
               >
-                <div className="footer-etsy-logo">
-                  <Image
-                    src="/figma/etsy-orange-logo.png"
-                    alt="Etsy"
-                    width={52}
-                    height={22}
-                    style={{ objectFit: "contain" }}
-                  />
-                </div>
-                <div className="footer-etsy-divider" />
-                <span className="footer-etsy-sub" style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                  Shop our unique designs on
-                  <Image
-                    src="/figma/etsy-orange-logo.png"
-                    alt="Etsy"
-                    width={40}
-                    height={16}
-                    style={{ objectFit: "contain", verticalAlign: "middle" }}
-                  />
-                  ↗
+                <Image
+                  src="/figma/etsy-orange-logo.png"
+                  alt="Etsy"
+                  width={48}
+                  height={20}
+                  style={{ objectFit: "contain" }}
+                />
+                <span className="footer-etsy-sub">
+                  Official Storefront ↗
                 </span>
               </a>
             </div>
@@ -496,7 +474,7 @@ export function Footer() {
               <span className="footer-bottom-dot">|</span>
               <Link href="/shipping">SHIPPING &amp; RETURNS</Link>
               <span className="footer-bottom-dot">|</span>
-              <a href="mailto:concierge@indiahomefurnishings.com">CONTACT CONCIERGE</a>
+              <Link href="/contact">CONTACT CONCIERGE</Link>
             </div>
 
             {/* Secure Payments Assurances */}

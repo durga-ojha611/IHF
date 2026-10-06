@@ -1,0 +1,489 @@
+/* ==========================================================================
+   INDIA HOME FURNISHINGS — ORDER TRACKING PAGE STYLES
+   ========================================================================== */
+
+.track-page {
+  background: #faf8f5;
+  color: #1c1917;
+  font-family: var(--font-inter), sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.track-main {
+  flex: 1;
+  padding: 64px 24px 96px;
+}
+
+.track-container {
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   1. Header Hero
+   -------------------------------------------------------------------------- */
+.track-header {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 52px;
+}
+
+.track-eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #8f7642;
+  margin-bottom: 12px;
+}
+
+.track-title {
+  font-family: var(--font-serif), Georgia, serif !important;
+  font-size: clamp(36px, 4.2vw, 52px) !important;
+  font-weight: 400 !important;
+  line-height: 1.15 !important;
+  color: #1c1917 !important;
+  margin: 0 0 14px 0 !important;
+  letter-spacing: -0.5px !important;
+}
+
+.track-subtitle {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #6c665a;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   2. Main Two-Column Grid
+   -------------------------------------------------------------------------- */
+.track-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 40px;
+  align-items: start;
+}
+
+/* Left Card: Search Form */
+.track-card {
+  background: #ffffff;
+  border: 1px solid #e7e2d8;
+  border-radius: 12px;
+  padding: 38px 34px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.track-card-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #ebe6dd;
+}
+
+.track-card-title {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #1c1917;
+  margin: 0 0 6px 0;
+}
+
+.track-card-desc {
+  font-size: 13px;
+  color: #78716c;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.track-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.track-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.track-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #37332d;
+}
+
+.track-input {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #dcd6c8;
+  border-radius: 6px;
+  padding: 13px 15px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 13.5px;
+  color: #1c1917;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.track-input:focus {
+  border-color: #8f7642;
+  box-shadow: 0 0 0 3px rgba(143, 118, 66, 0.12);
+}
+
+.track-input::placeholder {
+  color: #a8a29e;
+}
+
+.track-submit-btn {
+  background: #1c1917;
+  color: #ffffff;
+  border: 1px solid #1c1917;
+  border-radius: 6px;
+  padding: 15px 24px;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 4px;
+}
+
+.track-submit-btn:hover:not(:disabled) {
+  background: #332d26;
+  border-color: #332d26;
+  transform: translateY(-1px);
+}
+
+.track-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Quick test badges */
+.track-quick-test {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #ebe6dd;
+}
+
+.track-quick-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #8f7642;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.track-quick-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.track-quick-pill {
+  background: #fbfaf8;
+  border: 1px solid #e2ddd3;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 11.5px;
+  color: #444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.track-quick-pill:hover {
+  background: #8f7642;
+  border-color: #8f7642;
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   3. Right Card: Status & Timeline
+   -------------------------------------------------------------------------- */
+.track-result-card {
+  background: #ffffff;
+  border: 1px solid #e7e2d8;
+  border-radius: 12px;
+  padding: 38px 36px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.track-result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ebe6dd;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.track-result-order-num {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: #1c1917;
+  margin: 4px 0 0 0;
+}
+
+.track-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.track-status-pill.in_transit,
+.track-status-pill.processing {
+  background: #fbf5e6;
+  color: #8f7642;
+  border: 1px solid #eedec0;
+}
+
+.track-status-pill.delivered {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+/* Order summary details */
+.track-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  background: #fbfaf8;
+  border: 1px solid #eee8dc;
+  border-radius: 8px;
+  padding: 18px 20px;
+  margin-bottom: 28px;
+}
+
+.track-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.track-meta-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #8f7642;
+}
+
+.track-meta-val {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #1c1917;
+}
+
+/* Timeline Stages */
+.track-timeline-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: #8f7642;
+  margin: 0 0 20px 0;
+}
+
+.track-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: relative;
+  padding-left: 36px;
+}
+
+.track-timeline::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 13px;
+  width: 2px;
+  background: #ebe6dd;
+}
+
+.track-timeline-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.track-step-dot {
+  position: absolute;
+  left: -36px;
+  top: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #dcd6c8;
+  color: #78716c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.track-timeline-step.is-done .track-step-dot {
+  background: #1c1917;
+  border-color: #1c1917;
+  color: #ffffff;
+}
+
+.track-timeline-step.is-active .track-step-dot {
+  background: #8f7642;
+  border-color: #8f7642;
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(143, 118, 66, 0.2);
+}
+
+.track-step-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1c1917;
+}
+
+.track-timeline-step:not(.is-done):not(.is-active) .track-step-name {
+  color: #8c8273;
+}
+
+.track-step-date {
+  font-size: 12px;
+  color: #78716c;
+}
+
+/* Empty / Initial State */
+.track-empty-card {
+  background: #ffffff;
+  border: 1px dashed #dcd6c8;
+  border-radius: 12px;
+  padding: 56px 36px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.track-empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #f4efe6;
+  color: #8f7642;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.track-empty-title {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #1c1917;
+  margin: 0 0 8px 0;
+}
+
+.track-empty-desc {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #6c665a;
+  max-width: 420px;
+  margin: 0 0 24px 0;
+}
+
+/* --------------------------------------------------------------------------
+   4. Help & Concierge Bottom Callout
+   -------------------------------------------------------------------------- */
+.track-support-bar {
+  margin-top: 48px;
+  background: #f4efe6;
+  border: 1px solid #e7e2d8;
+  border-radius: 10px;
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.track-support-text {
+  font-size: 13.5px;
+  color: #4b473f;
+  line-height: 1.5;
+}
+
+.track-support-text strong {
+  color: #1c1917;
+}
+
+.track-support-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #8f7642;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.track-support-link:hover {
+  color: #1c1917;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .track-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .track-support-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .track-main {
+    padding: 44px 18px 64px;
+  }
+
+  .track-card,
+  .track-result-card {
+    padding: 28px 20px;
+  }
+
+  .track-meta-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
