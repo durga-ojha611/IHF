@@ -1,5 +1,5 @@
 import { CustomizerScreen } from "./customizer-screen";
 
 export default function DetailsPage() {
-  return <CustomizerScreen step="panels" />;
+  return <CustomizerScreen step="pleat" />;
 }

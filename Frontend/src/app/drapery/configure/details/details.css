@@ -989,6 +989,11 @@
   text-transform: uppercase;
 }
 
+.measurement-unit-switch{display:flex;align-items:center;gap:8px;margin:0 0 22px}
+.measurement-unit-switch>b{font:700 10px var(--font-inter);letter-spacing:1.4px;margin-right:8px}
+.measurement-unit-switch button{border:1px solid #d8d2c7;background:#fff;padding:10px 15px;font:650 10px var(--font-inter);letter-spacing:1px;cursor:pointer}
+.measurement-unit-switch button.selected{background:#1c1b18;color:#fff;border-color:#1c1b18}
+
 @media (max-width: 900px) {
   .customizer-shell {
     grid-template-columns: 1fr;

@@ -6,22 +6,64 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useCommerce } from "./commerce-context";
 import "@/app/footer.css";
+import "./site-mega-menu.css";
 
-const nav = [
-  ["Drapery", "/drapery"],
-  ["Shades", "/products/shades"],
-  ["Valances", "/products/valances"],
-  ["Pillows", "/products/pillows"],
-  ["Bedding", "/products/bedding"],
-  ["Table Linen", "/products/table-linen"],
-  ["Fabrics & Swatches", "/swatches"],
-  ["Decor & More", "/products/decor"],
-  ["Resources", "/resources"],
+type MenuGroup = { title: string; items: string[] };
+type MenuItem = { label: string; href: string; groups: MenuGroup[] };
+
+const menuHref = (base: string, item: string) => `${base}?view=${encodeURIComponent(item.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""))}`;
+const nav: MenuItem[] = [
+  { label: "Drapery", href: "/drapery", groups: [
+    { title: "SHOP DRAPERY", items: ["Custom Drapes", "Drapes & Curtains", "Fabrics & Swatches", "Trims", "Tie Backs"] },
+    { title: "PLEAT STYLES", items: ["French / Pinch Pleat", "Parisian Pleat", "Goblet Pleat", "Inverted Pleat", "Cartridge Pleat", "Pencil Pleat", "Cottage Pleat", "Double Pinch Pleat", "Grommet", "Rod Pocket", "Back Tab", "Flat Pleat", "Ripplefold", "WaveFold"] },
+    { title: "SHOP BY FABRIC", items: ["Dupioni Silk", "Silk Taffeta", "Mutka Silk", "Linen", "Velvet", "Cotton", "Faux Silk", "Sheer Voile", "Embroidered", "Patterned"] },
+    { title: "DRAPERY GUIDES", items: ["Measuring & Installation", "Header & Pleat Styles", "Fabric Types", "Lining Types", "Trims & Tie Backs", "Photo Gallery", "Design Assistance"] },
+  ] },
+  { label: "Shades", href: "/products/shades", groups: [
+    { title: "CUSTOM SHADES", items: ["Custom Roman Shades", "Fabrics & Swatches", "Trims"] },
+    { title: "ROMAN SHADE STYLES", items: ["Cascade Roman Shades", "Flat Roman Shades", "Relaxed Roman Shades", "Tulip Roman Shades", "Sheer Roman Shades"] },
+    { title: "SHOP BY FABRIC", items: ["Silk", "Linen", "Velvet", "Cotton", "Faux Silk", "Patterned", "Embroidered", "Sheer"] },
+    { title: "SHADES GUIDES", items: ["Measuring & Installation", "Inside & Outside Mount", "Shade Styles", "Fabric Types", "Lining Types", "Trims", "Photo Gallery"] },
+  ] },
+  { label: "Valances", href: "/products/valances", groups: [
+    { title: "CUSTOM TREATMENTS", items: ["Custom Valance", "Custom Cornices", "Fabrics & Swatches"] },
+    { title: "VALANCE STYLES", items: ["Swag Valance", "Shawl Valance", "Scallop Valance", "Curved Valance", "Kingston Valance", "Arched Valance", "Balloon Valance", "Inverted Pleat", "Box Pleats", "Flat Valance", "Swag Cascade"] },
+    { title: "CORNICE STYLES", items: ["Clean Style Cornice", "Cornice with Border", "Cornice with Trim", "Cornice with Fringe"] },
+    { title: "VALANCE & CORNICE GUIDES", items: ["Measuring & Installation", "Styles", "Board & Rod Mount", "Fabric Types", "Lining Types", "Trims", "Photo Gallery"] },
+  ] },
+  { label: "Pillows", href: "/products/pillows", groups: [
+    { title: "PILLOWS", items: ["Solid Pillow Covers", "Embroidered Pillow Covers", "Throw Pillows", "Lumbar Pillows", "Bolsters", "Pillow Shams"] },
+    { title: "SHAPES & SIZES", items: ["Square", "Rectangular / Lumbar", "Bolster", "Round", "Knife Edge", "Piped Edge", "Fringed", "Tassel Trim"] },
+  ] },
+  { label: "Bedding", href: "/products/bedding", groups: [
+    { title: "BEDDING", items: ["Duvet Covers", "Quilts & Coverlets", "Bedding Sets", "Pillowcases & Shams", "Bed Runners", "Bed Skirts", "Sheets & Sets", "Throws & Blankets", "Comforters"] },
+    { title: "BEDDING SIZES", items: ["King", "Queen / Full", "Twin / Twin XL", "Daybed", "Euro Sham", "Standard Sham"] },
+  ] },
+  { label: "Table Linen", href: "/products/table-linen", groups: [
+    { title: "TABLE LINEN", items: ["Table Covers", "Table Runners", "Table Skirts", "Placemats", "Napkins"] },
+    { title: "SHOP BY SHAPE", items: ["Square", "Rectangle", "Round"] },
+  ] },
+  { label: "Fabrics & Swatches", href: "/swatches", groups: [
+    { title: "FABRICS", items: ["Silk", "Linen & Linen Blends", "Velvet", "Cotton", "Polyester", "Sheer", "Patterned", "Embroidered"] },
+    { title: "SAMPLES", items: ["Fabric Swatches", "Trim Samples", "Trims & Fringes"] },
+    { title: "SHOP BY COLOUR", items: ["White & Off White", "Ivory", "Beige", "Grey", "Brown", "Black", "Blue", "Green", "Gold", "Metallic"] },
+  ] },
+  { label: "Decor & More", href: "/products/decor", groups: [
+    { title: "DECOR", items: ["Sculpture & Figurines", "Pottery", "Vases", "Art"] },
+    { title: "MATERIAL", items: ["Brass", "Marble", "Terracotta", "Glass", "Ceramic", "Fabric Art"] },
+  ] },
+  { label: "Resources", href: "/resources", groups: [
+    { title: "DRAPERY GUIDES", items: ["Measuring Drapery", "Regular Windows", "Bay Windows", "Stack Back", "Puddle", "Ripplefold Guide"] },
+    { title: "VALANCE & CORNICE", items: ["Measuring Valances", "Swag & Cascade Sizes", "Board & Rod Mount", "Cornice Installation"] },
+    { title: "DESIGN HELP", items: ["Photo Gallery & Inspiration", "Design Assistance", "How to Order", "Installation Guides"] },
+  ] },
 ];
 
 export function Header() {
   const { cartCount, favouriteCount, openCartDrawer } = useCommerce();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [mobileGroup, setMobileGroup] = useState<string | null>(null);
   const pathname = usePathname();
   const isLandingPage = pathname === "/";
 
@@ -116,11 +158,15 @@ export function Header() {
       </header>
 
       {/* Desktop & Tablet Category Nav Bar */}
-      <nav className="nav">
-        {nav.map(([label, href]) => (
-          <Link key={label} href={href}>
-            {label}
-          </Link>
+      <nav className="nav" onMouseLeave={() => setActiveMenu(null)}>
+        {nav.map((item) => (
+          <div className="nav-menu-item" key={item.label} onMouseEnter={() => setActiveMenu(item.label)}>
+            <Link href={item.href} aria-expanded={activeMenu === item.label}>{item.label}</Link>
+            {activeMenu === item.label && <div className="mega-menu"><div className="mega-menu-inner">
+              {item.groups.map((group) => <section key={group.title}><h3>{group.title}</h3>{group.items.map((label) => <Link key={label} href={menuHref(item.href, label)}>{label}</Link>)}</section>)}
+              <aside><span>MADE TO MEASURE</span><h3>Designed for your windows.</h3><p>Choose every detail, from fabric and heading to lining and finish.</p><Link className="mega-menu-cta" href={item.label === "Drapery" ? "/drapery/configure" : item.href}>EXPLORE {item.label.toUpperCase()} →</Link></aside>
+            </div></div>}
+          </div>
         ))}
       </nav>
 
@@ -148,17 +194,10 @@ export function Header() {
             </div>
 
             <div className="mobile-drawer-links">
-              {nav.map(([label, href]) => (
-                <Link
-                  key={label}
-                  href={href}
-                  className="mobile-nav-item"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <span>{label}</span>
-                  <span className="mobile-nav-arrow">→</span>
-                </Link>
-              ))}
+              {nav.map((item) => <div className="mobile-menu-group" key={item.label}>
+                <button type="button" className="mobile-nav-item" onClick={() => setMobileGroup(mobileGroup === item.label ? null : item.label)}><span>{item.label}</span><span>{mobileGroup === item.label ? "−" : "+"}</span></button>
+                {mobileGroup === item.label && <div className="mobile-submenu"><Link href={item.href} onClick={() => setMobileMenuOpen(false)}>View all {item.label}</Link>{item.groups.map((group) => <section key={group.title}><b>{group.title}</b>{group.items.map((label) => <Link key={label} href={menuHref(item.href, label)} onClick={() => setMobileMenuOpen(false)}>{label}</Link>)}</section>)}</div>}
+              </div>)}
             </div>
 
             <div className="mobile-drawer-footer">

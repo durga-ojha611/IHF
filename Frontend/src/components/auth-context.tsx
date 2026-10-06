@@ -89,7 +89,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const register = async (name: string, email: string, password: string, phone?: string) => {
-    return await authApi.register({ name, email, password, phone });
+    const res = await authApi.register({ name, email, password, phone });
+    if (res?.data?.user) {
+      setUser(res.data.user);
+    }
   };
 
   const logout = async () => {

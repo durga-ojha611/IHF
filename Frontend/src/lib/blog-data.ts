@@ -26,7 +26,7 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     title: "A Touch of Grandeur: Elevating Interiors with Tassel Trims",
     kicker: "FINISHING TOUCHES",
     subtitle: "Discover how traditional bullion tassels, silk tie-backs, and custom fringe trims add architectural depth and timeless elegance to bespoke window treatments.",
-    heroImage: "/figma/home-04.jpeg",
+    heroImage: "/blog/tassel-trims-grandeur-hd.png",
     paragraphs: [
       "Interior design often lives in the small, intimate details that bring warmth, history, and character into a living space, and while bold architectural gestures, expansive floor layouts, rich color schemes, and large furniture pieces establish the structural groundwork of a room, it is the finishing decorative elements that truly breathe life into an interior environment. Among the most historically rich, visually captivating, and tactilely engaging decorative accents available to interior designers today are tassel trims. Long associated with stately European manors, royal palaces, grand opera houses, and classical interior arrangements, tassel trims have evolved far beyond their traditional, highly formal roots to become incredibly versatile tools for introducing spatial dimension, physical movement, and an undeniable sense of bespoke luxury to contemporary residential settings. The presence of a carefully chosen tassel trim provides a bridge between historical grandeur and modern design sensibilities, offering a subtle nod to classic craftsmanship while remaining thoroughly relevant for today’s sophisticated homes. Understanding the transformative power of tassel trims requires an appreciation for both their rich history and their unique physical presence within a room’s broader design tapestry.",
 
@@ -97,7 +97,7 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     title: "A Tailored Accent: Defining Spaces with Border Trims",
     kicker: "FINISHING TOUCHES",
     subtitle: "Frame your view with structural border appliques, embroidered tape trims, and geometric leading edges that define luxury drapery.",
-    heroImage: "/figma/home-12.jpeg",
+    heroImage: "/blog/tailored-border-trims-hd.png",
     paragraphs: [
       "In the realm of high-end interior architecture and decorative design, structural clarity and visual precision are paramount to achieving a polished, cohesive environment. While bold color choices, expressive artwork, and dramatic furniture forms immediately command visual attention upon entering a room, it is the clean structural lines and defined boundaries that dictate how a space is interpreted, understood, and appreciated. Border trims—frequently referred to within the textile industry as braid, flat tape, or galloon trims—are flat, decoratively woven bands crafted specifically to establish crisp outlines, frame silhouettes, and impart a refined, tailored aesthetic across all types of home furnishings. Whether applied along the leading edges of drapery panels, mapped out as geometric motifs on decorative throw cushions, or stitched along key upholstery seams, border trims bring structural discipline, tailored elegance, and bespoke polish to contemporary and classic interiors alike.",
 
@@ -168,7 +168,7 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     title: "A Beautiful Edge: Crafting Dimension with Decorative Tapes",
     kicker: "FINISHING TOUCHES",
     subtitle: "Subtle texture meets modern minimalism with woven ribbon tapes, jacquard trims, and delicate braid accents.",
-    heroImage: "/figma/home-07.jpeg",
+    heroImage: "/blog/decorative-tapes-hd.png",
     paragraphs: [
       "In the refined world of interior decoration, true luxury is rarely about loud, overwhelming design statements; rather, it is found in the quiet, sophisticated layers of detail that subtly enhance a room's overall atmosphere. Decorative tapes represent a unique and captivating category of passementerie, blending the fine art of textile weaving with soft texture and refined dimension. These specialized, narrow woven ribbons are designed to introduce gentle transitions, elegant borders, and artistic flair to drapery, soft upholstery, bedding, and home accessories. Distinct from heavy, voluminous fringes or flat graphic braids, decorative tapes prioritize intricate weave structures, rich multi-yarn combinations, and soft, tactile finished edges that catch light gracefully and bring an unpretentious, made-to-measure sophistication to any interior space.",
 
@@ -237,7 +237,7 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     title: "Made by Hand: The Timeless Value of Custom Details",
     kicker: "FINISHING TOUCHES",
     subtitle: "Inside our master workrooms in India, where centuries-old hand-pleating, hand-stitching, and bespoke finishing bring your home to life.",
-    heroImage: "/figma/home-13.png",
+    heroImage: "/blog/made-by-hand-hd.png",
     paragraphs: [
       "In an era characterized by rapid technological advancement, mass production, and fast-paced consumer trends, true luxury in interior design has shifted away from mass-market availability toward authenticity, craftsmanship, and the rare beauty of the human touch. Custom, hand-made passementerie and decorative trimmings represent the absolute pinnacle of interior embellishment, elevating standard decor into bespoke, heirloom-quality features that tell a compelling story of artistic dedication and master skill. From hand-wrapped gimp cords and individually tied tassels to complex hand-knotted bullion fringes and bespoke embroidered border tapes, made-to-measure hand-finished details bring an unrivaled sense of soul, artistic depth, and personal character to luxury residential environments.",
 

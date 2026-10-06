@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { CustomizerScreen, type CustomizerStep } from "../customizer-screen";
 
-const routeSteps: CustomizerStep[] = ["fabric", "pleat", "panels", "measurements", "lining", "decor", "tiebacks", "review"];
+const routeSteps: CustomizerStep[] = ["pleat", "fabric", "panels", "measurements", "lining", "decor", "tiebacks", "room", "review"];
 
 export function generateStaticParams() {
   return routeSteps.map((step) => ({ step }));

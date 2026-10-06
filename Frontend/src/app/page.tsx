@@ -12,10 +12,10 @@ import "./figma-hero.css";
 import "./category-showcase.css";
 
 const finish = [
-  ["/figma/home-04.jpeg", "A touch of grandeur", "Tassel Trims", "/blog/a-touch-of-grandeur"],
-  ["/figma/home-12.jpeg", "A tailored accent", "Border Trims", "/blog/a-tailored-accent"],
-  ["/figma/home-07.jpeg", "A beautiful edge", "Decorative Tapes", "/blog/a-beautiful-edge"],
-  ["/figma/home-13.png", "Made by hand", "Custom Details", "/blog/made-by-hand"],
+  ["/blog/tassel-trims-grandeur-hd.png", "A touch of grandeur", "Tassel Trims", "/blog/a-touch-of-grandeur"],
+  ["/blog/tailored-border-trims-hd.png", "A tailored accent", "Border Trims", "/blog/a-tailored-accent"],
+  ["/blog/decorative-tapes-hd.png", "A beautiful edge", "Decorative Tapes", "/blog/a-beautiful-edge"],
+  ["/blog/made-by-hand-hd.png", "Made by hand", "Custom Details", "/blog/made-by-hand"],
 ];
 
 const romans = [
@@ -96,7 +96,7 @@ export default function Home() {
         <span className="home-kicker">MADE TO MEASURE</span>
         <h2>Drapes That Make an Entrance.</h2>
         <div className="entrance-grid">
-          <Image src="/figma/home-01.jpeg" alt="Grand custom drapery" width={760} height={620}/>
+          <Image src="/figma/home-grand-drapes-hd.png" alt="Grand ivory custom drapery framing tall French windows" width={1536} height={1024} quality={94}/>
           <article><span className="home-kicker">TIMELESS CRAFT</span><h3>EXTRA-LARGE<br/>DRAPES</h3><p>Dramatic scale. Tailored to perfection. Our grand-scale drapes are engineered to handle soaring heights while maintaining beautiful, fluid folds from ceiling to floor.</p><ArrowLink href="/drapery">EXPLORE DRAPERY</ArrowLink></article>
         </div>
       </section>
@@ -108,17 +108,17 @@ export default function Home() {
 
       <section className="product-family home-shell">
         <div className="section-number">01</div><div className="family-heading"><span className="home-kicker">SOFTLY TAILORED FOR EVERY WINDOW</span><h2>TYPES OF ROMAN SHADES</h2></div>
-        <div className="four-grid">{romans.map(([src,title,copy])=><article key={title}><h3>{title}</h3><p>{copy}</p><Image src={src} alt={title} width={400} height={360}/><ArrowLink href="/roman-shades">SHOP</ArrowLink></article>)}</div>
+        <div className="four-grid">{romans.map(([src,title,copy])=><article key={title}><h3>{title}</h3><p>{copy}</p><Image src={src} alt={title} width={400} height={360}/><ArrowLink href="/products/shades">SHOP</ArrowLink></article>)}</div>
       </section>
 
       <section className="product-family home-shell">
         <div className="section-number">02</div><div className="family-heading"><span className="home-kicker">THE FINISHING FRAME</span><h2>TYPES OF VALANCES</h2></div>
-        <div className="three-grid">{valances.map(([src,title,copy])=><article key={title}><h3>{title}</h3><p>{copy}</p><Image src={src} alt={title} width={520} height={500}/><ArrowLink href="/valances">SHOP</ArrowLink></article>)}</div>
+        <div className="three-grid">{valances.map(([src,title,copy])=><article key={title}><h3>{title}</h3><p>{copy}</p><Image src={src} alt={title} width={520} height={500}/><ArrowLink href="/products/valances">SHOP</ArrowLink></article>)}</div>
       </section>
 
       <section className="product-family home-shell cornice-family">
         <div className="section-number">03</div><div className="family-heading"><span className="home-kicker">A POLISHED ARCHITECTURAL FINISH</span><h2>TYPES OF CORNICES</h2><p>Designed to frame the view and conceal hardware beautifully.</p></div>
-        <div className="four-grid">{cornices.map(([src,title])=><article key={title}><Image src={src} alt={title} width={420} height={520}/><h3>{title}</h3><p>Tailored proportions and impeccable detailing.</p><ArrowLink>EXPLORE</ArrowLink></article>)}</div>
+        <div className="four-grid">{cornices.map(([src,title])=><article key={title}><Image src={src} alt={title} width={420} height={520}/><h3>{title}</h3><p>Tailored proportions and impeccable detailing.</p><ArrowLink href="/products/valances">EXPLORE</ArrowLink></article>)}</div>
       </section>
 
       <section className="craft-story">
@@ -237,14 +237,14 @@ export default function Home() {
             <div className="cat-card cat-card-short cat-card-shades">
               <div className="cat-card-content">
                 <span className="cat-pill">750+ Items</span>
-                <Link href="/roman-shades" className="cat-title-link">
+                <Link href="/products/shades" className="cat-title-link">
                   <h3 className="cat-title">Shades &amp; Blinds</h3>
                 </Link>
                 <ul className="cat-sublinks">
-                  <li><Link href="/roman-shades?type=reception-sofa">Reception Sofa</Link></li>
-                  <li><Link href="/roman-shades?type=sectional-sofa">Sectional Sofa</Link></li>
-                  <li><Link href="/roman-shades?type=armless-sofa">Armless Sofa</Link></li>
-                  <li><Link href="/roman-shades?type=curved-sofa">Curved Sofa</Link></li>
+                  <li><Link href="/products/shades">Roman Shades</Link></li>
+                  <li><Link href="/products/shades">Roller Shades</Link></li>
+                  <li><Link href="/products/shades">Woven Shades</Link></li>
+                  <li><Link href="/products/shades">Blackout Shades</Link></li>
                 </ul>
               </div>
               <div className="cat-card-graphic cat-graphic-shades">

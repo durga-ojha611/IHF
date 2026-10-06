@@ -20,15 +20,17 @@ export type DraperyConfig = {
   tiebackDesign: string;
   tiebackColor: string;
   tiebackQty: number;
+  grommetColor: string;
+  rippleCount: number;
 };
 
 export const FABRICS = [
-  { id: "velvet", name: "Velvet", description: "Luxurious weight & sheen", basePrice: 459.99, image: "/curtains/fabric-velvet.png", colors: ["navy", "charcoal", "emerald", "burgundy", "ivory"] },
-  { id: "linen", name: "Linen", description: "Natural, breathable texture", basePrice: 329.99, image: "/curtains/fabric-linen.png", colors: ["ivory", "sage", "natural", "dusty-blue", "stone"] },
-  { id: "silk", name: "Silk", description: "Lustrous, elegant drape", basePrice: 589.99, image: "/curtains/fabric-silk.png", colors: ["ivory", "champagne", "midnight", "burgundy", "dove-grey"] },
-  { id: "sheer", name: "Sheer", description: "Light & airy filter", basePrice: 249.99, image: "/curtains/fabric-sheer.png", colors: ["white", "pale-gold", "blush", "dove-grey", "dusty-blue"] },
-  { id: "blackout", name: "Blackout", description: "Full light block, structured", basePrice: 399.99, image: "/curtains/fabric-blackout.png", colors: ["black", "white", "grey", "emerald", "burgundy"] },
-  { id: "jacquard", name: "Jacquard", description: "Woven pattern, opulent look", basePrice: 519.99, image: "/curtains/fabric-jacquard.png", colors: ["gold", "ivory", "navy", "burgundy", "taupe"] },
+  { id: "dupioni-silk", name: "Dupioni Silk Drapery", description: "Crisp handwoven silk with natural slub", basePrice: 459.99, image: "/curtains/fabric-silk.png", colors: ["ivory", "champagne", "midnight", "burgundy", "dove-grey"] },
+  { id: "linen", name: "Linen Drapery", description: "Natural, breathable texture", basePrice: 319.99, image: "/curtains/fabric-linen.png", colors: ["ivory", "sage", "natural", "dusty-blue", "stone"] },
+  { id: "faux-silk", name: "Faux Silk Drapery", description: "Refined silk look with practical durability", basePrice: 159.99, image: "/curtains/fabric-silk.png", colors: ["ivory", "champagne", "dove-grey", "sage", "natural"] },
+  { id: "velvet", name: "Velvet Drapery", description: "Luxurious weight and soft sheen · price on request", basePrice: null, image: "/curtains/fabric-velvet.png", colors: ["navy", "charcoal", "emerald", "burgundy", "ivory"] },
+  { id: "silk-taffeta", name: "Silk Taffeta Stripes Drapery", description: "Structured silk with tailored stripe detail", basePrice: 659.99, image: "/curtains/fabric-jacquard.png", colors: ["gold", "ivory", "navy", "burgundy", "taupe"] },
+  { id: "sheer", name: "Sheer Curtains Voile", description: "Light, airy and naturally translucent", basePrice: 159.99, image: "/curtains/fabric-sheer.png", colors: ["white", "pale-gold", "blush", "dove-grey", "dusty-blue"] },
 ] as const;
 
 export const COLORS: Record<string, { label: string; hex: string }> = {
@@ -41,9 +43,21 @@ export const COLORS: Record<string, { label: string; hex: string }> = {
 };
 
 export const PLEATS = [
-  { id: "pinch", label: "Pinch Pleat", description: "Classic three-finger pleat" }, { id: "pencil", label: "Pencil Pleat", description: "Tight, tailored gathers" },
-  { id: "box", label: "Box Pleat", description: "Structured and geometric" }, { id: "goblet", label: "Goblet Pleat", description: "Wide-mouthed formal fold" },
-  { id: "eyelet", label: "Eyelet / Grommet", description: "Modern, clean movement" }, { id: "none", label: "No Pleat", description: "Rod pocket or flat panel" },
+  { id: "pinch", label: "French / Pinch Pleat", description: "Classic three-finger pleat" },
+  { id: "parisian", label: "Parisian Pleat", description: "Elegant tailored double fold" },
+  { id: "goblet", label: "Goblet Pleat", description: "Wide-mouthed formal fold" },
+  { id: "inverted", label: "Inverted Pleat", description: "Clean architectural reverse box" },
+  { id: "cartridge", label: "Cartridge Pleat", description: "Rounded structured columns" },
+  { id: "pencil", label: "Pencil Pleat", description: "Tight, tailored gathers" },
+  { id: "cottage", label: "Cottage Pleat", description: "Soft gathered country profile" },
+  { id: "double-pinch", label: "Double Pinch French Pleat", description: "Refined two-finger heading" },
+  { id: "grommet", label: "Grommet", description: "Modern metal eyelet heading" },
+  { id: "rod-pocket", label: "Rod Pocket", description: "Simple gathered pole pocket" },
+  { id: "rod-pocket-flange", label: "Rod Pocket with 2″ Flange", description: "Decorative top flange" },
+  { id: "back-tab", label: "Back Tab", description: "Hidden loops and relaxed folds" },
+  { id: "none", label: "Flat Pleat / No Pleat", description: "Flat non-pleated panel" },
+  { id: "ripplefold", label: "Ripplefold", description: "Continuous uniform S-curves" },
+  { id: "wavefold", label: "WaveFold", description: "Track-mounted flowing waves" },
 ] as const;
 
 export const LININGS = [
@@ -73,7 +87,7 @@ export const TASSELS = [
 ] as const;
 
 export function lengthIncrement(length: number) {
-  const rounded = Math.round(length);
+  const rounded = Math.ceil(length);
   if (rounded < 10) return 0;
   if (rounded <= 54) return Math.floor((rounded - 10) / 9) * 20;
   if (rounded <= 72) return 80 + Math.floor((rounded - 55) / 9) * 40 + 40;
@@ -89,7 +103,7 @@ export function calculateDraperyPrice(config: DraperyConfig) {
   const fabric = FABRICS.find((item) => item.id === config.fabric);
   const pleated = config.pleat !== "none";
   const maxWidth = pleated ? 400 : 1000;
-  if (!fabric || config.width < 12 || config.width > maxWidth || config.length < 10 || config.length > 400) return null;
+  if (!fabric || fabric.basePrice === null || config.width < 12 || config.width > maxWidth || config.length < 10 || config.length > 400) return null;
   const increment = lengthIncrement(config.length);
   const rawMultiplier = widthMultiplier(config.width, pleated);
   const multiplier = config.panel === "single" ? (rawMultiplier === 1 ? 0.5 : Math.ceil(rawMultiplier)) : rawMultiplier;
@@ -97,7 +111,7 @@ export function calculateDraperyPrice(config: DraperyConfig) {
   const lengthwise = (base: number, sides: number) => (base + increment) * (config.panel === "single" ? sides * 0.5 : sides);
   const base = curtain(fabric.basePrice);
   const liningOption = LININGS.find((item) => item.id === config.lining);
-  const lining = config.fabric === "sheer" || !liningOption || config.lining === "none" || (config.lining === "privacy" && config.liningPrivacyChoice !== "increase") ? 0 : curtain(liningOption.basePrice);
+  const lining = config.fabric === "sheer" || !liningOption || config.lining === "none" || (config.lining === "privacy" && config.liningPrivacyChoice !== "increase") ? 0 : base;
   const borderOption = BORDERS.find((item) => item.id === config.border);
   let border = 0;
   if (borderOption && config.border !== "none") border = config.border === "leading-edge-one" ? lengthwise(borderOption.basePrice, 1) : config.border === "leading-edge-both" ? lengthwise(borderOption.basePrice, 2) : curtain(borderOption.basePrice);
