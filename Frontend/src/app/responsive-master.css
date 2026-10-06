@@ -234,10 +234,10 @@ img, video, canvas, svg {
 
   /* Homepage Hero */
   .home-hero, .hero {
-    min-height: 100vh !important;
-    height: 100vh !important;
-    min-height: 100svh !important;
-    height: 100svh !important;
+    min-height: calc(100vh - 108px) !important;
+    height: calc(100vh - 108px) !important;
+    min-height: calc(100dvh - 108px) !important;
+    height: calc(100dvh - 108px) !important;
     width: 100% !important;
     max-width: 100% !important;
     margin-left: 0 !important;
@@ -784,10 +784,10 @@ img, video, canvas, svg {
     margin-inline: auto !important;
   }
   .home-hero, .hero {
-    min-height: 100vh !important;
-    height: 100vh !important;
-    min-height: 100svh !important;
-    height: 100svh !important;
+    min-height: calc(100vh - 222px) !important;
+    height: calc(100vh - 222px) !important;
+    min-height: calc(100dvh - 222px) !important;
+    height: calc(100dvh - 222px) !important;
     width: 100% !important;
     max-width: 100% !important;
     margin-left: 0 !important;

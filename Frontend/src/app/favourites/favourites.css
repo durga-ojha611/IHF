@@ -306,20 +306,21 @@
   height: 34px;
   border-radius: 50%;
   background: #ffffff;
-  border: none;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #b91c1c;
+  color: #1c1917 !important;
   font-size: 16px;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-  transition: transform 0.15s ease, background-color 0.15s ease;
+  transition: transform 0.15s ease, background-color 0.15s ease, color 0.15s ease;
 }
 
 .fav-heart-btn:hover {
   transform: scale(1.1);
-  background: #fef2f2;
+  background: #f5f4f0;
+  color: #000000 !important;
 }
 
 /* Card Body */

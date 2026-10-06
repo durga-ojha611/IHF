@@ -5,6 +5,7 @@ import { Footer, Header } from "@/components/site-chrome";
 import { CatalogCard, getCatalogCategory, getProductRecord } from "@/lib/catalog";
 import { CATEGORY_CUSTOMIZER_CONFIGS } from "@/lib/customizer-configs";
 import { CategoryFilterCatalog } from "@/components/category-filter-catalog";
+import "./category.css";
 
 const CUSTOMIZABLE_SLUGS = ["drapery", "shades", "valances"];
 
@@ -19,7 +20,7 @@ function ProductCard({
 
   return (
     <Link className="cp-product" href={targetHref}>
-      <div>
+      <div style={{ position: "relative" }}>
         <Image src={item.image} alt={item.name} fill sizes="30vw" />
         {item.customizable && <em>MADE TO MEASURE</em>}
       </div>
@@ -95,7 +96,7 @@ export default async function Products({ params }: { params: Promise<{ slug: str
       <Header />
       <main>
         {/* Editorial Category Hero */}
-        <section className={`cp-hero ${slug === "bedding" ? "cp-hero-bedding" : ""}`}>
+        <section className={`cp-hero ${slug === "bedding" ? "cp-hero-bedding" : ""}`} style={{ position: "relative" }}>
           <Image
             src={heroImage}
             alt={`${categoryName} collection`}
@@ -139,7 +140,9 @@ export default async function Products({ params }: { params: Promise<{ slug: str
               const itemHref = `/product/${item.slug}`;
               return (
                 <Link href={itemHref} key={item.slug}>
-                  <Image unoptimized src={item.image} alt={item.name} width={310} height={330} />
+                  <div style={{ position: "relative", width: "100%", height: "280px" }}>
+                    <Image unoptimized src={item.image} alt={item.name} fill style={{ objectFit: "cover", borderRadius: "4px" }} />
+                  </div>
                   <span>{item.name}</span>
                 </Link>
               );
@@ -158,7 +161,9 @@ export default async function Products({ params }: { params: Promise<{ slug: str
               const itemFabricHref = isCustomizable ? fabricUrl : "/swatches";
               return (
                 <Link href={itemFabricHref} key={item.slug}>
-                  <Image src={item.image} alt={item.name} width={280} height={230} />
+                  <div style={{ position: "relative", width: "100%", height: "230px" }}>
+                    <Image src={item.image} alt={item.name} fill style={{ objectFit: "cover", borderRadius: "4px" }} />
+                  </div>
                   <span>{item.name}</span>
                 </Link>
               );
@@ -199,12 +204,14 @@ export default async function Products({ params }: { params: Promise<{ slug: str
 
         {/* 5. Styled Sanctuary / Lookbook */}
         <section className="cp-layer cp-section">
-          <Image
-            src={products[1]?.image || heroImage}
-            alt={`Styled sanctuary ${categoryName.toLowerCase()}`}
-            width={640}
-            height={720}
-          />
+          <div style={{ position: "relative", width: "640px", maxWidth: "100%", height: "720px" }}>
+            <Image
+              src={products[1]?.image || heroImage}
+              alt={`Styled sanctuary ${categoryName.toLowerCase()}`}
+              fill
+              style={{ objectFit: "cover", borderRadius: "4px" }}
+            />
+          </div>
           <div>
             <span>STYLED SANCTUARY</span>
             <h2>Made to Live Beautifully</h2>
@@ -216,7 +223,7 @@ export default async function Products({ params }: { params: Promise<{ slug: str
               const lookHref = isCustomizable ? customizerUrl : `/product/${item.slug}`;
               return (
                 <Link href={lookHref} key={item.slug}>
-                  <Image src={item.image} alt={item.name} width={58} height={58} />
+                  <Image src={item.image} alt={item.name} width={52} height={52} style={{ objectFit: "cover", borderRadius: "2px", width: "52px", height: "52px" }} />
                   <span>
                     {item.name}
                     <small>{item.description}</small>
@@ -252,12 +259,13 @@ export default async function Products({ params }: { params: Promise<{ slug: str
             <h2>{guideTitle}</h2>
             <p>{guideCopy}</p>
           </header>
-          <div className="cp-guide-hero">
+          <div className="cp-guide-hero" style={{ position: "relative" }}>
             <Image
               src={guideImage}
               alt={guideTitle}
               fill
               sizes="100vw"
+              style={{ objectFit: "cover", objectPosition: "center" }}
             />
             <div>
               <span>EDITORIAL</span>

@@ -977,7 +977,7 @@ export default function Account() {
                               title="Remove from wishlist"
                               aria-label="Remove item"
                             >
-                              ✕
+                              ♥
                             </button>
 
                             <div className="wishlist-card-media">

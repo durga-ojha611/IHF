@@ -108,6 +108,14 @@ export function CategoryFilterCatalog({
         "Dinner Napkin Set (20″ × 20″)"
       ];
     }
+    if (categorySlug === "bedding") {
+      return [
+        "Twin / Twin XL",
+        "Full / Queen (90″ × 92″)",
+        "King / Cal King (108″ × 92″)",
+        "Euro Sham Pair (26″ × 26″)"
+      ];
+    }
     return [
       "Pair 96″ × 84″",
       "Pair 96″ × 96″",
@@ -115,6 +123,7 @@ export function CategoryFilterCatalog({
       "Custom Tailored Size"
     ];
   }, [categorySlug]);
+
 
   const availableColors = [
     "Natural Taupe",
@@ -367,7 +376,7 @@ export function CategoryFilterCatalog({
             <div className="cp-product-grid">
               {filteredProducts.map((item) => (
                 <Link key={item.slug} className="cp-product" href={`/product/${item.slug}`}>
-                  <div className="cp-product-image-container">
+                  <div className="cp-product-image-container" style={{ position: "relative" }}>
                     <Image src={item.image} alt={item.name} fill sizes="30vw" />
                     {item.customizable && <em>MADE TO MEASURE</em>}
                   </div>
