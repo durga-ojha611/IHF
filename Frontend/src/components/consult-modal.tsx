@@ -38,9 +38,9 @@ export function ConsultationModal({ isOpen, onClose }: ConsultModalProps) {
         phone: formData.phone,
         date: formData.date,
         time: formData.time,
-        room: formData.room,
+        room: "Living Room",
         notes: formData.notes,
-        type: "design_consultation"
+        type: "phone"
       });
       if (res.data?.consultation?.consultationNumber) {
         setBookingRef(res.data.consultation.consultationNumber);

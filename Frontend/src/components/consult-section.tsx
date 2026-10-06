@@ -62,7 +62,7 @@ export function ConsultSection() {
         phone: formData.phone,
         date: formData.date,
         time: formData.time,
-        room: formData.room,
+        room: "Living Room",
         notes: formData.notes,
         type: "phone"
       });

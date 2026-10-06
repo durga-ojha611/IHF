@@ -20,6 +20,7 @@ export interface User {
     state: string;
     zipCode: string;
     country?: string;
+    phone?: string;
     isDefault?: boolean;
   }>;
 }

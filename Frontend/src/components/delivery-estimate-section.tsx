@@ -9,7 +9,7 @@ export function DeliveryEstimateSection() {
     city: string;
     dispatchDays: string;
     deliveryDates: string;
-  }>({
+  } | null>({
     city: "Los Angeles Area",
     dispatchDays: "24-48 Hours",
     deliveryDates: "Oct 8 - Oct 10"
@@ -240,4 +240,3 @@ export function DeliveryEstimateSection() {
     </section>
   );
 }
-
